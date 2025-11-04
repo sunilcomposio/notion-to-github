@@ -1,275 +1,220 @@
-With the recent release of ChatGPT apps, especially the ChatGPT Apps SDK, developers can now build apps that run directly inside ChatGPT. 🤯
+While most agentic coding tools like Codex, Cursor, and Windsurf are adding SDKs and plugin APIs, Anthropic’s **Claude Code** is trying to do something a bit different. They’ve been quietly building a complete stack - skills for domain context, Plugins for modular workflows, and MCPs for tool integrations, all connected through one environment.
 
-Currently, by default, OpenAI supports just the following apps: Booking.com, Canva, Coursera, Expedia, Figma, Spotify, and Zillow.
+I wanted to see how that actually works when you build something real. 
 
-In the coming days, they plan to support developer-submitted apps by opening submissions later this year. This is a big moment for everyone who uses ChatGPT, especially developers who can build their own apps, and for the over 800 million ChatGPT users who get to try them.
+So I picked a project I’ve been planning for a while. **Luno is** a personal finance platform. It includes payment integrations, cron jobs for bill reminders, an agentic chatbot (wired with **Tool Router** for calling tools like Gmail, Notion, Stripe, etc, integrated inside the app), household sharing, subscription tracking, and analytics.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-So, you must know how to build your own apps with the ChatGPT Apps SDK. How cool would it be to create an app that supports over 500 apps and isn't limited to the default OpenAI-supported apps?
-
-That's precisely what we'll cover, from understanding the SDK and running the project locally to temporarily hosting it on Ngrok to access it in ChatGPT.
-
-So, without further ado, let's dive right in.
-
----
+The goal was simple: test the entire Claude Code setup. Skills, Plugins, MCP servers, Sub Agents, and slash commands, and see if it really helps speed up real-world development or just adds more setup overhead.
 
 ## TL;DR
 
-To quickly summarize what we'll cover in this blog post, here's what we'll go through:
+Built [**Luno **](https://github.com/rohittcodes/luno)in 2-3 days using Claude Code's full stack. Setup took a day (creating Skills, configuring Rube MCP). After that, features were shipped in 30-60 minutes instead of 8-10 hours of manual work. Cost: $12.67 for Claude Code usage (~15.5M input, 174k output tokens) + a Cursor Pro account for routine CRUD. Context7 MCP was critical in setup and development by pulling the right docs in‑session.
 
-- What are ChatGPT apps and the Apps SDK?
+![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
-- Installing Ngrok to host your localhost project on the internet with one command.
+The infrastructure works, but requires upfront investment. 
 
-- How to use Rube to access OpenAI ChatGPT Apps.
+Skills taught Claude: Code: my patterns for workflows; Rube MCP connected everything through one server; dev‑toolkit plugin handled security/testing/reviews. Tool Router powers the agentic chatbot. It would usually take 2-3 months and 200+ hours. 
 
-- How to implement widgets in Next.js with ChatGPT Apps SDK + Rube MCP.
+You can find the repository [here](https://github.com/rohittcodes/luno), don't forget to drop a star!
 
-If you work with Next.js and want to learn how to build custom widgets for your ChatGPT Apps, this is the right place to start.
+**Quick look: Here’s what the dashboard looks like:**
 
----
+![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
 
-## What is ChatGPT Apps and the Apps SDK
+## Day One: The Setup
 
-ChatGPT Apps are third-party tools that you can run directly in your ChatGPT conversations. The best way to understand this is to think of it as a way to use these apps like Figma, Canva, Zillow, Spotify, and more, and do all sorts of work directly in them without ever leaving ChatGPT.
+I started by creating Skills for CC. Not because I love documentation, but because I was tired of having to explain the same patterns over and over. "Use TanStack Query for data fetching." "RLS policies for multi-tenant data." "Error boundaries here, not there."
 
-To give you a better overview, these are some things you can do with ChatGPT Apps:
+I asked Claude Code to generate Skills for my workflow:
 
-- Say "Spotify, create me a playlist for my study session," and it'll build you a nice playlist in Spotify and play it directly in your chat.
+- Feature development patterns
 
-- Say "Canva, create me a thumbnail for my blog post with this text," and it'll build you a nice thumbnail for your blog post.
+- Database architecture (Supabase)
 
-You're seeing where this is headed. This is OpenAI's third attempt to make ChatGPT not just a chatbot, but an all-in-one platform with all apps directly available in it, so you never have to leave ChatGPT.
+- [Tool Router](https://docs.composio.dev/docs/tool-router/quick-start) integration with AI SDK
 
-The first two were custom GPTs, but they didn't work well with the users. However, this is a powerful, more flexible approach that, if adopted, could mean ChatGPT becomes your all-in-one platform.
+- Analytics pipeline patterns
 
-Well, then what's **ChatGPT Apps SDK?**
+- Design-to-code workflow
 
-As the name suggests, it's pretty obvious; it's used to build apps that run inside ChatGPT. 🫠
+They're just markdown files in `.claude/skills/`. Nothing fancy. But here's the thing: once I had them, Claude stopped generating code that looked like it came from a tutorial. It started generating code that looked like *my* code.
 
-To add more context, it's an open-source toolkit from OpenAI built on top of MCP that lets developers create apps that run directly in ChatGPT.
+Then I set up [**Rube MCP**](https://rube.app/). The problem with MCPs is that they eat your context window; multiple servers = less space for the model to think. Rube connects to 500+ apps through a single MCP server. GitHub, Linear, Figma, Supabase, all through one connection. It manages a sandbox environment for tool actions and stores data there, so your context window stays free. In parallel, Context7 MCP removed a ton of context‑switching by fetching authoritative docs directly in the session.
 
-At a high level, this is how it works:
+I already had my [dev-toolkit plugin](https://github.com/rohittcodes/claude-plugin-suite) from last month (when Anthropic dropped plugin support). 16 specialised agents, 10+ slash commands, MCP integrations. Things like `/security-scan` for OWASP reviews, `/test` for running tests with coverage reports. I wanted to stress-test it on something real.
 
-- Your app (e.g., Canva, Figma, etc.) runs as an MCP server that exposes its tools and input/output schemas directly to ChatGPT.
+Setup took a day. Then I started building.
 
-- Now, ChatGPT can invoke those tools and, optionally, render the UI components you provide in a sandbox.
+## Building Luno: My personal finance management (The Messy Part)
 
-Check out this video to get a high-level overview of ChatGPT Apps. 👇
+I gave Claude a prompt: "Build the database schema for a personal finance platform. Transactions, accounts, categories, budgets, goals, household sharing with invitations."
 
----
+It generated the complete **Supabase schema**. Foreign keys, indexes, RLS policies. The schema made sense because the Skills taught me how to structure databases. But then I looked closer, and it forgot the indexes on the household invitations table. The `token` and `email` Columns needed indexes for performance. Had to point that out.
 
-## Building a ChatGPT App in Next.js with Widgets
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-The source code mainly consists of basic React code, so I won't explain it from scratch here. It's a GPT app designed to display Google Calendar meeting details with widget support.
+### **First lesson:** Skills help consistency, but you still need to review.
 
-This should be a good starting point for you. Feel free to build something similar for your use case with any apps you prefer.
+For the UI, I passed Claude a Figma design link to get some ideas and build on top of it. I'd already set up my theme using tweakcn, so the implementation was based on that existing setup rather than an exact match of the Figma design. The designs don't match, but the UI came out clean and consistent.
 
-Begin by cloning the project repository using the command below:
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
 
-```bash
-git clone https://github.com/shricodev/chatgpt-apps-sdk-demo-composio.git
+Authentication was manual, and **Supabase Auth** handles most of it anyway.
+
+Then I hit a wall: cost. Claude's pricing was adding up fast. I was generating a lot of code, and at ~$3 per million tokens, it gets expensive quickly. So I switched to Cursor for routine feature work, transaction management, budget tracking, and basic CRUD. Cursor's $20/month subscription made more sense for that stuff.
+
+I came back to Claude Code when I needed to integrate Composio's** **[**Tool Router**](https://docs.composio.dev/docs/tool-router/quick-start)** **with the AI SDK for the chatbot. The docs weren't clear on some patterns, and I kept getting the integration wrong. I used Context7 MCP to fetch the actual AI SDK docs and Tool Router examples.
+
+### What is [Tool Router](https://docs.composio.dev/docs/tool-router/quick-start) (and why use it)?
+
+**Tool Router** exposes connected apps as callable tools for your AI agent, without hand‑wiring each integration. You connect once (per user), and the AI SDK gets a unified tool surface.
+
+- **Unified access + per‑user auth:** One router for 500+ apps, with tools automatically scoped to each user’s connections.
+
+- **Zero redeploys + AI‑SDK native:** New connections appear as tools immediately; tools already come with parameters/schemas for direct calls.
+
+In Luno, that meant email/calendar/issue flows existed only if the user had connected those apps, with no special‑case code or per‑app SDKs.
+
+Btw, this is what powers Rube MCP, at the backend.
+
+### **Claude pulled the documentation and showed me the pattern:**
+
+```typescript
+// Initialize Tool Router MCP client
+const mcpClient = await createToolRouterMCPClient(user.id)
+
+if (mcpClient) {
+  // Get tools from MCP client (AI SDK format)
+  const mcpToolSet = await mcpClient.tools()
+
+  // Combine with database tools
+  const allTools = {
+    ...dbTools,
+    ...Object.fromEntries(
+      Object.entries(mcpToolSet).map(([name, tool]) =>
+        [`toolRouter_${name}`, tool]
+      )
+    )
+  }
+
+  // Use with streamText
+  const result = streamText({
+    model,
+    messages: modelMessages,
+    tools: allTools,
+  })
+}
 ```
 
-### Step-1: Set Up Composio
+Once I had the pattern, it clicked. Tool Router creates a session per user, exposes all connected apps as MCP tools, handles auth per user, and returns tools in AI SDK format. So if a user connects Gmail, Calendar, and Notion, the chatbot automatically gets those tools. No code changes. Dynamic tool access based on what the user has connected.
 
-> ℹ️ We'll use Composio to add integrations support to our application. You can choose any integration you like.
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
 
-Before moving forward, you need to obtain a [Composio API key](https://platform.composio.dev/).
+That's what makes **Tool Router** powerful. It's not just connecting apps, it's exposing those connections as tools your AI can use directly.
 
-Go ahead and create an account on Composio, get your API key, and paste it into the `.env` file in the root of the project.
+## The RLS Policies That Took Three Tries
 
-![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
+The household invitation system was probably the most complex part. Invitations expire after 7 days, need email templates, and proper permission checks. Claude got the schema right on the first try. But the RLS policies? Three iterations.
 
-```plain text
-COMPOSIO_API_KEY=<YOUR_COMPOSIO_API_KEY>
-```
+First version: members could see invitations, but couldn't check ownership hierarchy properly. Second version: fixed the hierarchy but broke the permission logic for expired invitations. Third version: finally worked. The policy checked ownership, membership, and expiration all in the right order.
 
-For this demo, I'll be using Google Calendar, so head over to the Composio dashboard to access the auth config ID for Google Calendar.
+This is where having the plugin helped. I ran `/security-scan` and it caught issues I would've missed:
 
-1. Create the auth config for Google Calendar.
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
 
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
+- Trending updates weren't locked down properly
 
-1. Create an auth config for Google Calendar. Note the external user ID as we will use it in the `.env` file.
+- Anonymous tracking needed server‑issued signed tokens with TTL
 
-Once done, copy the auth config ID (which starts with `ac_`). Now, add the auth config ID and the user ID to the `.env` file.
+- The queue work needed proper batching
 
-```plain text
-COMPOSIO_USER_ID=<YOUR_COMPOSIO_USER_ID>
-CALENDAR_AUTH_CONFIG_ID=<YOUR_COMPOSIO_CALENDAR_AUTH_CONFIG_ID>
+- Long queries should be precomputed on a schedule
 
-```
+- SQL indexes are missing on some aggregations
 
-Your final `.env` file should look something like this:
+![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_8.png)
 
-```plain text
-COMPOSIO_API_KEY=<YOUR_COMPOSIO_API_KEY>
-COMPOSIO_USER_ID=<YOUR_COMPOSIO_USER_ID>
+Fixed all of these before deploying. The security‑reviewer agent checks for OWASP Top 10, suggests fixes, and validates implementations.
 
-CALENDAR_AUTH_CONFIG_ID=<YOUR_COMPOSIO_CALENDAR_AUTH_CONFIG_ID>
+## Payment Integration and Cron Jobs
 
-```
+Lemon Squeezy integration was straightforward. The Skill had patterns for webhook handling and subscription management. Claude generated webhook handlers with proper signature verification on the first try.
 
-### Install Dependencies and Start the Project
+![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_9.png)
 
-Once your environment variables are configured, install the project dependencies:
+Cron jobs for bill reminders were more interesting. I set up **Supabase (edge functions) **that:
 
-```bash
-pnpm install
-```
+- Check upcoming bills
 
-After installation is complete, start the project with:
+- Send email reminders via Resend
 
-```bash
-pnpm run dev
-```
+- Update notification preferences
 
-By default, the app runs on port `3000`. Double-check that it’s running on that port, as you’ll need this information later when setting up Ngrok.
+- Handle timezone conversions
 
-### Step-2: Expose Your App with Ngrok
+The timezone handling part needed manual fixes. Claude generated code that worked, but didn't account for daylight saving time properly. Had to correct that myself.
 
-Since ChatGPT isn't running locally on your machine, you can't use [`localhost:3000`](http://localhost:3000/) when connecting to the app in ChatGPT.
+## What Actually Shipped
 
-You can host it on platforms like Vercel, but Ngrok is often faster and more convenient for development.
+After 2-3 days, I had a production‑ready finance platform: transactions with categories, budgets with alerts, household sharing (7‑day invitations), subscription tracking, analytics, an agentic chatbot (Tool Router), automated bill reminders, and Lemon Squeezy payments.
 
-Ngrok lets you share your local project via a temporary public URL, which is perfect for quick testing without redeploying.
+The analytics dashboard was the last piece. Claude generated working code, but it split queries that should have been combined and missed opportunities to memoise. I optimised those manually.
 
-Even if you need to make changes, you won't have to push the changes to your repo to trigger the Vercel deployment. Ngrok can work directly from your local filesystem.
+## Dev-Toolkit Plugin (Quick Context)
 
-1. **Install Ngrok**
+Since I keep mentioning it, this plugin (built when Anthropic launched plugins) bundles the day‑to‑day work, security reviews, testing, and system design into slash commands and specialised agents.
 
-Make sure that you have [Ngrok](https://ngrok.com/) installed on your machine.
+- Core agents: security reviewer (OWASP), performance/load tester, compliance/testing/architecture specialists.
 
-Visit this URL: [Ngrok Installation Guide](https://ngrok.com/), and find the relevant steps for your machine.
+- Core commands: `/test`, `/code-review`, `/security-scan`, `/deploy`, `/monitor`.
 
-If you're someone like me who prefers Docker, you can use the following command to pull the Ngrok public image from Docker Hub.
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_10.png)
 
-```bash
-docker pull ngrok/ngrok
-```
+You can install it: [rohittcodes/claude-plugin-suite](http://github.com/rohittcodes/claude-plugin-suite)
 
-Use whichever installation method fits your workflow.
+The plugin meant I could run security reviews and code standardization continuously instead of at the end. Caught a lot of issues early.
 
-1. **Start Ngrok**
+## The Real Numbers
 
-Make sure that the project is running locally and listening on port 3000, as we will be exposing it to the internet.
+Let's talk money and time, because that's what actually matters.
 
-It's as simple as typing out this command:
+**Setup (day 1): **~1 day total (Skills ≈4h, Rube MCP ≈30m, Supabase ≈2h).
 
-```bash
-ngrok http 3000 // Change to the port your app is running on
+![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_11.png)
 
-```
+**Development (2-3 days):**
 
-And if you've followed the Docker steps, run the following command:
+- Claude Code: $12.67 (architecture, complex integrations, Tool Router)
 
-```bash
-docker run --net=host -it -e NGROK_AUTHTOKEN=<NGROK_AUTH_TOKEN> ngrok/ngrok:latest http 3000 // Change to the port your app is running on
+- Cursor: Pro account (routine CRUD, UI polish)
 
-```
+- Rube MCP: Free tier
 
-This will give you a public URL to access the project. Keep a note of this as we'll need it when setting up ChatGPT to add our new app.
+- Total: $12.67 + Cursor Pro
 
-Make sure to replace `<NGROK_AUTH_TOKEN>` with your actual ngrok auth token.
+**Time saved:** **200+ hours**. It typically takes **2-3 months** of solid work.
 
-You can find it in your Ngrok dashboard. Log in to your [Ngrok](https://dashboard.ngrok.com/) account, and you'll find it in the dashboard.
+But here's the context: that $12.67 is *after* I switched to Cursor Pro for routine work. If I'd used Claude Code for everything, it would've been closer to $50-60. The cost management part is real; you need to be strategic about when you use the expensive model.
 
-### Step 3: Connect Your App to ChatGPT
+## Would I Do It Again?
 
-Now, you should have a public URL for your app. Let's add it to ChatGPT.
+Absolutely. But if I were starting over, I'd approach a few things differently. I'd create Skills on day zero, before writing a single line of code. The consistency they bring matters more than moving fast in the beginning, and every feature afterwards benefits from having those patterns established. The plugin would be there from the start, too; catching security issues and enforcing code standards continuously is far better than fixing problems at the end.
 
-It should look something like this: [`https://topographical-unmagnifying-halle.ngrok-free.dev`](https://topographical-unmagnifying-halle.ngrok-free.dev/)
+![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_12.png)
 
-Head over to ChatGPT settings, then under **Additional Settings>** **Apps and Connectors**, make sure **Developer mode is turned on**. This gives you access to add your own application.
+I'd also budget more realistically. If you're building something serious, plan for $50-100 a month in AI costs. It's still cheaper than hiring someone or spending months of your own time, but it's not free. And Context7 MCP would be non-negotiable from the start, having documentation accessible in-session instead of constantly context-switching to docs is a massive productivity unlock.
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
+The thing is, you still review code. You still make architecture decisions. You still fix edge cases. Claude Code handles the boring stuff, boilerplate, migrations, and configuration so that you can focus on the hard problems: architecture, security, performance, and user experience. That upfront day spent on Skills and setup? It paid for itself ten times over in consistency and speed.
 
-Click **Create**, and fill in the following details:
+## Final Thoughts
 
-- MCP Server URL: The public URL you just got from Ngrok. Add `/mcp` at the end, because that's the endpoint in our code that handles the requests from ChatGPT.
+Claude Code's infrastructure is real. It's not hype. But it requires upfront investment in Skills, plugins, and MCP configuration. Once that's done, development becomes more conversational. "Build a subscription tracking feature with email reminders" actually works.
 
-- For Name and Description, you can put anything you want (show your creativity!)
+The value isn't replacing developers, it's handling the boring stuff so you can focus on what matters: the architecture, the security, the performance, the user experience. Luno took me 2-3 days, not 3 months. It's production‑ready with proper protection, error handling, and testing. That's the difference the full stack makes.
 
-- Authentication: Select **No Authentication**, as we'll handle authentication with Composio itself. Our app does not support OAuth by default.
+If you're building with Claude Code, invest in the infrastructure first. Create your Skills. Set up your MCPs properly. Build or install plugins that match your workflow. The upfront cost is worth it.
 
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
-
-### See It in Action
-
-Let's see how all of this adds up. Here's a quick demo to give you an idea of our application.
-
-Creating a Google Calendar meeting and viewing the details directly from GPT with widgets? That's really cool.
-
-## Advanced: How to use Rube MCP with the ChatGPT Apps SDK?
-
-You know what? You don’t need to worry about any of that if you don’t care about visual feedback or fancy widgets in ChatGPT. This is the right place to start.
-
-> 💡 We only had to code all of that because I wanted to show you how to use Widgets with ChatGPT Apps + Rube MCP inside Next.js.
-
-None of the coding is necessary. The whole point of ChatGPT apps is to give you direct access to your applications right inside ChatGPT, so if you want all your apps ready to go without extra setup, this is perfect.
-
-Honestly, this is precisely what I’d recommend for your daily workflow. It’s simple, smooth, and gives you access to over 500 apps available on Rube. Pretty cool, right?
-
-Here’s all you need to do:
-
-1. Make sure that you are in Developer Mode as we discussed earlier.
-
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
-
-1. In the same tab, click **Create**, and fill in the following details:
-
-- MCP Server URL: [https://rube.app/mcp](https://rube.app/mcp)
-
-- For Name and Description, you can put anything you want (show your creativity!)
-
-Make sure you set up OAuth authentication, as we'll be using it to access the tools in ChatGPT.
-
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_8.png)
-
-Now, click on **Create**.
-
-1. It will now ask for some access; hit **Allow**.
-
-![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_9.png)
-
-If everything goes well, your app should be available on ChatGPT. Make sure that you see all six actions appropriately listed, as these are the core actions Rube uses to manage authentication, prepare tool calls, and stuff.
-
-![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_10.png)
-
-Here's all 6 Rube actions listed:
-
-1. `RUBE_CREATE_PLAN`: Creates a complete step-by-step plan for LLMs.
-
-1. `RUBE_MULTI_EXECUTE_TOOL`: Fast and parallel tool executor for tools discovered through `RUBE_SEARCH_TOOLS`.
-
-1. `RUBE_REMOTE_BASH_TOOL`: Execute bash commands in a REMOTE sandbox for file operations, data processing, and system tasks.
-
-1. `RUBE_REMOTE_WORKBENCH`: Process remote files or script bulk tool executions using Python code in a remote sandbox.
-
-1. `RUBE_SEARCH_TOOLS`: Search for tools to execute the user task.
-
-1. `RUBE_MANAGE_CONNECTIONS`: Manage connection with Rube.
-
-This is to give you an idea of all the actions Rube will use to perform your tasks.
-
-And... that's it.
-
-Now, simply head over to your chat, use `@<APP_NAME>`, in my case `@Rube MCP Server`, and start talking.
-
-As an example, try saying this:
-
-> "@<APP_NAME> send an email to my ex at XYZ. Subject: Guess who. Body: Don’t worry, it’s just AI with Rube… or is it?"
-
-(C’mon, try it, you’ll test two **connections** at once. 😉 Just kidding…)
-
----
-
-## Wrapping Up
-
-Alright, now you’ve got a clear idea of how the ChatGPT Apps SDK works, how to set up a custom server powered by Rube, host it with Ngrok, and use it right inside ChatGPT or plug in Rube and get going without any coding at all if you don't care about widgets.
-
-In this post, we walked through everything from building your own custom server with Rube and widget support in Next.js to skipping the code entirely if you want to move fast.
-
-Well, that's all for this! I will see you in the next one.
+- Usage: ~15.5M input tokens, ~173k output tokens

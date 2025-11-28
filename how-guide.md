@@ -1,220 +1,232 @@
-While most agentic coding tools like Codex, Cursor, and Windsurf are adding SDKs and plugin APIs, Anthropic’s **Claude Code** is trying to do something a bit different. They’ve been quietly building a complete stack - skills for domain context, Plugins for modular workflows, and MCPs for tool integrations, all connected through one environment.
+Google recently released Gemini 3, Nano Banana Pro and its agentic IDE Antigravity, and it's exploding in popularity. AI, Builders & Business community are hyping it up like crazy. 
 
-I wanted to see how that actually works when you build something real. 
+But when it comes to tools, it's limited. Though one can add MCPs for use cases, it's hectic to connect every applications MCP servers manually
 
-So I picked a project I’ve been planning for a while. **Luno is** a personal finance platform. It includes payment integrations, cron jobs for bill reminders, an agentic chatbot (wired with **Tool Router** for calling tools like Gmail, Notion, Stripe, etc, integrated inside the app), household sharing, subscription tracking, and analytics.
+So, what if one has an MCP that you configure once, and it connects to 500+ products at once while intelligently figuring out which MCP tools and methods are needed?
+
+Enter Rube, a universal MCP & in this short blog, let's see how you can use it to supercharge your AI-assisted development.
+
+### TL DR;
+
+1. Rube MCP plugs into Antigravity once and instantly unlocks hundreds of tools without the annoying manual MCP wiring.
+
+1. You can automate code reviews and send off clean summaries straight to Gmail / Slack using Rube’s mail tools.
+
+1. Backend setup becomes trivial when Rube creates and seeds Supabase databases with text instructions and LLM commands.
+
+1. Frontend devs can turn Figma wireframes into clean HTML/CSS by letting Rube fetch designs and Antigravity generate UI code.
+
+1. Antigravity + Rube turns repetitive dev work into background noise so you can actually focus on building.
+
+---
+
+## Connect Antigravity with Rube MCP
+
+Before doing anything else, one needs to connect it once. Process is straightforward:
+
+- Go to[ Rube MCP](https://rube.app/) site.
+
+- Signup / Login
+
+- Head to Add Rube → MCP URL → Generate Token
+
+- Copy the code to put in place of  `RUBE API KEY` in `mcp.json`.
+
+- Head back to Antigravity, `…` dot in prompt editor → MCP -> Manage MCP Server → View raw config
+
+- Paste the command in [mcp.json ](https://gist.github.com/DevloperHS/19fb43ee702fd736a7f252da9ca9ec60#file-mcp-json)
+
+- Perform OAuth, wait till it completes
+
+- and boom, Rube added to the MCP list.
+
+For verification, head to Manage MCP Servers, refresh and check the tool. It will look something like this:
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-The goal was simple: test the entire Claude Code setup. Skills, Plugins, MCP servers, Sub Agents, and slash commands, and see if it really helps speed up real-world development or just adds more setup overhead.
+> Note: if you are new to MCP, don't change anything. If new to rube, for first time it ask for OAuth for each tool.
 
-## TL;DR
+Now let's see a few use cases of  Rube in Antigravity.
 
-Built [**Luno **](https://github.com/rohittcodes/luno)in 2-3 days using Claude Code's full stack. Setup took a day (creating Skills, configuring Rube MCP). After that, features were shipped in 30-60 minutes instead of 8-10 hours of manual work. Cost: $12.67 for Claude Code usage (~15.5M input, 174k output tokens) + a Cursor Pro account for routine CRUD. Context7 MCP was critical in setup and development by pulling the right docs in‑session.
+---
+
+## 1. Using Rube MCP to automate Code Review & Update 
+
+Senior developer often analyse intern codebases, pointing out errors, summarising them and sending them to their Slack/email.
+
+This can be a time-consuming, mundane & repetitive task. So, they can delegate it to Antigravity + Rube combo.
+
+So here is a prompt to paste in the agent window prompt box (much like VS Code)
+
+**Prompt**
+
+```plain text
+Find the bugs in @agent.py @requirements.txt @__init__.py . 
+Categorise them in low , medium high priority and create a short summary analysis with proper formating. 
+Then using @mcp:rube_mcp: Send the summary to devloper.hs2015@gmail.com with title "Code Analysis Summary".
+```
+
+In simple words, the prompt asks the LLM to review the codebase, identify bugs, generate a summary, and send it as an email to the user. The output should include a summary and a mail link. And all this should be done using rube’s Gmail tool.
+
+Yup, we don't have Gmail support in Antigravity, but rube helps here!
+
+Now click `>` And wait till it's complete. If this is 1st time, rube will ask you to connect your Gmail account to send mail, but that's just OAuth for you.
+
+Finally, it will come back with the draft/task it performed and an email link. Pretty transparent 😅
+
+Here I am performing the same:
+
+> Note: You can even ask it to send to team slack, but I went with gmail, as this is just a demo.
+
+Hopefully, now the intern will find the email and fix it all and send a pull request again :)
+
+
+
+---
+
+## 3. Using Rube MCP to handle Supabase Database for Apps
+
+Backend developers often need to create different database models for different projects. This can be time-consuming, mundane and repetitive.
+
+They can leverage Rube MCP to connect to Supabase, build the database in one shot, and use APIs to pull real-time information. Best part - no manual handling of pesky database issues, all handled by rube!
+
+Here is a prompt to do so:
+
+```plain text
+Build a minimal Student Grade CRUD application using Flask, Jinja, HTML, and CSS. The aesthetic should be "Google Material Minimal"—clean white backgrounds, subtle shadows, rounded corners, and excellent typography.
+
+Phase 1: Database Setup (via rube_mcp)
+Use the `rube_mcp` tool to interact with Supabase.
+1. Create a table named `students` in the database `student-data`.
+2. The schema should include: `id` (serial/int, primary key), `name` (text), `subject` (text), `grade` (int), and `last_updated` (timestamp).
+3. Immediately seed this table with 5-10 realistic mock entries (e.g., "Alice Smith", "Mathematics", 92).
+
+Phase 2: Flask Application
+Create a single-file Flask app (or standard folder structure if preferred) that connects to this Supabase instance.
+1. API/Routes:
+   - GET `/`: Render the dashboard showing all students.
+   - POST `/add`: Add a new student.
+   - POST `/update/<id>`: Update a student's grade.
+   - POST `/delete/<id>`: Remove a student.
+2. UI/UX:
+   - Use Jinja2 for templating.
+   - Style using vanilla CSS (no external frameworks like Bootstrap).
+   - Design: Center-aligned card layout. The table should look like a Google Docs file list or Google Classroom roster. Use soft gray borders (#e0e0e0) and the system font stack (Inter/Roboto/San Francisco).
+   - Add a "Add Student" floating action button (FAB) or a clean top bar button.
+
+Ensure the code is production-ready, handles database connections securely, and renders the frontend cleanly.
+```
+
+**In summary: **prompt the LLM to create a Google minimal style UI-UX-based CRUD app (for demo purposes) and pull in mock data defined in Supabase’s `student-db` using crud api’s. Here, the database was created using `rube_mcp`. 
+Yup, we don't have Supabase support in Antigravity, but rube helps here!.
+
+Here is how it worked for me! 
+
+> NOTE: For demo purposes, I have used a CRUD app example, but same flow can be expanded to complex project as well
+
+**Pro Tip**
+
+Always provide enough context for the LLM to perform the job as expected. For this example, this translates to adding: 
+
+- db name - student-db
+
+- column name - id, name, subject, grade, last_updated
+
+- mock data - in tuple pairs.
+
+With this power in hand, backend devs can create a robust and scalable database by just giving the right instructions!
+
+Now off to the final use case of today!
+
+---
+
+## 3. Using Rube MCP to generate Frontend Code from Figma Mockups
+
+Frontend developers often have to convert the Figma designs shared into webpages. They can leverage Composio’s Rube MCP to connect to Figma, fetch the designs, and generate the frontend code for them—best fact: no need to handle the conversion details; all done by rube.
+
+Here is a prompt to do so!
+
+**Mockup **(used for demo purposes only)
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
-The infrastructure works, but requires upfront investment. 
+**Prompt**
 
-Skills taught Claude: Code: my patterns for workflows; Rube MCP connected everything through one server; dev‑toolkit plugin handled security/testing/reviews. Tool Router powers the agentic chatbot. It would usually take 2-3 months and 200+ hours. 
+```plain text
+Here is the figma file url https://www.figma.com/design/CHX6G247vkQFDYh84Qv9CS/Low-fi-Wireframe-Template--Community-?node-id=123-0&p=f&t=6OH8UhfkjgLRPLpE-0. 
 
-You can find the repository [here](https://github.com/rohittcodes/luno), don't forget to drop a star!
+Implement a blog based ui base on the given wireframe. Keep ui minimal and clean, similar to google (materialistic design). 
 
-**Quick look: Here’s what the dashboard looks like:**
+Only Tech stack to be used: HTML, CSS. Create the project in new folder called blog-space. I only need Mocup UI for client. 
 
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
-
-## Day One: The Setup
-
-I started by creating Skills for CC. Not because I love documentation, but because I was tired of having to explain the same patterns over and over. "Use TanStack Query for data fetching." "RLS policies for multi-tenant data." "Error boundaries here, not there."
-
-I asked Claude Code to generate Skills for my workflow:
-
-- Feature development patterns
-
-- Database architecture (Supabase)
-
-- [Tool Router](https://docs.composio.dev/docs/tool-router/quick-start) integration with AI SDK
-
-- Analytics pipeline patterns
-
-- Design-to-code workflow
-
-They're just markdown files in `.claude/skills/`. Nothing fancy. But here's the thing: once I had them, Claude stopped generating code that looked like it came from a tutorial. It started generating code that looked like *my* code.
-
-Then I set up [**Rube MCP**](https://rube.app/). The problem with MCPs is that they eat your context window; multiple servers = less space for the model to think. Rube connects to 500+ apps through a single MCP server. GitHub, Linear, Figma, Supabase, all through one connection. It manages a sandbox environment for tool actions and stores data there, so your context window stays free. In parallel, Context7 MCP removed a ton of context‑switching by fetching authoritative docs directly in the session.
-
-I already had my [dev-toolkit plugin](https://github.com/rohittcodes/claude-plugin-suite) from last month (when Anthropic dropped plugin support). 16 specialised agents, 10+ slash commands, MCP integrations. Things like `/security-scan` for OWASP reviews, `/test` for running tests with coverage reports. I wanted to stress-test it on something real.
-
-Setup took a day. Then I started building.
-
-## Building Luno: My personal finance management (The Messy Part)
-
-I gave Claude a prompt: "Build the database schema for a personal finance platform. Transactions, accounts, categories, budgets, goals, household sharing with invitations."
-
-It generated the complete **Supabase schema**. Foreign keys, indexes, RLS policies. The schema made sense because the Skills taught me how to structure databases. But then I looked closer, and it forgot the indexes on the household invitations table. The `token` and `email` Columns needed indexes for performance. Had to point that out.
-
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
-
-### **First lesson:** Skills help consistency, but you still need to review.
-
-For the UI, I passed Claude a Figma design link to get some ideas and build on top of it. I'd already set up my theme using tweakcn, so the implementation was based on that existing setup rather than an exact match of the Figma design. The designs don't match, but the UI came out clean and consistent.
-
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
-
-Authentication was manual, and **Supabase Auth** handles most of it anyway.
-
-Then I hit a wall: cost. Claude's pricing was adding up fast. I was generating a lot of code, and at ~$3 per million tokens, it gets expensive quickly. So I switched to Cursor for routine feature work, transaction management, budget tracking, and basic CRUD. Cursor's $20/month subscription made more sense for that stuff.
-
-I came back to Claude Code when I needed to integrate Composio's** **[**Tool Router**](https://docs.composio.dev/docs/tool-router/quick-start)** **with the AI SDK for the chatbot. The docs weren't clear on some patterns, and I kept getting the integration wrong. I used Context7 MCP to fetch the actual AI SDK docs and Tool Router examples.
-
-### What is [Tool Router](https://docs.composio.dev/docs/tool-router/quick-start) (and why use it)?
-
-**Tool Router** exposes connected apps as callable tools for your AI agent, without hand‑wiring each integration. You connect once (per user), and the AI SDK gets a unified tool surface.
-
-- **Unified access + per‑user auth:** One router for 500+ apps, with tools automatically scoped to each user’s connections.
-
-- **Zero redeploys + AI‑SDK native:** New connections appear as tools immediately; tools already come with parameters/schemas for direct calls.
-
-In Luno, that meant email/calendar/issue flows existed only if the user had connected those apps, with no special‑case code or per‑app SDKs.
-
-Btw, this is what powers Rube MCP, at the backend.
-
-### **Claude pulled the documentation and showed me the pattern:**
-
-```typescript
-// Initialize Tool Router MCP client
-const mcpClient = await createToolRouterMCPClient(user.id)
-
-if (mcpClient) {
-  // Get tools from MCP client (AI SDK format)
-  const mcpToolSet = await mcpClient.tools()
-
-  // Combine with database tools
-  const allTools = {
-    ...dbTools,
-    ...Object.fromEntries(
-      Object.entries(mcpToolSet).map(([name, tool]) =>
-        [`toolRouter_${name}`, tool]
-      )
-    )
-  }
-
-  // Use with streamText
-  const result = streamText({
-    model,
-    messages: modelMessages,
-    tools: allTools,
-  })
-}
+Make sure to fetch the file using rube_mcp and then only start designing
 ```
 
-Once I had the pattern, it clicked. Tool Router creates a session per user, exposes all connected apps as MCP tools, handles auth per user, and returns tools in AI SDK format. So if a user connects Gmail, Calendar, and Notion, the chatbot automatically gets those tools. No code changes. Dynamic tool access based on what the user has connected.
+In a nutshell, the prompt provides the LLM with a Figma URL and asks it to replicate the wireframe into an HTML blog page with CSS, all in the same folder. 
 
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
+Again, we don't have Figma support in Antigravity, but rube helps here!.
 
-That's what makes **Tool Router** powerful. It's not just connecting apps, it's exposing those connections as tools your AI can use directly.
+**Output**
 
-## The RLS Policies That Took Three Tries
+**Pro Tip **
 
-The household invitation system was probably the most complex part. Invitations expire after 7 days, need email templates, and proper permission checks. Claude got the schema right on the first try. But the RLS policies? Three iterations.
+For generating a complex frontend, follow these guidelines for optimised results:
 
-First version: members could see invitations, but couldn't check ownership hierarchy properly. Second version: fixed the hierarchy but broke the permission logic for expired invitations. Third version: finally worked. The policy checked ownership, membership, and expiration all in the right order.
+- Name the layers; include additional details, such as row and column numbers, in the layer names themselves. E.g `memo-card-grid-row0-col0` (the leftmost corner).
 
-This is where having the plugin helped. I ran `/security-scan` and it caught issues I would've missed:
+- Name the colour styles. E.g. ❌ #FFFFFF, ✔️ background-color-white
 
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
+- Name the file properly. Please don’t keep it generic.
 
-- Trending updates weren't locked down properly
+These guidelines provide the model with enough context to generate the complex frontend architecture that developers are expected to deliver. 
 
-- Anonymous tracking needed server‑issued signed tokens with TTL
+These were some use cases; the list is endless. But here is the final verdict!
 
-- The queue work needed proper batching
+---
 
-- Long queries should be precomputed on a schedule
+## Conclusion
 
-- SQL indexes are missing on some aggregations
+With Antigravity and Rube, the repetitive task became child’s play, and the best part is that this same workflow can be incorporated into various domains.
 
-![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_8.png)
+Though Antigravity is new, it packs some serious punch and with Rube MCP as a partner, the only limit is your imagination.
 
-Fixed all of these before deploying. The security‑reviewer agent checks for OWASP Top 10, suggests fixes, and validates implementations.
+So, head to Rube MCP, connect it to Antigravity, pull up some PRD doc, give it to Gemini 3 / Nano Banana Pro with a kickass prompt, and let the tool do its thing while you focus on ideating and planning the part. 
 
-## Payment Integration and Cron Jobs
+Happy Building.
 
-Lemon Squeezy integration was straightforward. The Skill had patterns for webhook handling and subscription management. Claude generated webhook handlers with proper signature verification on the first try.
+---
 
-![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_9.png)
+## FAQ
 
-Cron jobs for bill reminders were more interesting. I set up **Supabase (edge functions) **that:
+**Q1. How do I integrate Rube MCP into Antigravity?**
 
-- Check upcoming bills
+**Answer:** Generate a token from the Rube dashboard and paste the provided command directly into your Antigravity’s `mcp.json` raw config.
 
-- Send email reminders via Resend
 
-- Update notification preferences
 
-- Handle timezone conversions
+**Q2. How do I verify that Rube is successfully connected to Antigravity?**
 
-The timezone handling part needed manual fixes. Claude generated code that worked, but didn't account for daylight saving time properly. Had to correct that myself.
+**Answer:** Head to "Manage MCP Servers" in the editor, refresh the page, and confirm that the Rube tool appears in your active list.
 
-## What Actually Shipped
 
-After 2-3 days, I had a production‑ready finance platform: transactions with categories, budgets with alerts, household sharing (7‑day invitations), subscription tracking, analytics, an agentic chatbot (Tool Router), automated bill reminders, and Lemon Squeezy payments.
+**Q3**. **Do I need to configure credentials for all 500+ tools manually?**
 
-The analytics dashboard was the last piece. Claude generated working code, but it split queries that should have been combined and missed opportunities to memoise. I optimised those manually.
+Answer: No, you configure Rube once, and it dynamically handles connections, requiring only a one-time OAuth login the first time you use a specific tool.
 
-## Dev-Toolkit Plugin (Quick Context)
 
-Since I keep mentioning it, this plugin (built when Anthropic launched plugins) bundles the day‑to‑day work, security reviews, testing, and system design into slash commands and specialised agents.
 
-- Core agents: security reviewer (OWASP), performance/load tester, compliance/testing/architecture specialists.
+**Q4. Can Rube handle tasks for platforms not natively supported by Antigravity?**
 
-- Core commands: `/test`, `/code-review`, `/security-scan`, `/deploy`, `/monitor`.
+**Answer:** Absolutely; Rube acts as a bridge to fetch data and perform actions on external platforms like Figma, Supabase, and Gmail that the native IDE doesn't support yet.
 
-![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_10.png)
 
-You can install it: [rohittcodes/claude-plugin-suite](http://github.com/rohittcodes/claude-plugin-suite)
 
-The plugin meant I could run security reviews and code standardization continuously instead of at the end. Caught a lot of issues early.
+**Q5**. **How can I optimise the code generation quality for complex tasks like Figma conversions?** **Answer:** Ensure you provide rich context, such as clearly naming Figma layers and colour styles, so the model understands the specific structural requirements.
 
-## The Real Numbers
 
-Let's talk money and time, because that's what actually matters.
 
-**Setup (day 1): **~1 day total (Skills ≈4h, Rube MCP ≈30m, Supabase ≈2h).
 
-![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_11.png)
 
-**Development (2-3 days):**
 
-- Claude Code: $12.67 (architecture, complex integrations, Tool Router)
 
-- Cursor: Pro account (routine CRUD, UI polish)
 
-- Rube MCP: Free tier
-
-- Total: $12.67 + Cursor Pro
-
-**Time saved:** **200+ hours**. It typically takes **2-3 months** of solid work.
-
-But here's the context: that $12.67 is *after* I switched to Cursor Pro for routine work. If I'd used Claude Code for everything, it would've been closer to $50-60. The cost management part is real; you need to be strategic about when you use the expensive model.
-
-## Would I Do It Again?
-
-Absolutely. But if I were starting over, I'd approach a few things differently. I'd create Skills on day zero, before writing a single line of code. The consistency they bring matters more than moving fast in the beginning, and every feature afterwards benefits from having those patterns established. The plugin would be there from the start, too; catching security issues and enforcing code standards continuously is far better than fixing problems at the end.
-
-![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_12.png)
-
-I'd also budget more realistically. If you're building something serious, plan for $50-100 a month in AI costs. It's still cheaper than hiring someone or spending months of your own time, but it's not free. And Context7 MCP would be non-negotiable from the start, having documentation accessible in-session instead of constantly context-switching to docs is a massive productivity unlock.
-
-The thing is, you still review code. You still make architecture decisions. You still fix edge cases. Claude Code handles the boring stuff, boilerplate, migrations, and configuration so that you can focus on the hard problems: architecture, security, performance, and user experience. That upfront day spent on Skills and setup? It paid for itself ten times over in consistency and speed.
-
-## Final Thoughts
-
-Claude Code's infrastructure is real. It's not hype. But it requires upfront investment in Skills, plugins, and MCP configuration. Once that's done, development becomes more conversational. "Build a subscription tracking feature with email reminders" actually works.
-
-The value isn't replacing developers, it's handling the boring stuff so you can focus on what matters: the architecture, the security, the performance, the user experience. Luno took me 2-3 days, not 3 months. It's production‑ready with proper protection, error handling, and testing. That's the difference the full stack makes.
-
-If you're building with Claude Code, invest in the infrastructure first. Create your Skills. Set up your MCPs properly. Build or install plugins that match your workflow. The upfront cost is worth it.
-
-- Usage: ~15.5M input tokens, ~173k output tokens

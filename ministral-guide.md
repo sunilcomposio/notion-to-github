@@ -1,22 +1,22 @@
 # Ministral 3 3B Local Setup Guide with MCP Tool Calling
-Everyone's talking about Ministral 3 3B, so I wanted to see what the hype is about. 🤨
-Let's test it properly. We'll start with the fun part and run it directly in the browser using WebGPU, fully local.
-Then we'll switch to the practical setup and run a quantized version with Ollama, plug it into Open WebUI, and test real tool calling. First with small local Python tools, then with remote MCP tools via Composio.
+Everyone’s talking about Ministral 3 3B, so I wanted to see what the hype is about. 🤨
+Let's test it properly. We’ll start with the fun part and run it directly in the browser using WebGPU, fully local.
+Then we’ll switch to the practical setup and run a quantized version with Ollama, plug it into Open WebUI, and test real tool calling. First with small local Python tools, then with remote MCP tools via Composio.
 
 [Image placeholder - images from Notion]
 We will cover a few specs and then move on to practical tests, so let's jump in.
 
 ---
 
-## What's Covered?
-In this hands-on guide, you'll learn about the Ministral 3 3B model, how to run it locally, and how to get it to perform **real tool calls** using Open WebUI, first with local tools and then with **remote MCP tools via Composio**.
+## What’s Covered?
+In this hands-on guide, you’ll learn about the Ministral 3 3B model, how to run it locally, and how to get it to perform **real tool calls** using Open WebUI, first with local tools and then with **remote MCP tools via Composio**.
 **What you will learn: ✨**
 - What makes Ministral 3 3B special
 - How to run the model locally using Ollama (including pulling a quantized variant)
 - How to launch Open WebUI using Docker and connect it to Ollama
 - How to add and test local Python tools inside Open WebUI
 - How to work with remotely hosted MCP tools in Open WebUI
-> ⚠️ **NOTE:** This isn't a benchmark post. The idea is to show a practical setup for running a small local model with real tools, then extending it with remote MCP servers.
+> ⚠️ **NOTE:** This isn’t a benchmark post. The idea is to show a practical setup for running a small local model with real tools, then extending it with remote MCP servers.
 
 ## What's so Special?
 Ministral 3 3B is the smallest and most efficient model in the Ministral 3 family. Mistral 3 includes three state-of-the-art small dense models: 14B, 8B, and 3B, along with Mistral Large 3, which is the most capable model to date from Mistral. All models in this family are open source under the Apache 2.0 license, which means you can fine-tune and use them commercially for free.
@@ -26,7 +26,7 @@ But the topic of our talk is the **Ministral 3 3B model**. At such a small size,
 As Mistral puts it, this model is both compact and powerful. It is specially designed for edge deployment, offering insanely high speed and the ability to run completely locally even on fairly old or low-end hardware.
 
 [Image placeholder - images from Notion]
-Here is the model's token context window and pricing.
+Here is the model’s token context window and pricing.
 - **Token Context Window:** It comes with a 256K token context window, which is impressive for a model of this size. For reference, the recent Claude Opus 4.5 model, which is built specifically for agentic coding, comes with a 200K token context window.
 - **Pricing:** Because it is open source, you can access it for free by running it locally. If you use it through the Mistral playground, pricing starts at $0.1 per million input tokens and $0.1 per million output tokens, which is almost negligible. It honestly feels like the pricing is there just for formality.
 Besides its decent context window and fully open-source nature, these are the major features of Ministral 3 3B.

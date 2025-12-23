@@ -1,16 +1,16 @@
-Everyone’s talking about Ministral 3 3B, so I wanted to see what the hype is about. 🤨
+Everyone's talking about Ministral 3 3B, so I wanted to see what the hype is about. 🤨
 
-Let's test it properly. We’ll start with the fun part and run it directly in the browser using WebGPU, fully local.
+Let's test it properly. We'll start with the fun part and run it directly in the browser using WebGPU, fully local.
 
-Then we’ll switch to the practical setup and run a quantized version with Ollama, plug it into Open WebUI, and test real tool calling. First with small local Python tools, then with remote MCP tools via Composio.
+Then we'll switch to the practical setup and run a quantized version with Ollama, plug it into Open WebUI, and test real tool calling. First with small local Python tools, then with remote MCP tools via Composio.
 
 We will cover a few specs and then move on to practical tests, so let's jump in.
 
 ---
 
-## What’s Covered?
+## What's Covered?
 
-In this hands-on guide, you’ll learn about the Ministral 3 3B model, how to run it locally, and how to get it to perform real tool calls using Open WebUI, first with local tools and then with remote MCP tools via Composio.
+In this hands-on guide, you'll learn about the Ministral 3 3B model, how to run it locally, and how to get it to perform real tool calls using Open WebUI, first with local tools and then with remote MCP tools via Composio.
 
 What you will learn: ✨
 
@@ -24,7 +24,7 @@ What you will learn: ✨
 
 - How to work with remotely hosted MCP tools in Open WebUI
 
-> ⚠️ NOTE: This isn’t a benchmark post. The idea is to show a practical setup for running a small local model with real tools, then extending it with remote MCP servers.
+> ⚠️ NOTE: This isn't a benchmark post. The idea is to show a practical setup for running a small local model with real tools, then extending it with remote MCP servers.
 
 ## What's so Special?
 
@@ -34,7 +34,7 @@ But the topic of our talk is the Ministral 3 3B model. At such a small size, it 
 
 As Mistral puts it, this model is both compact and powerful. It is specially designed for edge deployment, offering insanely high speed and the ability to run completely locally even on fairly old or low-end hardware.
 
-Here is the model’s token context window and pricing.
+Here is the model's token context window and pricing.
 
 - Token Context Window: It comes with a 256K token context window, which is impressive for a model of this size. For reference, the recent Claude Opus 4.5 model, which is built specifically for agentic coding, comes with a 200K token context window.
 
@@ -225,5 +225,4 @@ You now have a simple local setup where the model can do more than just chat. Th
 Now, try adding more toolkits and models (if your system can handle it) and just experiment. You already have a clear understanding of Ministral 3 3B and running models locally with Ollama. Apply it to your actual work, and you'll thank me later.
 
 Well, that's all for now! I will see you in the next one. 🫡
-
 

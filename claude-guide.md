@@ -6,6 +6,8 @@ The catch here is that there are so many models available for coding or agentic 
 
 All of them claim at some point to be the "so-called" best for coding. But now the question arises: in actual agentic coding, which involves working on a production-ready project, how much better or worse is each of them in comparison?
 
+![Image](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTluZWVibXA4d3NpZWcweTltdGo3OWFjdWw1eG51a2JxM3FtZHE2ZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4JVTF9zR9BicshFAb7/giphy.gif)
+
 ---
 
 ## TL;DR
@@ -16,7 +18,7 @@ If you want a quick take, here’s how the three models performed in these two t
 
 - **Gemini 3 Pro:** Best result on Test 1. The fallback and cache were actually working and fast. Test 2 was weird; it kept hitting a loop, which resulted in halting the request.
 
-![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_2.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_2.png)
 
 - **GPT-5.2 Codex:** Turned out to be the least reliable for me in these two tasks. Too many API and version mismatches, and it never really landed a clean working implementation.
 
@@ -95,7 +97,7 @@ This is a bit involving, the model needs to add a local fallback, use an in-memo
 
 Claude went all in and started with the fallback implementation, followed by writing tests and running the build until it was able to fix all the build and lint issues.
 
-![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_3.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_3.png)
 
 The entire run took about **9 minutes**, which is fair given all the features we asked it to build, the tests we added, and the iterations required to fix it.
 
@@ -103,11 +105,11 @@ Here's the code it generated: [Claude Opus 4.5 Code](https://github.com/shricode
 
 It wrote two tests for both features as explicitly asked, which pass as well:
 
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_4.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_4.png)
 
 Now, the time is to test, and when I ran the test, part of what was asked is implemented. The UI does not break when AI is unavailable, but for the in-memory cache for the same task title, cache hits but does not get populated in the field:
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_5.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_5.png)
 
 The overall result is **partially correct**, compiles, and runs successfully. And here's the overall token usage and cost from Claude CLI for your reference:
 
@@ -117,7 +119,7 @@ The overall result is **partially correct**, compiles, and runs successfully. An
 
 - **Code Changes:** +1,122 lines, -36 lines
 
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_6.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_6.png)
 
 ### GPT-5.2 Codex
 
@@ -125,11 +127,11 @@ GPT-5.2 Codex took about **7min 34sec** coding the implementation, and an additi
 
 Now is the time to test it. The result turned out even worse; it's using an older version of the API or some unexported code. Warnings everywhere!
 
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_7.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_7.png)
 
 and even some exceptions in places.
 
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_8.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_8.png)
 
 Here's the code it generated: [GPT-5.2 Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/e019e27b14d582e1d62eda87d0c73ffb3cb06667)
 
@@ -149,7 +151,7 @@ Seriously disappointed with the model's response :(
 
 Here's the model `/status` of the run:
 
-![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_9.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_9.png)
 
 ### Gemini 3 Pro
 
@@ -157,11 +159,11 @@ This turns out to be the fastest of all, with a total time of **7min 14sec** (5m
 
 The test runs successfully, and even the fallback error is handled properly.
 
-![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_10.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_10.png)
 
 Now, it's time to test the actual implementation. Surprisingly, Gemini 3 Pro got this task done the best.
 
-![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_11.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_11.png)
 
 As you can see, the same request in the second or third run returns the response instantly in 6-7 milliseconds from the cache implementation.
 
@@ -177,7 +179,7 @@ The final implementation is fully working, compiles, and runs successfully.
 
 Here's the model `/usage` of the run:
 
-![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_12.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_12.png)
 
 ### Test 2: Tool Router Agent Build (GitHub Triage)
 
@@ -201,7 +203,7 @@ The run stats from Claude Code:
 
 - **Code Changes**: +1,176 lines, -294 lines
 
-![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_13.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_13.png)
 
 Here's the code it generated: [Opus 4.5 Agent Build Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/18ee83e288479434c2365d858716450250e888dc)
 
@@ -221,15 +223,15 @@ Still, this is a great head start. The demo works, the UI is there, and it’s c
 
 In the first run, the model gave a decent response with a decent UI, but I noticed it uses the old version of the Composio API.
 
-![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_14.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_14.png)
 
 Now, this is going to be a test where the model is tested explicitly without much human help. I thought to give this an update on how to use the new API, but it still resulted in an error:
 
-![Image 14](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_15.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_15.png)
 
 Even more weird is that, even though the request failed, the API returns 200 OK, which is insane. From this point onward, I stopped as this does not seem to be fixing anytime soon.
 
-![Image 15](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_16.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_16.png)
 
 Here's the code it generated: [GPT-5.2 Agent Build Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/9148bac2c1d70fe657c35ac27d983ee9a4c49abf)
 
@@ -247,7 +249,7 @@ Now, this turned out even weirder. Almost every other time, it kept hitting a "p
 
 The run usually resulted in the following loop which eventually halted the request:
 
-![Image 16](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_17.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_17.png)
 
 - **Cost:** $6.3 (approximate)
 
@@ -255,7 +257,7 @@ The run usually resulted in the following loop which eventually halted the reque
 
 - **Token Usage:** 12,622,153 (input + cache read), 24K output
 
-![Image 17](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_18.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_18.png)
 
 I couldn't even get the final build of the project, and it just cost me money with no usable output. Disappointing!
 
@@ -275,4 +277,4 @@ And yeah, this never really ends. Better models will come, we’ll keep running 
 
 Let me know your thoughts in the comments. Would love to chat.
 
-![Image 18](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_19.png)
+![Image](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_19.png)

@@ -1,391 +1,278 @@
-Three flagship AI coding models launched within weeks of each other. Claude Opus 4.5 on November 24. Gemini 3.0 Pro on November 18. GPT 5.1 Codex-Max on November 19. All three claim to be the best model for complex coding tasks and agentic workflows.
+Recently, within a month, we've been amazed by all these new AI models from three giants: OpenAI, Google, and Anthropic!
 
-The benchmarks show they're neck-and-neck. I wanted to see what that means for actual development work. So I gave all three the same prompts for two hard problems in my observability platform: **statistical anomaly detection** and **distributed alert deduplication**. Same codebase, same requirements, same IDE setup.
+From Anthropic, we have Claude Opus 4.5 (with the highest SWE Benchmark 80.9%); from OpenAI, their flagship coding model GPT-5.2 (Codex) with SWE Benchmark 80%; and from Google, Gemini 3 Pro, which at launch was said to be SOTA in most benchmarks and boasts advanced agentic capabilities.
 
-Benchmarks show the gap between them is razor-thin. But synthetic leaderboards don’t always translate into real engineering outcomes. So instead of relying on charts and marketing collateral, I decided to find out how they perform on real development work.
+The catch here is that there are so many models available for coding or agentic coding that it's hard to decide which one to pick as your daily driver.
 
-**The Official Benchmarks **
+All of them claim at some point to be the "so-called" best for coding. But now the question arises: in actual agentic coding, which involves working on a production-ready project, how much better or worse is each of them in comparison?
 
-![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_1.png)
+---
 
-![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_2.png)
+## TL;DR
 
-### Pricing Comparison (Per 1M Tokens)
+If you want a quick take, here’s how the three models performed in these two tests:
 
-### Key Benchmark Scores:
+- **Claude Opus 4.5:** Safest overall pick from this run. It got closest in both tests and shipped working demos, even if there were rough edges (hardcoded values, weird similarity matching). Also, the most expensive.
 
-- **SWE-bench Verifited:** Opus 4.5 leads at 80.9%, followed by GPT 5.1 Codex-Max at 77.9% and Gemini 3 Pro at 76.2%
+- **Gemini 3 Pro:** Best result on Test 1. The fallback and cache were actually working and fast. Test 2 was weird; it kept hitting a loop, which resulted in halting the request.
 
-- **Terminal-Bench 2.0:** Gemini 3 Pro tops at 54.2%, demonstrating exceptional tool use capabilities
+![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_2.png)
 
-- **MMMU-Pro (Visual Reasoning):** Gemini 3 Pro leads with superior multimodal understanding
+- **GPT-5.2 Codex:** Turned out to be the least reliable for me in these two tasks. Too many API and version mismatches, and it never really landed a clean working implementation.
 
-- **WebDev Arena:** Gemini 3 Pro reaches 1487 Elo score for "vibe coding" capabilities
+One thing I really hate about Opus in Claude Code is how much it does web searches. Across these two tests, it did like 30+ web searches, which ended up eating up a big part of the total time. Web search is great, but it gets super frustrating fast when you have to keep approving it and typing “Yes” over and over.
 
-### **TL;DR:**
+Has anybody else felt this with Claude Code, especially Opus 4.5?
 
-- **Opus 4.5(Claude):** Outstanding at strategy and design, but its solutions tend to be elaborate, slower to integrate, and prone to practical hiccups once they hit the metal.
+> ⚠️ **NOTE:** Don’t treat these as a hard rule. This is just two real dev tasks in one repo, and it shows how each model did for me in that exact setup.
 
-- **GPT-5.1 Codex:** The most dependable for real-world development, integrates cleanly, handles edge cases, and produces code that holds up under load.
+---
 
-- **Gemini 3 Pro:** Lean, fast, and cost-efficient, strong for prototyping and greenfield builds, though its outputs need some hardening for production-grade resilience.
+## Test Workflow
 
-## How I Tested This
+For the test, we will be using the following CLI coding agents:
 
-To really see what these models are made of, I threw all three at the **exact same prompts** and asked them to solve two problems that have bitten our production pipeline more than once: building a solid **anomaly detection path**, and hardening **alert deduplication** across multiple processors. These aren’t academic exercises, they’re the kind of tasks where clock drift, concurrency quirks, and partial crashes turn into 3 a.m. pages.
+- **Claude Opus 4.5:** Claude Code (Anthropic’s terminal-based agentic coding tool)
 
-I ran everything in the same **Cursor environment** so no model got special treatment. From there, I wasn’t just watching token counts tick upward, I paid attention to how well each model understood the shape of the system, whether its code actually plugged into the real project, and ultimately whether the output felt like something I could trust in production and ultimately one key question:
+- **Gemini 3 Pro:** Gemini CLI (an open source terminal agent that runs a React-style loop and can use local or remote MCP servers)
 
-**Is this something I would confidently deploy in a real system?**
+- **GPT-5.2 Codex:** Codex CLI (OpenAI’s Codex agent in the terminal)
 
-**Tooling notes:**
+We will be checking the models on two different tasks:
 
-- **Claude Code** still delivers the most refined user experience overall, offering structured reasoning traces, step-by-step visibility, and helpful inline feedback during development.
+1. **Task 1: Production feature build inside a real app**
 
-- **GPT Codex CLI (v0.59)** has leveled up significantly, now supporting streamed reasoning, stable session recovery, clearer accounting of cached tokens, and automatic context compaction, making long-running agent loops far more reliable.
+We drop each model into the same working codebase and ask it to ship a production-ready feature, wire it into the existing flows, and add tests. The goal here is simple: can it navigate a repo, make safe changes across multiple files, and leave things in a shippable state?
 
-- Gemini 3 Pro (via the Node SDK) delivered the fastest completions and lowest cost per task, though the model tends to reveal less of its internal reasoning compared to GPT-5.1 or Claude.
+1. **Task 2: Build a tool-powered agent using the Composio Tool Router**
 
-## Test 1: Statistical Anomaly Detection
+> 💁 To build the agent, we will be using Composio’s [Tool Router (Stable)](https://docs.composio.dev/tool-router/quickstart), which automatically discovers, authenticates, and executes the right tool for any task without you having to manage auth or hand wire each integration. This significantly helps reduce the MCP context load on the model.
 
-The challenge: Build a system that learns baseline error rates, uses z-scores and moving averages, catches rate-of-change spikes, and handles 100k+ logs/minute with under 10ms latency.
+We’re dogfooding it here because Tool Router has just moved from its experimental phase to a stable release, so this is the exact moment we want to stress-test it in the real world.
 
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_3.png)
+We’ll compare code quality, token usage, cost, and time to complete the build.
 
-## Opus 4.5 Attempt
+---
 
-**Time:** 12m 11s | **Cost:** $1.28| **Diff:** +**2,981 lines** across 9 files
+## Coding Comparison
 
-[https://github.com/VarshithKrishna14/Kompi/commit/aefae4e2a2e6e5befd8365d3f1c730ec564603be](https://github.com/VarshithKrishna14/Kompi/commit/aefae4e2a2e6e5befd8365d3f1c730ec564603be)
+### Test 1: Feature Build in a Production App
 
-Claude delivered a huge implementation: a full statistical anomaly detector with rolling snapshots, Welford-based state tracking, spike detection, serialization logic, configuration structures, and extensive inline comments. On first read, it felt like production-ready engineering.
+The task is simple: all the models start from the same base commit and then follow the same prompt to build what's asked.
 
-Then it hit the real system.
+I will evaluate the final result from the "best of 3" responses for each model, so we won't be evaluating based on an unlucky dice roll.
 
-The first run immediately exposed a critical failure path. When the historical average approached zero, `calculateSpikeRatio()` produced astronomical values (e.g., `1e12` or worse), which were sent directly into `.toFixed(2)` without passing through the existing sanitization layer. The result: **hard runtime crashes from perfectly valid data**.
+Here's the prompt used:
 
-State restoration made things even worse. The `deserialize()` function reloaded snapshots but didn’t recompute the means, variance terms, or sample counts. After a restart, the spike detector and z-score logic were working off **statistically incompatible internal state**. No crash, no error, just silent corruption.
+```plain text
+You are a coding agent working inside an existing repository.
 
-But the core design choice, using Welford for a rolling window, undermined the entire system. The output looked sophisticated, but the logic couldn’t behave correctly under real production workload patterns.
+Repo context
+- Repo: shricodev/kanban-ai-realtime-localization
+- Goal: Implement Test 1 (AI description fallback + caching) in a production-quality way.
+- Constraints:
+  - Do not add new dependencies unless truly necessary.
+  - Keep changes minimal and consistent with repo style.
+  - Must integrate into the existing AI task description feature path.
+  - Add tests for any new pure logic.
 
-## GPT-5.1 Analysis 
+Rules
+- You may read and edit files and run terminal commands.
+- After implementing, run: npm run lint and npm run build and fix failures until both pass.
+- Output a final checklist with files changed, commands run, and how to verify manually.
 
-Time: 6m | Cost: ~$0.24 | Diff: ~+577 lines for across 3 files modified
+Feature requirements (Test 1)
+1) Add a deterministic local fallback for AI task description generation when OpenAI credentials are missing OR the external call fails.
+2) Add a 10-minute in-memory cache keyed by (taskTitle + language) so repeated generations do not call the external model repeatedly.
+3) Ensure the UI does not break when AI is unavailable. The user should still be able to create and save tasks.
+4) Add unit tests for the fallback generator and cache behavior.
 
-[https://github.com/VarshithKrishna14/Kompi/commit/2afad7e6e7940b6204a0ff0d1c51ea1b912a362e](https://github.com/VarshithKrishna14/Kompi/commit/2afad7e6e7940b6204a0ff0d1c51ea1b912a362e)
-
-GPT-5.1 implemented a streaming statistical anomaly detector optimized for extremely high-throughput logging workloads (100k+ events/sec). Instead of heavy time-bucket structures or map-based rolling memory, this design uses a **single-pass O(1) update loop** with:
-
-- **EWMA for online mean**
-
-- **EWMA of squared error-rate for stable variance**
-
-- **Rolling time window for short-term spikes**
-
-- **Hard defenses against NaN, Infinity, invalid counts, and timestamp issues**
-
-Everything executes synchronously with constant-time updates, making it viable in a log ingestion pipeline that runs inside a hot data path.
-
-## **Gemini 3 Pro Attempt**
-
-**Time:** ~5m 44s | **Estimated Cost:** ~$0.14 | **Diff:** +366 lines across 4 files
-
-[https://github.com/VarshithKrishna14/Kompi/commit/1d711ecdec0786bc0265afe3b73e36bab0b6f553](https://github.com/VarshithKrishna14/Kompi/commit/1d711ecdec0786bc0265afe3b73e36bab0b6f553)
-
-Gemini 3 Pro tackled the anomaly-detection problem with a **stream-optimized, low-latency architecture**. The implementation uses a **stateless EWMA model** (Exponentially Weighted Moving Average) rather than sliding windows, ensuring O(1) memory usage regardless of throughput. High-volume logs are aggregated in-memory and flushed to the detector at fixed intervals (e.g., 1s), ensuring the system easily handles 100,000+ logs/minute with negligible overhead.
-
-**Edge cases are rigorously handled:**
-
-- **Zero-Variance**: Explicitly guarded to prevent infinite Z-scores during flatline periods.
-
-- **Math Safety**: Division operations use epsilon guarding (0.000001) to prevent zero-division errors.
-
-- **Invalid Inputs**: NaN and Infinity are gracefully filtered out without crashing the pipeline.
-
-**The test suite is comprehensive and deterministic:**
-
-- Verifies **regime adaptation** (baseline shifting) using fast-adaptation alpha values.
-
-- Tests **rate-of-change spikes** (e.g., 6x jumps) independently of Z-scores.
-
-- Validates initialization convergence and mock database integration points.
-
-## **Round 1 – Quick comparison**
-
-## **Tool Router Integration**
-
-*I*nstead of preloading giant toolkits into MCP and bloating every session with dozens of unused capabilities, the Tool Router acts as an **on-demand integration layer.**
-
-*If you’re curious about the underlying system, the full technical breakdown is documented here:*[*https://composio.dev/blog/introducing-tool-router-(beta)*](https://composio.dev/blog/introducing-tool-router-(beta))
-
-Before running our further tests and alerting workflows, I integrated through Tool Router. One OAuth handshake per user gives the MCP client access to Slack, Jira, PagerDuty, or any other connected tool, no manual wiring required. (For context, we first tried this setup in the Gemini version.)
-
-
-**The benefits we see in practice:**
-
-- **Seamless per-user integration:** a single router manages many apps, and each session only exposes the tools the user actually connected.
-
-- **Instant, code-free updates:** newly connected services show up automatically, so agents can start using them immediately without redeploys or extra glue code.
-
-- **Automated workflow routing:** alerts and tasks from our anomaly detection pipeline can be sent through Slack, Jira, PagerDuty, or any connected tool effortlessly.
-
-In our processor pipeline, we integrated **Tool Router** to handle alerting dynamically across Slack, Jira, and PagerDuty. Instead of manually wiring each service, we use a unified `ComposioClient` that initializes the MCP client with a single configuration:
-
-```python
-const composioClient = new ComposioClient({
-  apiKey: process.env.COMPOSIO_API_KEY!,
-  userId: 'tracer-system',
-  toolkits: ['slack', 'jira', 'pagerduty'],
-});
-
-const mcpClient = await composioClient.createMCPClient();
 ```
 
+This is a bit involving, the model needs to add a local fallback, use an in-memory cache, fix some UI issues and finally write unit tests for all that it implemented in the Next.js project.
 
-Once initialized, any alerting workflow can call agents directly. For example, our anomaly detection triggers the `log-anomaly-alert-agent`, which automatically decides which tools to notify.
+### Claude Opus 4.5
 
-## **Test 2: Distributed Alert Deduplication**
+Claude went all in and started with the fallback implementation, followed by writing tests and running the build until it was able to fix all the build and lint issues.
 
-The challenge:  Implement distributed alert deduplication so multiple processors don’t fire duplicate alerts within a 5-second window, tolerating up to 3s clock skew and processor crash
+![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_3.png)
 
-### **Opus 4.5 Take**
+The entire run took about **9 minutes**, which is fair given all the features we asked it to build, the tests we added, and the iterations required to fix it.
 
-**Time:** ~7 m 1 s (estimate) | **Cost:** ~$0.48 | **+715 lines across 4 files**
+Here's the code it generated: [Claude Opus 4.5 Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/3dd9f188a253a5fb43e7e92268b594452e33c477)
 
-[https://github.com/VarshithKrishna14/Kompi/commit/0bb9ad721afe00f74f01f67409551a9ff0b256a0](https://github.com/VarshithKrishna14/Kompi/commit/0bb9ad721afe00f74f01f67409551a9ff0b256a0)
+It wrote two tests for both features as explicitly asked, which pass as well:
 
-Opus 4.5 uses a **three-layer deduplication architecture**:
+![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_4.png)
 
-- **L1 cache** for fast in-memory rejection of recent alerts
+Now, the time is to test, and when I ran the test, part of what was asked is implemented. The UI does not break when AI is unavailable, but for the in-memory cache for the same task title, cache hits but does not get populated in the field:
 
-- **L2 advisory-locks + explicit DB query** to coordinate across processors
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_5.png)
 
-- **L3 unique constraints on the alert table** to enforce deduplication at the database level
+The overall result is **partially correct**, compiles, and runs successfully. And here's the overall token usage and cost from Claude CLI for your reference:
 
-Clock skew is addressed by relying on the database’s `NOW()` timestamp rather than local processor clocks. The use of PostgreSQL advisory locks ensures that if a processor crashes while holding a lock, the lock is released automatically when the connection closes.
+- **Cost:** $2.21
 
-The test suite is well-sized (~493 lines) and covers cache hit/miss behavior, concurrent lock acquisition, clock skew edge cases, and simulated processor crashes.
+- **Duration:** 9min 11sec (API Time)
 
-**Where it falls short:**
+- **Code Changes:** +1,122 lines, -36 lines
 
-- The L1 cache uses `Math.abs(ageMs)` to evaluate recency, but this fails to account for processor clock skew. While the L2 lock layer catches most cases, this failure in L1 means the fast path is unreliable under skewed clocks.
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_6.png)
 
-- The advisory lock key is derived only from `service:alertType` (no timestamp or recent history), which can cause excessive serialisation (different distinct alerts colliding unnecessarily).
+### GPT-5.2 Codex
 
-- The unique constraint (L3) blocks *all* duplicate active alerts rather than only duplicates within the 5-second window; this may suppress legitimate, slightly delayed alerts beyond that timeframe.
+GPT-5.2 Codex took about **7min 34sec** coding the implementation, and an additional **55sec** for working with the implementation unit tests. It is shorter than the time it took Opus 4.5 to implement the feature entirely.
 
-Overall: **A sophisticated architecture with solid multi-tier deduplication strategy, ** but still a prototype rather than a fully hardened production module.
+Now is the time to test it. The result turned out even worse; it's using an older version of the API or some unexported code. Warnings everywhere!
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_4.png)
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_7.png)
 
-## **GPT-5.1’s Take**
+and even some exceptions in places.
 
-**Time:** ~4m | **Cost:** ~$0.27 | **+188 net lines across 2 files**
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_8.png)
 
-[https://github.com/VarshithKrishna14/Kompi/commit/406d262d9795d0a5e74582bb28a9215d609e4a4f](https://github.com/VarshithKrishna14/Kompi/commit/406d262d9795d0a5e74582bb28a9215d609e4a4f)
+Here's the code it generated: [GPT-5.2 Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/e019e27b14d582e1d62eda87d0c73ffb3cb06667)
 
-GPT-5.1 implemented distributed alert deduplication with a **clean, production-oriented architecture** built around a simple rule:
+None of the requested features works. Some are not implemented, and some have very fragile implementations.
 
-> Only one processor should emit an alert for the same anomaly within a 5-second window, even with multiple nodes, clock skew, or crashes.
+Seriously disappointed with the model's response :(
 
-### **Architecture**
+- **Cost:** $0.9 (ballpark for API users)
 
-GPT-5.1 introduced a new `alert-dedup.ts` module containing:
+> ℹ️ It's included in the plan for subscription users.
 
-- **AlertDeduplicator interface**
+- **Duration:** 7min 34sec (+55 sec)
 
-- **DedupKeyValueStore abstraction**
+- **Code Changes:** +203 lines, -32 lines
 
-- **KeyValueStoreAlertDeduplicator**
+- **Token Usage:** total=269,195 input=252,810 (+1,560,192 cached) output=16,385 (reasoning 8,704)
 
-- **InMemoryDedupKeyValueStore**
+Here's the model `/status` of the run:
 
-## **Gemini 3 Pro’s Take**
+![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_9.png)
 
-**Time:** 4m 02s | **Cost:** ~$0.11 | **+103 lines across 2 files**
+### Gemini 3 Pro
 
-[https://github.com/VarshithKrishna14/Kompi/commit/4090823d34006500fed0e052c99af530076abef6](https://github.com/VarshithKrishna14/Kompi/commit/4090823d34006500fed0e052c99af530076abef6)
+This turns out to be the fastest of all, with a total time of **7min 14sec** (5min 23sec API time and 1min 51sec Tool time).
 
-Gemini 3 Pro implemented distributed alert deduplication directly inside the main processing path, making it the only version so far that is **fully wired into the LogProcessor without additional scaffolding**.
+The test runs successfully, and even the fallback error is handled properly.
 
-### **Architecture**
+![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_10.png)
 
-Gemini introduced a centralized deduplication strategy based on PostgreSQL:
+Now, it's time to test the actual implementation. Surprisingly, Gemini 3 Pro got this task done the best.
 
-- **AlertDeduplicator interface** (`deduplicator.ts`)
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_11.png)
 
-- **PostgresDeduplicator**
+As you can see, the same request in the second or third run returns the response instantly in 6-7 milliseconds from the cache implementation.
 
-- **InMemoryDeduplicator**
+The final implementation is fully working, compiles, and runs successfully.
 
-# **Round 2 Quick Compare**
+- **Cost:** $0.45 (approximate)
 
-## The Cost
+- **Duration:** 7min 14sec (5min 23sec API time, 1min 51sec Tool time).
 
-Total spend across both tests:
+- **Code Changes:**
 
-- **Opus 4.5:** **$1.76**
+- **Token Usage:** 746K (input + cache read), 11K output
 
-- **GPT-5.1 Codex:** **$0.51** *(~71% cheaper than Opus)*
+Here's the model `/usage` of the run:
 
-- **Gemini 3 Pro:** **$0.25** *(~86% cheaper than Opus)*
+![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_12.png)
 
-Opus was consistently the most expensive. The reason is straightforward: it generated **far more code**, ran longer chains of reasoning, and produced large comment blocks and support scaffolding that never landed in production. GPT-5.1 was far leaner,  it solved the same problem in less than half the tokens and with far less backtracking. Gemini came in even cheaper, largely because it produced compact implementations with fewer files changed.
+### Test 2: Tool Router Agent Build (GitHub Triage)
 
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_5.png)
+For this, we will build everything on top of our Kanban repo, keeping the concerns separated.
 
-## **What I Actually Learned**
+> ℹ️ As I said, this is a real test for these models, to see how well they can organize things, separate concerns, and manage the overall project build.
 
-Across both challenges, three very different personalities showed up:
+Since the prompt is a bit longer, I've linked it separately. You can find it here: [Tool Router Agent Build Prompt](https://gist.github.com/shricodev/27ae260a70a8f0196b5d38fb714ea0fe).
 
-### **Opus 4.5**
+Let's start off with Opus 4.5, the model with the highest SWE and many other benchmarks.
 
-Opus generated the most **ambitious, elaborate engineering** every time. Rolling statistics, advisory lock stacks, structured configuration, test coverage, comments, serialization logic, you could mistake the output for a whitepaper implementation.
+### Claude Opus 4.5
 
-But once plugged into a running system, hidden failure modes surfaced immediately:
+Opus got the Tool Router triage demo working end-to-end inside the Kanban repo (kept under `/labs` as we requested). It spins up a Tool Router session with GitHub and returns a real issue URL, which is a solid outcome for dogfooding Tool Router now that it has moved out of beta into the stable release.
 
-- Stateful calculations that didn’t restore correctly
+The run stats from Claude Code:
 
-- Edge paths that threw runtime errors
+- **Cost**: $2.88
 
-- Logic that was architecturally elegant but not operationally safe
+- **Duration**: 12min 60sec (API), 22min 46sec (wall)
 
-It **thinks at design-document scale**, but it requires another engineering pass to harden for production.
+- **Code Changes**: +1,176 lines, -294 lines
 
-### **GPT-5.1 Codex**
+![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_13.png)
 
-GPT-5.1 was the opposite, smaller changes, far more focused, and always wired directly into the running codebase.
+Here's the code it generated: [Opus 4.5 Agent Build Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/18ee83e288479434c2365d858716450250e888dc)
 
-This model:
+Here's a demo:
 
-- Solved the problem in the fewest lines of code
+That said, it is not perfectly implemented:
 
-- Handled error cases proactively
+- **Hardcoded tool names:** It's hardcoding specific tool names explicitly. What if the tool names change in the future? The code breaks instantly, which defeats the entire purpose of using a router.
 
-- Took real deployments into account (crashes, skew, dirty input)
+- **Similarity matching is weird:** Even with the exact same issue title, it fails to flag an issue as a duplicate.
 
-- Integrated immediately into the live processor code
+and there could be many more...
 
-Not the most beautiful architecture, but consistently the most **deployable** and far cheaper to run.
+Still, this is a great head start. The demo works, the UI is there, and it’s close enough that a couple of fixes could make it workable, and genuinely this is a great start.
 
-### **Gemini 3 Pro**
+### GPT-5.2 Codex
 
-Gemini landed in the middle, creative, compact, and technically solid. It implemented solutions that were:
+In the first run, the model gave a decent response with a decent UI, but I noticed it uses the old version of the Composio API.
 
-- Fast
+![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_14.png)
 
-- Easy to reason about
+Now, this is going to be a test where the model is tested explicitly without much human help. I thought to give this an update on how to use the new API, but it still resulted in an error:
 
-- Minimal in moving parts
+![Image 14](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_15.png)
 
-- Cheap in compute
+Even more weird is that, even though the request failed, the API returns 200 OK, which is insane. From this point onward, I stopped as this does not seem to be fixing anytime soon.
 
-It didn't produce architecture essays, but its solutions were easier to drop straight into a project, especially the dedup logic, which required almost no scaffolding. The downside is that some of its deeper edge cases had to be checked manually, its tests weren’t as exhaustive as the other two.
+![Image 15](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_16.png)
 
-# **Why GPT-5.1 Stands Out**
+Here's the code it generated: [GPT-5.2 Agent Build Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/9148bac2c1d70fe657c35ac27d983ee9a4c49abf)
 
-For production engineering, GPT-5.1 hit the sweet spot:
+Here are the run stats from GPT-5.2-Codex:
 
-- **Minimal rewrite required**
+- **Duration:** 5 min 15 sec (+20 sec attempted fix)
 
-- **Zero critical bugs in either test**
+- **Code Changes:** +1,682, -86
 
-- **Fast iteration**
+- **Token Usage:** total=201,382 input=186,265 (+432,640 cached) output=15,117 (reasoning 6,912)
 
-- **One-pass integration**
+### Gemini 3 Pro
 
-It wasn’t the cheapest (Gemini was), but GPT-5.1 produced the most performable-ready code per dollar.
+Now, this turned out even weirder. Almost every other time, it kept hitting a "potential loop" after about 13-14 minutes of runtime with incomplete code.
 
-If you want a model that:
+The run usually resulted in the following loop which eventually halted the request:
 
-- Writes code that compiles,
+![Image 16](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_17.png)
 
-- Runs on the first try,
+- **Cost:** $6.3 (approximate)
 
-- Handles operational edge cases,
+- **Duration:** 14min 7sec (API), 30min 7sec (wall)
 
-- And fits into an existing codebase…
+- **Token Usage:** 12,622,153 (input + cache read), 24K output
 
-GPT-5.1 is the practical winner.
+![Image 17](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_18.png)
+
+I couldn't even get the final build of the project, and it just cost me money with no usable output. Disappointing!
 
 ---
 
-# **When to Use Opus 4.5**
+## Final Thoughts
 
-Opus is the model to call when you need **deep architectural reasoning**:
+At least from this test, I can conclude that you can’t really expect a model to work great in projects like this, or even more complex ones, at least not right now. Even when they seem to work well, they often don’t.
 
-- System design reviews
+If I were to go ahead and fix the problems one by one, it would take me nearly as long as building it from scratch.
 
-- Technical write-ups
+If I compare the results across models, Opus 4.5 definitely takes the crown. But I still don’t think we’re anywhere close to relying on it for real, big production projects. The recent improvements are honestly insane, but the results still don’t fully back it up.
 
-- Planning modules or frameworks
+For now, I think these models are great for refactoring, planning, and helping you move faster. But if you solely rely on their generated code, the codebase just won’t hold up long term.
 
-- Long-term maintainability discussions
+And yeah, this never really ends. Better models will come, we’ll keep running similar tests, and the results will get slightly better each time. But for now, I don’t see this as “use it and ship it” for production, at least not in the way people hype it up.
 
-It produces more infrastructure than is needed, but that’s because it’s thinking **like a platform architect rather than a service engineer**. If you have the time to refine and integrate, Opus gives you the widest view of the problem space.
+Let me know your thoughts in the comments. Would love to chat.
 
-Just expect to:
-
-- Wire things together manually
-
-- Fix runtime behavior
-
-- Trim unnecessary complexity
-
----
-
-# **When to Use Gemini 3 Pro**
-
-Gemini is the **fastest and cheapest path to working code**. It’s ideal when:
-
-- You want to move quickly
-
-- You’re okay filling in the deep testing yourself
-
-- Simplicity matters more than formal architecture
-
-Its solutions tend to be:
-
-- Straightforward
-
-- Operationally efficient
-
-- Very easy to deploy
-
-Just be ready to manually audit some boundary conditions, it doesn’t always anticipate the same number of failure modes as GPT-5.1.
-
----
-
-# **Bottom Line**
-
-Across these practical engineering scenarios, GPT-5.1 Codex stood out by producing solutions that were closest to “ready to deploy” with the least amount of intervention. Claude 4.5 consistently demonstrated the strongest architectural reasoning and long-horizon thinking, but its outputs usually required additional effort to integrate and stabilize. Gemini 3 Pro delivered fast, lightweight, and inexpensive solutions that worked well early but benefited from hardening when pushed into more demanding or distributed environments.
-
-In other words:
-
-- **Codex most often produced code that could be dropped straight into the system**,
-
-- **Claude provided the deepest engineering thinking**, and
-
-- **Gemini offered the quickest path to functional scaffolding at low cost**.
-
-Complete code is available on GitHub if you want to examine the implementations. Fair warning: it's an evaluation harness I built for this test, not production code.
-
-These results reflect only what I observed in these particular test cases, but they highlight the practical trade-offs engineers may see when using the models in day-to-day development.
-
-`shouldEmit(fingerprint, dedupWindowMs)` → returns whether this processor is allowed to emit the alert.
-
-Defines a shared atomic operation:
-
-`setIfNotExistsWithTTL(key, ttlMs) `the backend (Redis, DynamoDB, etc.) ensures only one processor can create a key during the TTL window.
-
-Production implementation that performs distributed coordination using the above atomic write.
-
-Lightweight mock version used for local runs and unit tests.
-
-Exposes `shouldAlert(alertKey, windowSeconds)` to decide whether a processor is allowed to emit an alert.
-
-Uses an `INSERT ... ON CONFLICT` pattern to guarantee single-winner semantics.
-
-The logic attempts to update the row only if `last_fired_at` is older than the dedup window, and returns whether the update succeeded.
-
-A local fallback for environments without a database, matching the same interface for drop-in testing.
+![Image 18](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_19.png)

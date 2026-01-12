@@ -1,196 +1,260 @@
-Google recently released Gemini 3, Nano Banana Pro and its agentic IDE Antigravity, and it's exploding in popularity. AI, Builders & Business community are hyping it up like crazy. 
+OpenCode has recently gained significant popularity in the open-source space. It’s an alternative to Claude Code.
 
-But when it comes to tools, it's limited. Though one can add MCPs for use cases, it's hectic to connect every applications MCP servers manually
+But what if I told you could 100x your Opencode experience with just one MCP?  Yes, with [Rube](https://rube.app/), that’s totally possible. But wait, what is possible?
 
-So, what if one has an MCP that you configure once, and it connects to 500+ products at once while intelligently figuring out which MCP tools and methods are needed?
+After building a thousand managed MCP integrations and speaking with countless users, we found that while MCP is a force multiplier, it still has physical limitations. Adding even a single GitHub server will take 20k tokens from your LLM's context window; adding Jira/Linear, Supabase, etc., will essentially choke the models. There is nothing novel in it; most industry folks are already aware of this. 
 
-Enter Rube, a universal MCP & in this short blog, let's see how you can use it to supercharge your AI-assisted development.
+So, how do we solve this? 
+
+By exposing a few meta tools (Search, Planner, Bash, Remote Workbench, etc). When the agent searches for tools, the search tool fetches only relevant tools from Composio-managed apps, ensuring the LLM's context space remains clean. 
+
+For complex issues, it uses a remote workbench or a bash script to chain multiple tools together, and instead of dumping the large artefacts directly into the context, Rube stores them in a file system and fetches the results as needed. 
+
+There’s more to it: OAuth handling, healing loop when tool execution fails, and more. We are doing a full technical write-up for the same, will share on socials, so do [follow us ](https://x.com/composio)for Rube/Tool router breakdown.
+
+Here in this blog post, I’ll walk you through how to set up Rube MCP with **Opencode**.
 
 ### TL DR;
 
-1. Rube MCP plugs into Antigravity once and instantly unlocks hundreds of tools without the annoying manual MCP wiring.
+- Rube MCP plugs into **OpenCode** once and instantly unlocks hundreds of tools without the annoying manual MCP wiring.
 
-1. You can automate code reviews and send off clean summaries straight to Gmail / Slack using Rube’s mail tools.
+- Automate code reviews and send off clean summaries straight to Gmail or Slack using Rube’s mail tools.
 
-1. Backend setup becomes trivial when Rube creates and seeds Supabase databases with text instructions and LLM commands.
+- Backend setup becomes trivial when Rube creates and seeds Supabase databases with text instructions and LLM commands.
 
-1. Frontend devs can turn Figma wireframes into clean HTML/CSS by letting Rube fetch designs and Antigravity generate UI code.
+- Turn project insights into polished X threads and auto-save them into Notion with a single prompt.
 
-1. Antigravity + Rube turns repetitive dev work into background noise so you can actually focus on building.
+- OpenCode + Rube turns repetitive dev work into background noise so you can actually focus on building.
 
 ---
 
-## Connect Antigravity with Rube MCP
+## Install OpenCode
 
-Before doing anything else, one needs to connect it once. Process is straightforward:
+Let’s start with installing OpenCode.
 
-- Go to[ Rube MCP](https://rube.app/) site.
+Head to the terminal and install it using:
+
+```shell
+npm i -g opencode-ai
+```
+
+or use for the latest:
+
+```shell
+npm i -g opencode-ai@latest
+```
+
+Once done, verify it by:
+
+```shell
+opencode
+```
+
+It will open the TUI like this:
+
+![opencode](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
+
+Now let’s connect it with Rube MCP.
+
+---
+
+## Connect OpenCode with Rube MCP
+
+Connecting rube mcp with OpenCode is straightforward:
+
+- Go to[ the Rube MCP](https://rube.app/) site.
 
 - Signup / Login
 
-- Head to Add Rube → MCP URL → Generate Token
+- Head to Add Rube → MCP URL → Generate Token and copy it.
 
-- Copy the code to put in place of  `RUBE API KEY` in `mcp.json`.
+- Create a new folder `open-code` and open it.
 
-- Head back to Antigravity, `…` dot in prompt editor → MCP -> Manage MCP Server → View raw config
+- Inside, create a new file called `opencode.json` 
 
-- Paste the command in [mcp.json ](https://gist.github.com/DevloperHS/19fb43ee702fd736a7f252da9ca9ec60#file-mcp-json)
+- Open it with File Explorer, nano/vim, and paste the following code. 
 
-- Perform OAuth, wait till it completes
-
-- and boom, Rube added to the MCP list.
-
-For verification, head to Manage MCP Servers, refresh and check the tool. It will look something like this:
-
-![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
-
-> Note: if you are new to MCP, don't change anything. If new to rube, for first time it ask for OAuth for each tool.
-
-Now let's see a few use cases of  Rube in Antigravity.
-
----
-
-## 1. Using Rube MCP to automate Code Review & Update 
-
-Senior developer often analyse intern codebases, pointing out errors, summarising them and sending them to their Slack/email.
-
-This can be a time-consuming, mundane & repetitive task. So, they can delegate it to Antigravity + Rube combo.
-
-So here is a prompt to paste in the agent window prompt box (much like VS Code)
-
-**Prompt**
-
-```plain text
-Find the bugs in @agent.py @requirements.txt @__init__.py . 
-Categorise them in low , medium high priority and create a short summary analysis with proper formating. 
-Then using @mcp:rube_mcp: Send the summary to devloper.hs2015@gmail.com with title "Code Analysis Summary".
+```shell
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "rube_mcp": {
+      "type": "remote",
+      "url": "https://rube.app/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer <api-token>"
+      }
+    }
+  }
+}
 ```
 
-In simple words, the prompt asks the LLM to review the codebase, identify bugs, generate a summary, and send it as an email to the user. The output should include a summary and a mail link. And all this should be done using rube’s Gmail tool.
-
-Yup, we don't have Gmail support in Antigravity, but rube helps here!
-
-Now click `>` And wait till it's complete. If this is 1st time, rube will ask you to connect your Gmail account to send mail, but that's just OAuth for you.
-
-Finally, it will come back with the draft/task it performed and an email link. Pretty transparent 😅
-
-Here I am performing the same:
-
-> Note: You can even ask it to send to team slack, but I went with gmail, as this is just a demo.
-
-Hopefully, now the intern will find the email and fix it all and send a pull request again :)
-
-
-
----
-
-## 3. Using Rube MCP to handle Supabase Database for Apps
-
-Backend developers often need to create different database models for different projects. This can be time-consuming, mundane and repetitive.
-
-They can leverage Rube MCP to connect to Supabase, build the database in one shot, and use APIs to pull real-time information. Best part - no manual handling of pesky database issues, all handled by rube!
-
-Here is a prompt to do so:
-
-```plain text
-Build a minimal Student Grade CRUD application using Flask, Jinja, HTML, and CSS. The aesthetic should be "Google Material Minimal"—clean white backgrounds, subtle shadows, rounded corners, and excellent typography.
-
-Phase 1: Database Setup (via rube_mcp)
-Use the `rube_mcp` tool to interact with Supabase.
-1. Create a table named `students` in the database `student-data`.
-2. The schema should include: `id` (serial/int, primary key), `name` (text), `subject` (text), `grade` (int), and `last_updated` (timestamp).
-3. Immediately seed this table with 5-10 realistic mock entries (e.g., "Alice Smith", "Mathematics", 92).
-
-Phase 2: Flask Application
-Create a single-file Flask app (or standard folder structure if preferred) that connects to this Supabase instance.
-1. API/Routes:
-   - GET `/`: Render the dashboard showing all students.
-   - POST `/add`: Add a new student.
-   - POST `/update/<id>`: Update a student's grade.
-   - POST `/delete/<id>`: Remove a student.
-2. UI/UX:
-   - Use Jinja2 for templating.
-   - Style using vanilla CSS (no external frameworks like Bootstrap).
-   - Design: Center-aligned card layout. The table should look like a Google Docs file list or Google Classroom roster. Use soft gray borders (#e0e0e0) and the system font stack (Inter/Roboto/San Francisco).
-   - Add a "Add Student" floating action button (FAB) or a clean top bar button.
-
-Ensure the code is production-ready, handles database connections securely, and renders the frontend cleanly.
-```
-
-**In summary: **prompt the LLM to create a Google minimal style UI-UX-based CRUD app (for demo purposes) and pull in mock data defined in Supabase’s `student-db` using crud api’s. Here, the database was created using `rube_mcp`. 
-Yup, we don't have Supabase support in Antigravity, but rube helps here!.
-
-Here is how it worked for me! 
-
-> NOTE: For demo purposes, I have used a CRUD app example, but same flow can be expanded to complex project as well
-
-**Pro Tip**
-
-Always provide enough context for the LLM to perform the job as expected. For this example, this translates to adding: 
-
-- db name - student-db
-
-- column name - id, name, subject, grade, last_updated
-
-- mock data - in tuple pairs.
-
-With this power in hand, backend devs can create a robust and scalable database by just giving the right instructions!
-
-Now off to the final use case of today!
-
----
-
-## 3. Using Rube MCP to generate Frontend Code from Figma Mockups
-
-Frontend developers often have to convert the Figma designs shared into webpages. They can leverage Composio’s Rube MCP to connect to Figma, fetch the designs, and generate the frontend code for them—best fact: no need to handle the conversion details; all done by rube.
-
-Here is a prompt to do so!
-
-**Mockup **(used for demo purposes only)
+Now open the OpenCode again and type `/mcp` and it will show:
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
-**Prompt**
+![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
 
-```plain text
-Here is the figma file url https://www.figma.com/design/CHX6G247vkQFDYh84Qv9CS/Low-fi-Wireframe-Template--Community-?node-id=123-0&p=f&t=6OH8UhfkjgLRPLpE-0. 
+You can even verify this using prompting OpenCode:
 
-Implement a blog based ui base on the given wireframe. Keep ui minimal and clean, similar to google (materialistic design). 
-
-Only Tech stack to be used: HTML, CSS. Create the project in new folder called blog-space. I only need Mocup UI for client. 
-
-Make sure to fetch the file using rube_mcp and then only start designing
+```shell
+Do you have access to Rube MCP?
 ```
 
-In a nutshell, the prompt provides the LLM with a Figma URL and asks it to replicate the wireframe into an HTML blog page with CSS, all in the same folder. 
+If you get an answer like this, it means we are all set:
 
-Again, we don't have Figma support in Antigravity, but rube helps here!.
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-**Output**
+> Note: if you are new to MCP, don't change anything. If new to rube, for first time it ask for OAuth for each tool.
 
-**Pro Tip **
+Now let's see a few use cases of Rube in OpenCode.
 
-For generating a complex frontend, follow these guidelines for optimised results:
+---
 
-- Name the layers; include additional details, such as row and column numbers, in the layer names themselves. E.g `memo-card-grid-row0-col0` (the leftmost corner).
+## 1. Using OpenCode to automate Code Review & Update 
 
-- Name the colour styles. E.g. ❌ #FFFFFF, ✔️ background-color-white
+For the 1st task, we will ask OpenCode to find bugs across all files in a code repository, prepare a report, and send it to [Gmail](https://rube.app/apps). (can use [Slack](https://rube.app/apps)[ ](https://rube.app/apps)as well)
 
-- Name the file properly. Please don’t keep it generic.
+Paste the following prompt:
 
-These guidelines provide the model with enough context to generate the complex frontend architecture that developers are expected to deliver. 
+```shell
+Act as an autonomous code auditor. Given access to a source code @ repository, recursively scan all files, detect bugs, vulnerabilities, logical errors, performance issues, and bad practices, classify them by severity, suggest concrete fixes, and generate a structured report (summary, critical issues, file-wise findings, recommendations). Use Rube MCP to handle the Gmail task and send the full report to devloper.hs2015@gmail.com. At the end, output a concise execution summary of all tasks completed. Prioritize real execution over explanation; keep results actionable and production-ready.
+```
 
-These were some use cases; the list is endless. But here is the final verdict!
+In simple terms, the prompt asks the LLM to review the codebase, identify bugs, generate a summary, and email it to the user. The output should include a summary and a link to email. And all this should be done using rube’s Gmail tool. 
+
+Yup, we don't have Gmail support in Antigravity, but rube helps here!
+
+And here’s the Output it generated:
+
+> Note: you may need to login to Gmail, if using first time.
+
+For simplicity, the report is kept short. Feel free to expand it using a format you prefer. 
+
+Now let’s look at the 2nd use case!
+
+---
+
+## 2. Using Rube MCP to handle Supabase Database for Apps
+
+For the next task, let’s ask OpenCode to handle the database creation via Rube MCP for a vehicle parking management app. 
+
+Paste the following prompt:
+
+```shell
+Build a minimal Parking Management System using Python, Supabase, HTML, and CSS with a Google Material Minimal aesthetic.
+
+Project Setup
+Create a new folder named `vms` and build the entire application inside it.
+Create a `.venv` using `python3` and activate it before installing dependencies.
+Use Supabase project ID: `<supabase-project-id>`.
+
+Phase 1: Database Setup (via rube_mcp)
+Use rube_mcp to create database `parking-system` and models:
+User(id, name, email, created_at)
+Admin(id → User.id, role, created_at) [predefined]
+ParkingLot(id, name, location, total_spots)
+ParkingSpot(id, lot_id → ParkingLot.id, spot_number, is_available)
+Reservation(id, user_id → User.id, spot_id → ParkingSpot.id, start_time, end_time, status)
+Establish all relationships and seed: 1 Admin, 3 ParkingLots, 10–15 Spots per lot, 5–10 Users, 8–12 Reservations.
+
+Constraints
+All Supabase operations via rube_mcp, production-ready code, env vars for secrets, clean error handling.
+
+```
+
+**In summary: **prompt the LLM to create a parking system model and define the relationship, and then pull in mock data defined in Supabase’s `student-db` using crud api’s. 
+
+Yup, we don't have Supabase support in OpenCode, but rube helps here!
+
+Here is the output:
+
+Notice how OpenCode defined the task, and worked on it incrementally, while OpenCode + rube mcp handled the heavy lifting
+
+Now let’s look at the final individual task, which we will do with OpenCode + Rube
+
+---
+
+## 3. Using Rube MCP to generate a Build Log-based Social Media Post for X
+
+For the final task, we will ask OpenCode to draft us an X thread by analysing the entire project (handled by OpenCode) and save it to Notion (handled by rube mcp)
+Here is the prompt:
+
+```shell
+Analyze the entire @vehicle-parking-app project to identify its key problems, milestones, and achievements. Then, write a 5-tweet engaging X(Twitter)thread using a problem–solution narrative. The first tweet should hook readers, and the last should include a call-to-action. Keep each tweet under 250 characters, separated with "1/". Use only bold or italic formatting (no headings or code). Save the final formatted thread to the Notion page at https://www.notion.so/appdev1/Project-Devlogs-2e3b43216e448044941ec4ea71ca30cc. Use rube_mcp for notion. 
+```
+
+In essence, the prompt asks OpenCode to analyse the project, find its key problems, milestones and achievements, use them to generate an engaging X thread based on given instructions and save it to the given Notion sheet.
+How it worked out for me:
+
+The OpenCode didn’t just create the task:
+
+-  It launched its subagents to focus on analysing the project 
+
+- while it performs the notion page retrieval, 
+
+- Then use the results of the subagent to generate the thread and 
+
+- Add it into given Notion page
+
+Pretty handy, isn’t it?
+
+But so far, we have looked at individual use cases. OpenCode + rube combination can do more. Let’s give it a final challenge!
+
+---
+
+## Capstone Task
+
+For the final task, let’s ask rube to create an image tools webapp that has 3 -4 functionalities, similar to [pinetools.com](http://pinetools.com/), but in Python, Flask, core web dev frameworks and most heavy lifting done by rube integrations for AI tools. 
+
+Here goes the prompt:
+
+```shell
+Build a simple MVP-level image creation web app as a new project named image-tools. 
+
+Inside the project, first create and activate a Python 3 virtual environment (venv), then build the full application. 
+
+Use Python (Flask) for the backend, SQLAlchemy for the local database, and HTML, CSS, and vanilla JavaScript for the frontend. 
+
+The UI/UX should follow a Google-inspired minimalist design — clean, centered, and modern. 
+
+The app will have four AI-powered tools: Post Complement Image Creation, Theme Change, Background Removal, and Prompt-Based Image Generation. 
+
+All image creation features should use Google Gemini API through Rube MCP (gemini) integration, where clicking a tool’s button triggers Rube MCP in the backend to process the request and return results. 
+
+Flask handles routing and data flow, while Rube manages all AI automation for scalable, real-time image generation.
+
+Follow the best security practices.
+```
+
+In a nutshell, the prompt asks OpenCode to build an image editing tool that can use rube mcp to:
+
+- Generate complement image to the provided post
+
+- Change the theme of a given image (defaults)
+
+- Remove the background of the provided image 
+
+- Generate an image based on a prompt
+
+while keeping the UI**-UX** minimal and simple (google inspired)
+
+Here is the output:
+
+Not only did OpenCode make the website one-shot with the power of Opus 4.5, but it also handled the DB (SQLite), multiple tool integrations, state handling, Ruber MCP routing, and UI/UX. 
+
+This concludes our final build. Here are a few of my final thoughts on OpenCode + rube integrations.
 
 ---
 
 ## Conclusion
 
-With Antigravity and Rube, the repetitive task became child’s play, and the best part is that this same workflow can be incorporated into various domains.
+With OpenCode and Rube, the repetitive task became child’s play, and the best part is that this same workflow can be incorporated into various domains.
 
-Though Antigravity is new, it packs some serious punch and with Rube MCP as a partner, the only limit is your imagination.
+Though OpenCode has been developed for the last 15 years, it packs some serious punch and with Rube MCP as a partner, the only limit is your imagination.
 
-So, head to Rube MCP, connect it to Antigravity, pull up some PRD doc, give it to Gemini 3 / Nano Banana Pro with a kickass prompt, and let the tool do its thing while you focus on ideating and planning the part. 
+So, head to Rube MCP, connect it to OpenCode, pull up some PRD doc, give it to Claude opus 4.5 / Claude sonnet 3.5 / Gemini3 models with a kickass prompt, and let the tool do its thing while you focus on software/automation architecting part. 
 
 Happy Building.
 
@@ -198,15 +262,15 @@ Happy Building.
 
 ## FAQ
 
-**Q1. How do I integrate Rube MCP into Antigravity?**
+**Q1. How do I integrate Rube MCP into OpenCode?**
 
-**Answer:** Generate a token from the Rube dashboard and paste the provided command directly into your Antigravity’s `mcp.json` raw config.
+**Answer:** Generate a token from the Rube dashboard and paste the provided code directly into your `opencode.json` config.
 
 
 
-**Q2. How do I verify that Rube is successfully connected to Antigravity?**
+**Q2. How do I verify that Rube is successfully connected to OpenCode?**
 
-**Answer:** Head to "Manage MCP Servers" in the editor, refresh the page, and confirm that the Rube tool appears in your active list.
+**Answer:** In OpenCode check the bottom or use `/mcp` command editor, in the popup, and confirm that the Rube tool appears in your active list.
 
 
 **Q3**. **Do I need to configure credentials for all 500+ tools manually?**
@@ -221,12 +285,6 @@ Answer: No, you configure Rube once, and it dynamically handles connections, req
 
 
 
-**Q5**. **How can I optimise the code generation quality for complex tasks like Figma conversions?** **Answer:** Ensure you provide rich context, such as clearly naming Figma layers and colour styles, so the model understands the specific structural requirements.
+**Q5**. **How can I optimize the code generation quality for complex tasks like Figma conversions?** **Answer:** Ensure you provide rich context, such as clearly naming Figma layers and color styles, so the model understands the specific structural requirements.
 
-
-
-
-
-
-
-
+- Replace the `<api-token>` with copied token and save it:

@@ -1,278 +1,240 @@
-Recently, within a month, we've been amazed by all these new AI models from three giants: OpenAI, Google, and Anthropic!
+Right when everyone was busy talking about how good Claude Code is, Anthropic launched Claude CoWork, basically Claude Code with a much less intimidating interface for automating fake email jobs. It can access your local file system, connectors, MCPs, and do almost everything that can be executed through the shell.
 
-From Anthropic, we have Claude Opus 4.5 (with the highest SWE Benchmark 80.9%); from OpenAI, their flagship coding model GPT-5.2 (Codex) with SWE Benchmark 80%; and from Google, Gemini 3 Pro, which at launch was said to be SOTA in most benchmarks and boasts advanced agentic capabilities.
+Claude CoWork is currently available as a research preview in the Claude Desktop app as a separate tab for Max subscribers ($100 or $200 per month plans) on macOS, with Windows support planned for the future. 
 
-The catch here is that there are so many models available for coding or agentic coding that it's hard to decide which one to pick as your daily driver.
+The tool works by giving users access to a folder on their computer, where it can read, edit, or create files on their behalf. It works inside a local containerised environment by mounting your local folders. Which means you can trust that it won’t access folders that you haven’t granted permission to.
 
-All of them claim at some point to be the "so-called" best for coding. But now the question arises: in actual agentic coding, which involves working on a production-ready project, how much better or worse is each of them in comparison?
+There’s a lot to talk about CoWork, but perhaps in a separate blog post. This talks about using connectors and MCPs to do more than organising files.
 
----
+## Working with MCP Connectors
 
-## TL;DR
+Claude AI Connectors are direct integrations that let Claude access your actual work tools and data. Launched in July 2025, these connectors transform Claude from an AI that knows a lot about the world into an AI that knows a lot about *your* world.
 
-If you want a quick take, here’s how the three models performed in these two tests:
+Claude comes with pre-built integrations, including Gmail, Google Drive, GitHub, and Google Calendar. Apart from these, there are tons of Local and Remote MCP servers from HubSpot, Snowflake, Figma, and Context7. 
 
-- **Claude Opus 4.5:** Safest overall pick from this run. It got closest in both tests and shipped working demos, even if there were rough edges (hardcoded values, weird similarity matching). Also, the most expensive.
+### Using default Integrations
 
-- **Gemini 3 Pro:** Best result on Test 1. The fallback and cache were actually working and fast. Test 2 was weird; it kept hitting a loop, which resulted in halting the request.
+For default integrations, all you need to do is just connect your accounts and start working with them. 
 
-![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_2.png)
+1. Navigate to **Settings > Connectors**
 
-- **GPT-5.2 Codex:** Turned out to be the least reliable for me in these two tasks. Too many API and version mismatches, and it never really landed a clean working implementation.
+1. Find the integration you want to enable
 
-One thing I really hate about Opus in Claude Code is how much it does web searches. Across these two tests, it did like 30+ web searches, which ended up eating up a big part of the total time. Web search is great, but it gets super frustrating fast when you have to keep approving it and typing “Yes” over and over.
+1. Click the "Connect" button
 
-Has anybody else felt this with Claude Code, especially Opus 4.5?
+1. Follow the authentication flow
 
-> ⚠️ **NOTE:** Don’t treat these as a hard rule. This is just two real dev tasks in one repo, and it shows how each model did for me in that exact setup.
+Pro, Max, Team, and Enterprise users can add these connectors to Claude or Claude Desktop.
 
----
+![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_1.png)
 
-## Test Workflow
+### Using Anthropic Marketplace Connectors
 
-For the test, we will be using the following CLI coding agents:
+Anthropic has an MCP marketplace where you can find Anthropic-reviewed tools, both local and remote-hosted connectors.
 
-- **Claude Opus 4.5:** Claude Code (Anthropic’s terminal-based agentic coding tool)
+**For Desktop/Local MCPs: **Click Desktop → Search Your MCP → Click Install
 
-- **Gemini 3 Pro:** Gemini CLI (an open source terminal agent that runs a React-style loop and can use local or remote MCP servers)
+![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_2.png)
 
-- **GPT-5.2 Codex:** Codex CLI (OpenAI’s Codex agent in the terminal)
+**For remote MCPs, **
 
-We will be checking the models on two different tasks:
+1. Navigate to Browse Connectors
 
-1. **Task 1: Production feature build inside a real app**
+1. On the Web tab, search your MCPs 
 
-We drop each model into the same working codebase and ask it to ship a production-ready feature, wire it into the existing flows, and add tests. The goal here is simple: can it navigate a repo, make safe changes across multiple files, and leave things in a shippable state?
+![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_3.png)
 
-1. **Task 2: Build a tool-powered agent using the Composio Tool Router**
+Provide your server URL if needed, and you’re done.
 
-> 💁 To build the agent, we will be using Composio’s [Tool Router (Stable)](https://docs.composio.dev/tool-router/quickstart), which automatically discovers, authenticates, and executes the right tool for any task without you having to manage auth or hand wire each integration. This significantly helps reduce the MCP context load on the model.
+**Custom MCP Server**
 
-We’re dogfooding it here because Tool Router has just moved from its experimental phase to a stable release, so this is the exact moment we want to stress-test it in the real world.
+This is the most interesting part. You can use whatever MCP servers you prefer.
 
-We’ll compare code quality, token usage, cost, and time to complete the build.
+Click on Add a Custom Connector → Provide MCP name and Server URL → (Optional) Oauth credentials
 
----
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_4.png)
 
-## Coding Comparison
+## But….You shouldn’t be using MCP servers
 
-### Test 1: Feature Build in a Production App
+MCP servers are definitely a force multiplier, making it easy for LLMs to access data. However, they have physical limitations.
 
-The task is simple: all the models start from the same base commit and then follow the same prompt to build what's asked.
+### 1. The MCPs are token hungry
 
-I will evaluate the final result from the "best of 3" responses for each model, so we won't be evaluating based on an unlucky dice roll.
+Each MCP tool has a schema definition, what it does, the parameters, and sometimes examples. The more detailed the tool definitions, the more reliable the execution; however, LLMs have a limited context window (200k). And it’s well known that LLMs are more effective when they are not bloated. The more MCPs there are, the less space there is for actual execution.
 
-Here's the prompt used:
+For example, the GitHub and Linear official MCPs have 40 and 27 tools, respectively, and they consume 17.1K tokens (8.5%). 
 
-```plain text
-You are a coding agent working inside an existing repository.
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_5.png)
 
-Repo context
-- Repo: shricodev/kanban-ai-realtime-localization
-- Goal: Implement Test 1 (AI description fallback + caching) in a production-quality way.
-- Constraints:
-  - Do not add new dependencies unless truly necessary.
-  - Keep changes minimal and consistent with repo style.
-  - Must integrate into the existing AI task description feature path.
-  - Add tests for any new pure logic.
+### 2. Tool definitions are always loaded, even when unused
 
-Rules
-- You may read and edit files and run terminal commands.
-- After implementing, run: npm run lint and npm run build and fix failures until both pass.
-- Output a final checklist with files changed, commands run, and how to verify manually.
+Most MCP clients eagerly load all available tools into the model context. That means tools the model will never call still consume tokens on every request.
 
-Feature requirements (Test 1)
-1) Add a deterministic local fallback for AI task description generation when OpenAI credentials are missing OR the external call fails.
-2) Add a 10-minute in-memory cache keyed by (taskTitle + language) so repeated generations do not call the external model repeatedly.
-3) Ensure the UI does not break when AI is unavailable. The user should still be able to create and save tasks.
-4) Add unit tests for the fallback generator and cache behavior.
+If your server exposes 20 endpoints but a given task only needs 2, the model still incurs the cost of all 20. Over time, this pushes teams to artificially split MCP servers, not for architectural clarity, but to work around context limits.
 
-```
+This also discourages experimentation. Engineers hesitate to add new tools because every addition degrades all existing interactions.
 
-This is a bit involving, the model needs to add a local fallback, use an in-memory cache, fix some UI issues and finally write unit tests for all that it implemented in the Next.js project.
+### 3. Large tool outputs quietly destroy context
 
-### Claude Opus 4.5
+The biggest failures are less about schemas. They are caused by results.
 
-Claude went all in and started with the fallback implementation, followed by writing tests and running the build until it was able to fix all the build and lint issues.
+Logs, database rows, file lists, search results, stack traces, and JSON blobs all flow straight back into the model. Even a single careless response can erase half the conversation history.
 
-![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_3.png)
+This is not ideal at all and can jeopardize LLMs.
 
-The entire run took about **9 minutes**, which is fair given all the features we asked it to build, the tests we added, and the iterations required to fix it.
+### 4. Tool selection degrades as tool count grows
 
-Here's the code it generated: [Claude Opus 4.5 Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/3dd9f188a253a5fb43e7e92268b594452e33c477)
+As the number of MCP tools increases, tool selection accuracy drops.
 
-It wrote two tests for both features as explicitly asked, which pass as well:
+Models begin to:
 
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_4.png)
+- Call near matches instead of the correct tool
 
-Now, the time is to test, and when I ran the test, part of what was asked is implemented. The UI does not break when AI is unavailable, but for the in-memory cache for the same task title, cache hits but does not get populated in the field:
+- Overuse generic tools
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_5.png)
+- Avoid tools altogether and hallucinate answers
 
-The overall result is **partially correct**, compiles, and runs successfully. And here's the overall token usage and cost from Claude CLI for your reference:
+This happens even if all tools are well described. The attention budget simply is not infinite. Past a certain point, the model stops fully reading tool definitions.
 
-- **Cost:** $2.21
+You can observe this directly by adding more tools and watching call precision decline.
 
-- **Duration:** 9min 11sec (API Time)
+## How to fix this?
 
-- **Code Changes:** +1,122 lines, -36 lines
+By implementing a few architectural improvements
 
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_6.png)
+### 1. On-demand tool loading
 
-### GPT-5.2 Codex
+Instead of loading every tool definition into the context upfront, only load the tools you actually need for the current task.
 
-GPT-5.2 Codex took about **7min 34sec** coding the implementation, and an additional **55sec** for working with the implementation unit tests. It is shorter than the time it took Opus 4.5 to implement the feature entirely.
+This is the simplest way to cut token usage, because tool schemas are the “always-on” cost. If you can turn that into a “pay only when used” cost, you immediately get more room for reasoning and better reliability.
 
-Now is the time to test it. The result turned out even worse; it's using an older version of the API or some unexported code. Warnings everywhere!
+We’ve implemented this in the Rube, a universal MCP server, that dynamically loads tools based on the task contexts
 
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_7.png)
+- A Planner tool that plans in detail about a task, and a Search tool that finds and retrieves required tools.
 
-and even some exceptions in places.
+- When the model needs something, it asks for the specific tool definition.
 
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_8.png)
+- Only then do you inject that tool’s schema into the context.
 
-Here's the code it generated: [GPT-5.2 Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/e019e27b14d582e1d62eda87d0c73ffb3cb06667)
+This also fixes the experimentation problem. You can add more tools without degrading every session, since most sessions won't load them.
 
-None of the requested features works. Some are not implemented, and some have very fragile implementations.
+### 2. Indexing tools for better discoverability
 
-Seriously disappointed with the model's response :(
+Tool selection gets worse as the tool count grows, even if every tool is well described.
 
-- **Cost:** $0.9 (ballpark for API users)
+So don’t rely on the model to “scan” a long list of tools. Give it a way to search tools like an index.
 
-> ℹ️ It's included in the plan for subscription users.
+The pattern is:
 
-- **Duration:** 7min 34sec (+55 sec)
+- Maintain a small searchable catalogue of tools. Effectively, in a vector database with hybrid search (full text match + vector embeddings of tool definitions)
 
-- **Code Changes:** +203 lines, -32 lines
+- Each entry has: tool name, one-line purpose, key parameters, and a few example queries.
 
-- **Token Usage:** total=269,195 input=252,810 (+1,560,192 cached) output=16,385 (reasoning 8,704)
+- Let the model search the catalogue with natural language.
 
-Here's the model `/status` of the run:
+- Return the top 3-5 matches, then load only those schemas.
 
-![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_9.png)
+It also makes tool naming less painful. Even if a tool name is slightly off, the index can still match on description.
 
-### Gemini 3 Pro
+### 3. Handling Large Outputs outside the LLM’s context
 
-This turns out to be the fastest of all, with a total time of **7min 14sec** (5min 23sec API time and 1min 51sec Tool time).
+This is the biggest lever.
 
-The test runs successfully, and even the fallback error is handled properly.
+Most MCP failures occur when tools return a large payload, and you paste it straight back into the model. Once you do that, the session starts forgetting earlier goals and acting strangely.
 
-![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_10.png)
+The fix is to stop treating the model like your output buffer.
 
-Now, it's time to test the actual implementation. Surprisingly, Gemini 3 Pro got this task done the best.
+Instead:
 
-![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_11.png)
+- Store large outputs outside the prompt (local file, object store, database, even a temp cache).
 
-As you can see, the same request in the second or third run returns the response instantly in 6-7 milliseconds from the cache implementation.
+- Return a small summary plus a handle (file path, ID, cursor, pointer).
 
-The final implementation is fully working, compiles, and runs successfully.
+- Models are extremely good at file operations, and storing large blobs in file storage and letting the model retrieve only what’s needed can go a long way.
 
-- **Cost:** $0.45 (approximate)
+The model should never be forced to read 200 KB of JSON just because the tool had it available.
 
-- **Duration:** 7min 14sec (5min 23sec API time, 1min 51sec Tool time).
+### 4. Programmatic Tool Calling or CodeAct
 
-- **Code Changes:**
+LLMs are extremely performant at writing code. So, instead of giving LLMs direct MCP tools, it's better to give a workbench where they can write glue code for MCP tool chaining and execute it to get outputs.
 
-- **Token Usage:** 746K (input + cache read), 11K output
+Instead of LLMs calling a tool, waiting, reading the result, then deciding the next tool call (and repeating that cycle over and over), LLMs** write a small chunk of code inside a code execution container that calls your tools as functions**. That code can loop, branch, filter, aggregate, and stop early without requiring a new model round-trip for every step.
 
-Here's the model `/usage` of the run:
+The reason this matters for MCPs is context.
 
-![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_12.png)
+With traditional tool calling, every intermediate result is included in the chat and consumes token space. With programmatic tool calling, **the intermediate tool results are processed inside the code execution environment and do not enter Claude’s context**. Claude only sees the final output of the code, which is usually a much smaller summary.
 
-### Test 2: Tool Router Agent Build (GitHub Triage)
+[Anthropic’s guidance](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling) is that it pays off most when you have any of these patterns:
 
-For this, we will build everything on top of our Kanban repo, keeping the concerns separated.
+- Large datasets where you only need aggregates or summaries
 
-> ℹ️ As I said, this is a real test for these models, to see how well they can organize things, separate concerns, and manage the overall project build.
+- Multi-step workflows with 3 or more dependent tool calls
 
-Since the prompt is a bit longer, I've linked it separately. You can find it here: [Tool Router Agent Build Prompt](https://gist.github.com/shricodev/27ae260a70a8f0196b5d38fb714ea0fe).
+- Filtering, sorting, or transforming tool results before Claude sees them
 
-Let's start off with Opus 4.5, the model with the highest SWE and many other benchmarks.
+- Parallel operations across many items (for example, checking 50 things)
 
-### Claude Opus 4.5
+- Tasks where intermediate data should not influence reasoning
 
-Opus got the Tool Router triage demo working end-to-end inside the Kanban repo (kept under `/labs` as we requested). It spins up a Tool Router session with GitHub and returns a real issue URL, which is a solid outcome for dogfooding Tool Router now that it has moved out of beta into the stable release.
+There is some overhead because you are adding code execution to the loop, so it’s less useful for a single quick lookup.
 
-The run stats from Claude Code:
+## We’ve already solved it
 
-- **Cost**: $2.88
+Before this became mainstream knowledge (thanks to Anthropic’s[ Blog post](https://www.anthropic.com/engineering/code-execution-with-mcp)), we had already implemented the pattern at scale with [Rube](https://rube.app/).
 
-- **Duration**: 12min 60sec (API), 22min 46sec (wall)
+It’s an MCP server with meta tools that implements the above design patterns and more. This is a wrapper over our core tool infrastructure. You can access all our [877 SaaS toolkits](https://composio.dev/toolkits) without the headaches of implementing authentication.
 
-- **Code Changes**: +1,176 lines, -294 lines
+Here’s what we’ve got in Rube MCP.
 
-![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_13.png)
+## Discovery & Connection Tools
 
-Here's the code it generated: [Opus 4.5 Agent Build Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/18ee83e288479434c2365d858716450250e888dc)
+## Execution Tools
 
-Here's a demo:
+## Recipe Tools (Reusable Workflows)
 
-That said, it is not perfectly implemented:
+## Typical Workflow
 
-- **Hardcoded tool names:** It's hardcoding specific tool names explicitly. What if the tool names change in the future? The code breaks instantly, which defeats the entire purpose of using a router.
+1. **RUBE_SEARCH_TOOLS** → Find tools for your task
 
-- **Similarity matching is weird:** Even with the exact same issue title, it fails to flag an issue as a duplicate.
+1. **RUBE_MANAGE_CONNECTIONS** → Ensure apps are connected
 
-and there could be many more...
+1. **RUBE_MULTI_EXECUTE_TOOL** → Execute the tools
 
-Still, this is a great head start. The demo works, the UI is there, and it’s close enough that a couple of fixes could make it workable, and genuinely this is a great start.
+1. **RUBE_REMOTE_WORKBENCH** → Process large results if needed
 
-### GPT-5.2 Codex
+1. **RUBE_CREATE_UPDATE_RECIPE** → Save as reusable recipe (optional)
 
-In the first run, the model gave a decent response with a decent UI, but I noticed it uses the old version of the Composio API.
+## How to use Rube with Claude CoWork
 
-![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_14.png)
+The process is essentially the same as adding any Remote MCP servers.
 
-Now, this is going to be a test where the model is tested explicitly without much human help. I thought to give this an update on how to use the new API, but it still resulted in an error:
+1. Head to [Rube.app](http://rube.app/)
 
-![Image 14](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_15.png)
+1. Click on Use Rube
 
-Even more weird is that, even though the request failed, the API returns 200 OK, which is insane. From this point onward, I stopped as this does not seem to be fixing anytime soon.
+1. Copy the code `https://rube.app/mcp`
 
-![Image 15](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_16.png)
+1. Open your Claude App and go to the connectors
 
-Here's the code it generated: [GPT-5.2 Agent Build Code](https://github.com/shricodev/kanban-ai-realtime-localization/commit/9148bac2c1d70fe657c35ac27d983ee9a4c49abf)
+1. Paste the MCP URL
 
-Here are the run stats from GPT-5.2-Codex:
+1. And…You’re done.
 
-- **Duration:** 5 min 15 sec (+20 sec attempted fix)
+1. Ask whatever you want. You’ll be prompted to authenticate with the apps you need. Then leave it upto Claude.
 
-- **Code Changes:** +1,682, -86
+## Some cool examples that I use every day
 
-- **Token Usage:** total=201,382 input=186,265 (+432,640 cached) output=15,117 (reasoning 6,912)
+### 1. Analyse blog post performance from Google Search Console and create Notion files
 
-### Gemini 3 Pro
+### 2. Converting the Google Sheet to Notion
+[https://youtu.be/PsPjcFp4-iY](https://youtu.be/PsPjcFp4-iY)
 
-Now, this turned out even weirder. Almost every other time, it kept hitting a "potential loop" after about 13-14 minutes of runtime with incomplete code.
+## End Note
 
-The run usually resulted in the following loop which eventually halted the request:
+Claude CoWork is really great. If you want to take yourself to the next level, add all the apps you use. Rube is the one you should be using. 
 
-![Image 16](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_17.png)
 
-- **Cost:** $6.3 (approximate)
 
-- **Duration:** 14min 7sec (API), 30min 7sec (wall)
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_6.png)
 
-- **Token Usage:** 12,622,153 (input + cache read), 24K output
-
-![Image 17](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_18.png)
-
-I couldn't even get the final build of the project, and it just cost me money with no usable output. Disappointing!
-
----
-
-## Final Thoughts
-
-At least from this test, I can conclude that you can’t really expect a model to work great in projects like this, or even more complex ones, at least not right now. Even when they seem to work well, they often don’t.
-
-If I were to go ahead and fix the problems one by one, it would take me nearly as long as building it from scratch.
-
-If I compare the results across models, Opus 4.5 definitely takes the crown. But I still don’t think we’re anywhere close to relying on it for real, big production projects. The recent improvements are honestly insane, but the results still don’t fully back it up.
-
-For now, I think these models are great for refactoring, planning, and helping you move faster. But if you solely rely on their generated code, the codebase just won’t hold up long term.
-
-And yeah, this never really ends. Better models will come, we’ll keep running similar tests, and the results will get slightly better each time. But for now, I don’t see this as “use it and ship it” for production, at least not in the way people hype it up.
-
-Let me know your thoughts in the comments. Would love to chat.
-
-![Image 18](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_19.png)
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/claude/image_7.png)

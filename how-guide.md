@@ -1,290 +1,203 @@
-OpenCode has recently gained significant popularity in the open-source space. It’s an alternative to Claude Code.
+LangChain recently introduced [LangSmith Agent Builder](https://smith.langchain.com/), a no-code tool to build agents with natural languages and its making quite the buzz.
 
-But what if I told you could 100x your Opencode experience with just one MCP?  Yes, with [Rube](https://rube.app/), that’s totally possible. But wait, what is possible?
+Instead of relying on user setting up the nodes and edges, it allows a chat-based interactions, where user just need to define the goal and system generates the prompt, connects tools and setup triggers automatically.
 
-After building a thousand managed MCP integrations and speaking with countless users, we found that while MCP is a force multiplier, it still has physical limitations. Adding even a single GitHub server will take 20k tokens from your LLM's context window; adding Jira/Linear, Supabase, etc., will essentially choke the models. There is nothing novel in it; most industry folks are already aware of this. 
+It built on top of [LangChain’s deep agent’s ](https://docs.langchain.com/oss/python/deepagents/overview) framework and supports planning, persistent memory, and multi-step tasks for complex workflow.
 
-So, how do we solve this? 
+However, when it comes to tool’s I felt it pretty limited, even connecting mcp was not straightforward, I had to struggle a bit to use remote MCPs.
 
-By exposing a few meta tools (Search, Planner, Bash, Remote Workbench, etc). When the agent searches for tools, the search tool fetches only relevant tools from Composio-managed apps, ensuring the LLM's context space remains clean. 
+So, I did a manual digging and found the issues to both problems, and this blog covers the fix along with few use cases.
 
-For complex issues, it uses a remote workbench or a bash script to chain multiple tools together, and instead of dumping the large artefacts directly into the context, Rube stores them in a file system and fetches the results as needed. 
-
-There’s more to it: OAuth handling, healing loop when tool execution fails, and more. We are doing a full technical write-up for the same, will share on socials, so do [follow us ](https://x.com/composio)for Rube/Tool router breakdown.
-
-Here in this blog post, I’ll walk you through how to set up Rube MCP with **Opencode**.
-
-### TL DR;
-
-- Rube MCP plugs into **OpenCode** once and instantly unlocks hundreds of tools without the annoying manual MCP wiring.
-
-- Automate code reviews and send off clean summaries straight to Gmail or Slack using Rube’s mail tools.
-
-- Backend setup becomes trivial when Rube creates and seeds Supabase databases with text instructions and LLM commands.
-
-- Turn project insights into polished X threads and auto-save them into Notion with a single prompt.
-
-- OpenCode + Rube turns repetitive dev work into background noise so you can actually focus on building.
+Let’s get started!
 
 ---
 
-## Install OpenCode
+### TL; DR
 
-Let’s start with installing OpenCode.
+- **LangSmith** Agent Builder lets you build AI agents through chat instead of wrestling with nodes and edges, but the MCP connection is secretly broken.
 
-Head to the terminal and install it using:
+- Rube MCP unlocks 900+ tools instantly-Gmail, Calendar, LinkedIn, Exa-without auth headaches or tool selection chaos once you apply the manual fix.
 
-```shell
-npm i -g opencode-ai
-```
+- Email triage becomes autopilot when agents fetch unread Gmail, categorize by urgency, and send consolidated summaries without you lifting a finger.
 
-or use for the latest:
+- Calendar briefings turn intelligent when agents pull today's schedule, research external contacts via LinkedIn, and email you a personalized day-ahead report.
 
-```shell
-npm i -g opencode-ai@latest
-```
-
-Once done, verify it by:
-
-```shell
-opencode
-```
-
-It will open the TUI like this:
-
-![opencode](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
-
-Now let’s connect it with Rube MCP.
+- LinkedIn candidate sourcing gets surgical precision as agents calibrate with 5 samples, refine criteria iteratively, then deliver 30 qualified profiles matching your exact requirements.
 
 ---
 
-## Connect OpenCode with Rube MCP
+## Set Up MCP Server in LangSmith Agent Builder
 
-Connecting rube mcp with OpenCode is straightforward:
+For demonstration, we will go with hosted[ Rube MCP](https://rube.app/) server as it allows me to access 900+ tools without worrying about auth, tool selection, query management and tool calling orchestration. 
 
-- Go to[ the Rube MCP](https://rube.app/) site.
+Here is what to do:
 
-- Signup / Login
+- Head over to [Rube ](https://rube.app/chat)& Login / Create Account
 
-- Head to Add Rube → MCP URL → Generate Token and copy it.
+- In left side panel select Use Rube → MCP URL → Copy it!
 
-- Create a new folder `open-code` and open it.
+- Now head to LangSmith agent builder and Login / Create Account (important that you select no-code experience)
 
-- Inside, create a new file called `opencode.json` 
+- Within LangSmith Agent Builder, click ⚙️ Settings → MCP Servers → Add MCP Servers
 
-- Open it with File Explorer, nano/vim, and paste the following code. 
+- In the new modal put 
 
-```shell
-{
-  "$schema": "https://opencode.ai/config.json",
-  "mcp": {
-    "rube_mcp": {
-      "type": "remote",
-      "url": "https://rube.app/mcp",
-      "enabled": true,
-      "headers": {
-        "Authorization": "Bearer <api-token>"
-      }
-    }
-  }
-}
+- After few seconds, a pop up will appear asking to verify, hit verify and you need to re-login to rube / the tool.
+
+However, it’s not over yet, you can’t use the tool yet!
+
+If you go now to agent builder workspace, select* Create manually instead,* you will only see default tools (probably a bug), so to fix it, you need to click on MCP → fill in same details and revalidate. 
+
+After few seconds you will see tools listed under the mcp server name you added, in our case it’s RUBE. 
+
+![Rube MCP Server Showing Tools](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
+
+> NOTE: Though I used rube mcp server for demo, you can use any other using same technique, till they don’t fix the issue!
+
+Now let’s see how mcp server work together with LangSmith Agent Builder to handle daily odd jobs.
+
+---
+
+## How to Use MCP server with LangSmith Agent Builder 
+
+The process at Agent Builder is slightly different than rest of the tool you might have used!
+
+It actually a single [agent.md](http://agent.md/) file behind the scenes, with addition of folders like tools and skills as needed. 
+
+When you create agent, these file changes in real time based on instructions and can later be reviewed.
+
+However, the above complexity is hidden behind a chat interface that allow user to prompt what they want to build, and the system take care of the rest. 
+
+So, let’s use it for ease of understanding, by building 3 agents (easy, medium, complex).
+
+### 1. Email Triage Agent
+
+The 1st agent will be a simple one, use the agent to fetch all the emails and triage them into Important, General & Rubbish.
+
+Put in the following prompt to in the chat window & hit enter.
+
+```plain text
+Build a agent that uses Rube MCP to fetch only unread emails from Gmail. For each email, analyze the sender, subject, and content, then triage into exactly three labels: Important, General, Ignore based on urgency, relevance, and action required. After processing all unread emails, return a single consolidated summary with bullet points grouped by label, including sender, subject, and a one-line intent per email. Do not modify, reply, or archive emails. Output the summary only after the task fully completes.
 ```
 
-Now open the OpenCode again and type `/mcp` and it will show:
+Now the agent builder will ask you few clarifying questions:
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
 
-You can even verify this using prompting OpenCode:
-
-```shell
-Do you have access to Rube MCP?
-```
-
-If you get an answer like this, it means we are all set:
-
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-> Note: if you are new to MCP, don't change anything. If new to rube, for first time it ask for OAuth for each tool.
+Once you answer these, like I have done, it will combine metadata, toolbox, instructions and generate an agent overview. 
 
-Now let's see a few use cases of Rube in OpenCode.
+Hit create and your agent is created just like that!
 
----
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
 
-## 1. Using OpenCode to automate Code Review & Update 
+To test the agent, in the left chat window enter:
 
-For the 1st task, we will ask OpenCode to find bugs across all files in a code repository, prepare a report, and send it to [Gmail](https://rube.app/apps). (can use [Slack](https://rube.app/apps)[ ](https://rube.app/apps)as well)
-
-Paste the following prompt:
-
-```shell
-Act as an autonomous code auditor. Given access to a source code @ repository, recursively scan all files, detect bugs, vulnerabilities, logical errors, performance issues, and bad practices, classify them by severity, suggest concrete fixes, and generate a structured report (summary, critical issues, file-wise findings, recommendations). Use Rube MCP to handle the Gmail task and send the full report to devloper.hs2015@gmail.com. At the end, output a concise execution summary of all tasks completed. Prioritize real execution over explanation; keep results actionable and production-ready.
+```plain text
+Triage my unread Gmail emails using and email me the summary
 ```
 
-In simple terms, the prompt asks the LLM to review the codebase, identify bugs, generate a summary, and email it to the user. The output should include a summary and a link to email. And all this should be done using rube’s Gmail tool. 
+Result:
 
-Yup, we don't have Gmail support in Antigravity, but rube helps here!
+As can be seen, it calls the gmail tool via rube mcp we added and did the task for us!
 
-And here’s the Output it generated:
+> **Note**: To keep things simple, I have kept the text in markdown (apparently no rendering support in Gmail). Feel free to optimize it further.
 
-> Note: you may need to login to Gmail, if using first time.
 
-For simplicity, the report is kept short. Feel free to expand it using a format you prefer. 
 
-Now let’s look at the 2nd use case!
+### 2. Daily Calendar Briefing Agent
 
----
+Next up let’s spin up an agent that fetches the calendar and other tools, generates a daily briefer and send it to gmail. 
 
-## 2. Using Rube MCP to handle Supabase Database for Apps
+Enter the following prompt in the chat window:
 
-For the next task, let’s ask OpenCode to handle the database creation via Rube MCP for a vehicle parking management app. 
-
-Paste the following prompt:
-
-```shell
-Build a minimal Parking Management System using Python, Supabase, HTML, and CSS with a Google Material Minimal aesthetic.
-
-Project Setup
-Create a new folder named `vms` and build the entire application inside it.
-Create a `.venv` using `python3` and activate it before installing dependencies.
-Use Supabase project ID: `<supabase-project-id>`.
-
-Phase 1: Database Setup (via rube_mcp)
-Use rube_mcp to create database `parking-system` and models:
-User(id, name, email, created_at)
-Admin(id → User.id, role, created_at) [predefined]
-ParkingLot(id, name, location, total_spots)
-ParkingSpot(id, lot_id → ParkingLot.id, spot_number, is_available)
-Reservation(id, user_id → User.id, spot_id → ParkingSpot.id, start_time, end_time, status)
-Establish all relationships and seed: 1 Admin, 3 ParkingLots, 10–15 Spots per lot, 5–10 Users, 8–12 Reservations.
-
-Constraints
-All Supabase operations via rube_mcp, production-ready code, env vars for secrets, clean error handling.
-
+```plain text
+You are a daily calendar assistant. Each morning, get today’s date (dd-mm-yyyy), fetch all events for the day, sort them by time and importance, and identify busy periods, gaps, and back-to-back meetings. Briefly research external meetings if needed using tavily_linkedin_search accessed via rube mcp. Send a concise email summary of the day via Gmail.
 ```
 
-**In summary: **prompt the LLM to create a parking system model and define the relationship, and then pull in mock data defined in Supabase’s `student-db` using crud api’s. 
+> Ensure you add the TAVILY_API_KEY & GEMINI_API_KEY by selecting ⚙️ at top as well, for it work fine.
 
-Yup, we don't have Supabase support in OpenCode, but rube helps here!
+Now to test:
 
-Here is the output:
-
-Notice how OpenCode defined the task, and worked on it incrementally, while OpenCode + rube mcp handled the heavy lifting
-
-Now let’s look at the final individual task, which we will do with OpenCode + Rube
-
----
-
-## 3. Using Rube MCP to generate a Build Log-based Social Media Post for X
-
-For the final task, we will ask OpenCode to draft us an X thread by analysing the entire project (handled by OpenCode) and save it to Notion (handled by rube mcp)
-Here is the prompt:
-
-```shell
-Analyze the entire @vehicle-parking-app project to identify its key problems, milestones, and achievements. Then, write a 5-tweet engaging X(Twitter)thread using a problem–solution narrative. The first tweet should hook readers, and the last should include a call-to-action. Keep each tweet under 250 characters, separated with "1/". Use only bold or italic formatting (no headings or code). Save the final formatted thread to the Notion page at https://www.notion.so/appdev1/Project-Devlogs-2e3b43216e448044941ec4ea71ca30cc. Use rube_mcp for notion. 
+```plain text
+send me 21/01/2016 briefing please
 ```
 
-In essence, the prompt asks OpenCode to analyse the project, find its key problems, milestones and achievements, use them to generate an engaging X thread based on given instructions and save it to the given Notion sheet.
-How it worked out for me:
+Results:
 
-The OpenCode didn’t just create the task:
+As can be seen, it calls the rube calendar & Gmail tool via rube mcp we added and sent me a email. It seems I have a scheduled travel, so it wrote a customized message for me. (ignore markdowns)
 
--  It launched its subagents to focus on analysing the project 
 
-- while it performs the notion page retrieval, 
 
-- Then use the results of the subagent to generate the thread and 
+### 3. LinkedIn Candidate Sourcing Agent
 
-- Add it into given Notion page
+As for last agent, let’s make an agent that can filter out / source candidate from LinkedIn based on provided criteria. 
 
-Pretty handy, isn’t it?
+We will use rube mcp to call exa-tool and pass in the inputs and let it handle the rest. 
 
-But so far, we have looked at individual use cases. OpenCode + rube combination can do more. Let’s give it a final challenge!
+Paste the following prompt in chat window:
 
----
+```plain text
+You are an expert LinkedIn candidate sourcing agent. When a user requests candidates, first gather role requirements (skills, seniority, location, constraints) and ask clarifying questions if needed. Begin with a calibration search of exactly 5 candidates using the Exa search protocol via Rube MCP, returning real LinkedIn profiles only (name, role, company, qualifications, LinkedIn URL). 
 
-## Capstone Task
-
-For the final task, let’s ask rube to create an image tools webapp that has 3 -4 functionalities, similar to [pinetools.com](http://pinetools.com/), but in Python, Flask, core web dev frameworks and most heavy lifting done by rube integrations for AI tools. 
-
-Here goes the prompt:
-
-```shell
-Build a simple MVP-level image creation web app as a new project named image-tools. 
-
-Inside the project, first create and activate a Python 3 virtual environment (venv), then build the full application. 
-
-Use Python (Flask) for the backend, SQLAlchemy for the local database, and HTML, CSS, and vanilla JavaScript for the frontend. 
-
-The UI/UX should follow a Google-inspired minimalist design — clean, centered, and modern. 
-
-The app will have four AI-powered tools: Post Complement Image Creation, Theme Change, Background Removal, and Prompt-Based Image Generation. 
-
-All image creation features should use Google Gemini API through Rube MCP (gemini) integration, where clicking a tool’s button triggers Rube MCP in the backend to process the request and return results. 
-
-Flask handles routing and data flow, while Rube manages all AI automation for scalable, real-time image generation.
-
-Follow the best security practices.
+Never fabricate data. Ask for feedback and refine criteria iteratively until the user confirms alignment. Only after explicit confirmation, run a full-scale Exa search via Rube MCP (default 30 candidates), list candidates in chat. Exclude candidates already at the hiring company. Clearly state limitations if results are sparse. Prioritize precision, transparency, and iteration over volume.
 ```
 
-In a nutshell, the prompt asks OpenCode to build an image editing tool that can use rube mcp to:
+> Ensure you add EXA_API_KEY and GEMINI_API_KEY in ⚙️ at top. Also select Gemini 3.0 Model from Model Selector 
 
-- Generate complement image to the provided post
+Let’s test it out:
 
-- Change the theme of a given image (defaults)
+```plain text
+Source LinkedIn candidates for a Senior Backend Engineer. Focus on Python, Django, AWS, 5–8 years' experience, based in India.
+```
 
-- Remove the background of the provided image 
+Results:
 
-- Generate an image based on a prompt
+Amazing it called the exa tool via rube mcp, we added earlier and showed potential candidate in chat based on criteria's.
 
-while keeping the UI**-UX** minimal and simple (google inspired)
+This is just a glimpse of what is automations are possible with LangSmith Agent Builder & and rube mcp.  Feel free to expand these base examples as per your liking and get rid of those boring mundane task.
 
-Here is the output:
-
-Not only did OpenCode make the website one-shot with the power of Opus 4.5, but it also handled the DB (SQLite), multiple tool integrations, state handling, Ruber MCP routing, and UI/UX. 
-
-This concludes our final build. Here are a few of my final thoughts on OpenCode + rube integrations.
+Time to look at the final take!
 
 ---
 
 ## Conclusion
 
-With OpenCode and Rube, the repetitive task became child’s play, and the best part is that this same workflow can be incorporated into various domains.
+LangSmith Agent Builder paired with Rube MCP turns complex agent workflows into effortless no-code magic, handling everything from email triage to candidate sourcing.
 
-Though OpenCode has been developed for the last 15 years, it packs some serious punch and with Rube MCP as a partner, the only limit is your imagination.
+Though the toolset starts limited, a quick MCP server like rube unlocks 900+ tools, letting you automate daily mundane task with chat-based prompts.
 
-So, head to Rube MCP, connect it to OpenCode, pull up some PRD doc, give it to Claude opus 4.5 / Claude sonnet 3.5 / Gemini3 models with a kickass prompt, and let the tool do its thing while you focus on software/automation architecting part. 
+So, connect Rube to LangSmith, drop in a goal like "build me a reseach agent…” add API keys, connect to tools/ mcp’s and watch it build, run, and deliver - while you reclaim your time for high-impact work.
 
-Happy Building.
+Happy Automating.
 
 ---
 
 ## FAQ
 
-**Q1. How do I integrate Rube MCP into OpenCode?**
+**Q1: How do I fix LangSmith Agent Builder not showing MCP tools after connection?**
 
-**Answer:** Generate a token from the Rube dashboard and paste the provided code directly into your `opencode.json` config.
+A: Click "Create manually" in Agent Builder workspace, select MCP, re-enter server details and revalidate -tools will appear under your MCP server name after verification.
 
+**Q2: What is Rube MCP and why use it with LangSmith Agent Builder?**
 
+A: Rube MCP is a hosted server providing 900+ pre-authenticated tools (Gmail, Calendar, LinkedIn, Exa) that integrate with LangSmith through OAuth 2.1 without manual auth configuration.
 
-**Q2. How do I verify that Rube is successfully connected to OpenCode?**
+**Q3: Can LangSmith Agent Builder create agents without coding experience?**
 
-**Answer:** In OpenCode check the bottom or use `/mcp` command editor, in the popup, and confirm that the Rube tool appears in your active list.
+A: Yes, LangSmith uses chat-based prompts to auto-generate system prompts, connect tools, and build agents—no node setup required, built on LangChain's Deep Agents framework.
 
+**Q4: What agents can I build with LangSmith and Rube MCP integration?**
 
-**Q3**. **Do I need to configure credentials for all 500+ tools manually?**
+A: You can build email triage agents, calendar briefing bots, LinkedIn candidate sourcing tools, and any automation combining 900+ tools through natural language instructions.
 
-Answer: No, you configure Rube once, and it dynamically handles connections, requiring only a one-time OAuth login the first time you use a specific tool.
+- name: rube, 
 
+- URL: [https://mcp.notion.com/mcp](https://mcp.notion.com/mcp),
 
+- select OAuth 2.1 & hit save.
 
-**Q4. Can Rube handle tasks for platforms not natively supported by Antigravity?**
-
-**Answer:** Absolutely; Rube acts as a bridge to fetch data and perform actions on external platforms like Figma, Supabase, and Gmail that the native IDE doesn't support yet.
-
-
-
-**Q5**. **How can I optimize the code generation quality for complex tasks like Figma conversions?** **Answer:** Ensure you provide rich context, such as clearly naming Figma layers and color styles, so the model understands the specific structural requirements.
-
-- Replace the `<api-token>` with copied token and save it:
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)

@@ -1,171 +1,233 @@
-In this guide, I will share the process for customizing the auth config for **Stripe**. So, let’s begin.
+In this guide, I’ll walk you through the process of customizing the auth config for **Zendesk**. So, let’s begin.
 
 ---
 
-## Setting up Stripe
+## Setting up Zendesk
 
-In this section, we’ll go through the process of setting up **Stripe** and creating either an **API Key** or an **OAuth application**.
+In this section, we’ll go through the process of setting up Zendesk and creating an OAuth client.
 
-> NOTE: If you already have a Stripe API Key or OAuth credentials (Client ID + Client Secret), you can skip directly to the Composio setup section.
+> NOTE: If you already have a Zendesk OAuth client and access to the Client ID and Client Secret, you can skip this section.
 
 ---
 
-### Option 1: Using Stripe API Key (Simplest)
+### Step 1: Create a Zendesk OAuth Client
 
-### Step 1: Log in to Stripe Dashboard
+1. Log in to your **Zendesk Admin Center**.
 
-1. Go to the Stripe Dashboard.
+1. In the left sidebar, click **Apps and integrations**.
 
-1. From the left-hand menu, click on **Developers → API Keys**.
+1. Select **APIs**.
+
+1. Open the **OAuth clients** tab.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
 
----
-
-### Step 2: Copy Your Secret Key
-
-1. Under **Standard keys**, you will see:
-
-1. Copy the **Secret Key**. This is what you’ll need for Composio.
+1. Click **Add OAuth client**.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_2.png)
 
- Keep this secret safe and never expose it in client-side code.
-
 ---
 
-### Option 2: Using Stripe OAuth2 (Recommended for SaaS / Multi-user Apps)
+### Step 2: Register Your OAuth Client and Generate Credentials
 
-### Step 1: Create a Stripe Connect Application
+After clicking **Add OAuth client**, you’ll see the OAuth client creation form.
 
-1. Go to your Stripe Dashboard → Settings → Connect.
+1. Fill in the required fields:
 
-1. Scroll to **Integration settings** and click **+ Add Integration**.
+![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
 
----
+1. Click **Save**.
 
-### Step 2: Register Your OAuth App
+Once saved, Zendesk will immediately generate:
 
-Fill in the details:
-
-- **Name:** Anything recognizable (e.g., `Composio-Integration`).
-
-- **Redirect URL:**
-
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
-```
-
-This is required for Composio to complete the OAuth handshake.
-
-- **Website / Privacy Policy / EULA:** Optional.
-
----
-
-### Step 3: Copy OAuth Credentials
-
-After saving, Stripe will generate:
-
-- **Client ID** (starts with `ca_...`)
+- **Client ID(Identifier)**
 
 - **Client Secret**
 
-Copy these credentials somewhere safe.
+Copy these values and store them securely, you’ll need them shortly.
 
 ---
 
-### Step 4: Configure Authorized Redirect URI
+### Step 3: Configure Redirect URI
 
-Ensure your Stripe app has the following redirect URL added:
+Ensure the following Redirect URL is present in your OAuth client configuration:
 
 ```plain text
 https://backend.composio.dev/api/v3/toolkits/auth/callback
 ```
 
-No trailing slash. Protocol must be `https`.
+**Important:**
 
-That’s all you need to set up on the Stripe side.
+- No trailing slash
+
+- Must use `https`
+
+---
+
+### Step 4: OAuth Scopes
+
+Zendesk does **not** provide a UI to configure OAuth scopes in the Admin Center.
+
+Instead, OAuth scopes are **requested at authorization time** as part of the OAuth flow.
+
+Zendesk supports the following OAuth scopes:
+
+- `read` → Read access to Zendesk resources
+
+- `write` → Create and update Zendesk resources
+
+- `delete` → Delete Zendesk resources
+
+When using Composio:
+
+- You **do not select scopes in Zendesk**
+
+- You **define scopes in Composio’s Auth Config**
+
+- Composio automatically includes the selected scopes in the OAuth authorization request
+
+Example scopes configuration in Composio:
+
+```plain text
+read write
+```
+
+> Note: Zendesk permissions are also constrained by the user’s role (agent, admin, etc.), even if broader OAuth scopes are requested.
 
 ---
 
 ## Creating the Auth Config in Composio
 
-With your Stripe credentials ready, navigate to the [Composio dashboard](https://platform.composio.dev/).
+With your OAuth credentials ready, navigate to the [Composio dashboard](https://platform.composio.dev/) to configure Zendesk authentication.
 
-1. Click on **Create Auth Config**.
-
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
-
-1. From the toolkit list, select **Stripe**.
+1. Click **Create Auth Config** to view all available toolkits.
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
 
-1. For API Key auth → choose **API Key**.
-
-1. For OAuth2 auth → choose **OAuth2**.
+1. In the sidebar that opens, choose **Xero** for the toolkit. Stick with all the default settings for now, as we'll configure it shortly.
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
 
-1. (Optional) Check **Use your own developer authentication** if you want to use your custom Stripe app instead of Composio’s default.
-
----
-
-### Step 4: Fill in Your Auth Details
-
-On the **Manage Auth Config** page:
-
-- For **API Key auth**:
-
-- For **OAuth2 auth**:
+1. Ensure authentication is set to **OAuth2** (not Bearer Token).
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
 
-- **Client ID** → Paste from Stripe
+1. Enable **Use your own developer authentication**.
 
-- **Client Secret** → Paste from Stripe
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
 
-- **Redirect URI** → Must match exactly:
+1. Click **Create Zendesk Auth Config**.
+
+![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_8.png)
+
+---
+
+### Configure the Auth Config
+
+1. Open the **Manage Auth Config** tab.
+
+1. Paste the **Client ID** and **Client Secret** you copied from Zendesk.
+
+---
+
+### Scopes Supported by Composio
+
+Below are the scopes supported by Composio for Zendesk. Add scopes based on your integration requirements:
+
+```plain text
+read write delete
+```
+
+---
+
+## Base URL for Zendesk
+
+All Zendesk API requests go through:
+
+```plain text
+https://{your_subdomain}.zendesk.com/api/v2/
+
+```
+
+Replace `{your_subdomain}` with your Zendesk account subdomain.
+
+---
+
+## How Scopes Are Applied
+
+When a user connects their Zendesk account, scopes are passed as part of the OAuth authorization process.
+
+While using **Composio**:
+
+- Composio automatically manages the authorization URL
+
+- You define scopes inside the **Auth Config → Scopes** field
+
+- Composio exposes **fine-grained, resource-level scopes**
+
+- Internally, Composio maps them to Zendesk’s coarse scopes:
+
+For **Zendesk**, Composio provides **fine-grained resource-level scopes** that map internally to Zendesk’s coarse OAuth scopes. These are the scopes you can select inside Composio’s Auth Config, even though Zendesk itself only recognizes the broad `read`, `write`, `delete` scopes.
+
+Here’s the **actual Composio Zendesk scope list**:
+
+```plain text
+tickets.read
+tickets.write
+users.read
+users.write
+organizations.read
+organizations.write
+groups.read
+groups.write
+views.read
+views.write
+macros.read
+macros.write
+triggers.read
+triggers.write
+automations.read
+automations.write
+webhooks.read
+webhooks.write
+```
+
+---
+
+## Final Step
+
+Once everything is set up:
+
+1. Copy the **Auth Config ID** (starts with `ac_`)
+
+![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_9.png)
+
+1. Store it securely using your secret manager
+
+1. Use it in your application code to authenticate Zendesk via Composio
+
+Your custom **Zendesk auth config** is now ready to go 
+
+
+
+- **Client Name:**
+
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
+
+- **Description:**
+
+- **Redirect URLs:**
+
+Example: `Composio-Zendesk`
+
+Optional description for your integration
 
 ```plain text
 https://backend.composio.dev/api/v3/toolkits/auth/callback
 ```
 
-- **Scopes** → Keep defaults, unless you need custom access.
+- `*:read` → `read`
 
-**Scopes supported by Composio:**
+- `*:write` → `write`
 
-Below are all the scopes that **Composio** supports for Stripe. You should add these scopes based on your integration requirements:
-
-```plain text
-read_only,read_write
-```
-
-These scopes define the permissions your app can request during the OAuth authorization process. It’s essential to select only the scopes necessary for your application's functionality, adhering to the principle of least privilege.
-
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
-
-Click **Create Stripe Auth Config.**
-
----
-
-## Base URL for Stripe
-
-All Stripe API requests go through:
-
-```plain text
-https://api.stripe.com/v1
-```
-
----
-
-Your custom Stripe auth config (API Key or OAuth2) is now ready to use! Copy the auth config ID (`ac_...`) and plug it into your application or workflow via a secret manager.
-
-
-
-
-
-- **Publishable key** (starts with `pk_...`)
-
-- **Secret key** (starts with `sk_test_...` or `sk_live_...`)
-
-- **API Key** → Paste the Stripe Secret Key (`sk_test_...` or `sk_live_...`).
+- destructive actions → `delete` (if required)

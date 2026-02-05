@@ -1,239 +1,183 @@
-In this guide, I’ll walk you through the process of customizing the auth config for **Zendesk**. So, let’s begin.
+In this guide, I’ll share the process for customizing the auth config for **Dropbox**. So, let’s begin.
 
 ---
 
-## Setting up Zendesk
+## Setting up Dropbox
 
-In this section, we’ll go through the process of setting up Zendesk and creating an OAuth client.
+In this section, we’ll go through the process of setting up a Dropbox developer app and obtaining OAuth credentials.
 
-> NOTE: If you already have a Zendesk OAuth client and access to the Client ID and Client Secret, you can skip this section.
+> NOTE: If you already have a Dropbox developer app and access to its Client ID and Client Secret, you can skip this section.
 
 ---
 
-### Step 1: Create a Zendesk OAuth Client
+### Step 1: Create a Dropbox App
 
-1. Log in to your **Zendesk Admin Center**.
+1. Log in to your Dropbox account.
 
-1. In the left sidebar, click **Apps and integrations**.
+1. Visit the **Dropbox App Console**:
 
-1. Select **APIs**.
+  [https://www.dropbox.com/developers/apps](https://www.dropbox.com/developers/apps)
 
-1. Open the **OAuth clients** tab.
+1. Click **Create app**.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
 
-1. Click **Add OAuth client**.
+1. For **Choose an API**, select **Scoped access**.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_2.png)
 
----
+1. For **Choose the type of access you need**, select:
 
-### Step 2: Register Your OAuth Client and Generate Credentials
+  - **App folder** (access only to a specific folder), or
 
-After clicking **Add OAuth client**, you’ll see the OAuth client creation form.
+  - **Full Dropbox** (access to all files)
 
-1. Fill in the required fields:
+    depending on your use case.
 
-  - **Client Name:**
-
-    Example: `Composio-Zendesk`
+1. Enter an app name (e.g., `Composio‑Dropbox`), and click **Create app**.
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
 
-  - **Description:**
+---
 
-    Optional description for your integration
+### Step 2: Client ID and Client Secret
 
-  - **Redirect URLs:**
+Once the app is created:
 
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
-```
+1. You’ll be taken to the app’s settings page.
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
+1. Under the **App key** and **App secret** fields, you’ll see your **Client ID** and **Client Secret**.
 
-1. Once saved, Zendesk will immediately generate:
+  - **App key** → **Client ID**
 
-  - **Client ID(Identifier)**
+  - **App secret** → **Client Secret**
 
-  - **Client Secret**
-
-Copy these values and store them securely, you’ll need them shortly.
+1. Copy both values and save them securely — you’ll need them in Composio.
 
 ---
 
 ### Step 3: Configure Redirect URI
 
-Ensure the following Redirect URL is present in your OAuth client configuration:
+In the Dropbox developer app settings:
+
+1. Scroll to the **OAuth 2** section.
+
+1. Under **Redirect URIs**, click **Add** and enter:
 
 ```plain text
 https://backend.composio.dev/api/v3/toolkits/auth/callback
 ```
 
-**Important:**
+1. Make sure the redirect URI matches exactly , otherwise Dropbox will reject the OAuth flow.
 
-- No trailing slash
-
-- Must use `https`
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
 
 ---
 
-### Step 4: OAuth Scopes
+### Step 4: Configure OAuth Scopes (Permissions)
 
-Zendesk does **not** provide a UI to configure OAuth scopes in the Admin Center.
+Dropbox lets you choose **scopes** that control what your app can access.
 
-Instead, OAuth scopes are **requested at authorization time** as part of the OAuth flow.
+1. In your app settings, go to the **Permissions** tab.
 
-Zendesk supports the following OAuth scopes:
+1. Check the permissions your integration needs, for example:
 
-- `read` → Read access to Zendesk resources
+  - `files.metadata.read` → Read file metadata
 
-- `write` → Create and update Zendesk resources
+  - `files.content.read` → Read file contents
 
-- `delete` → Delete Zendesk resources
+  - `files.content.write` → Modify uploaded files
 
-When using Composio:
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
 
-- You **do not select scopes in Zendesk**
-
-- You **define scopes in Composio’s Auth Config**
-
-- Composio automatically includes the selected scopes in the OAuth authorization request
-
-Example scopes configuration in Composio:
-
-```plain text
-read write
-```
-
-Here’s the **actual Composio supported Zendesk scope list**:
-
-```javascript
-tickets.read
-tickets.write
-users.read
-users.write
-organizations.read
-organizations.write
-groups.read
-groups.write
-views.read
-views.write
-macros.read
-macros.write
-triggers.read
-triggers.write
-automations.read
-automations.write
-webhooks.read
-webhooks.write
-```
-
-> Note: Zendesk permissions are also constrained by the user’s role (agent, admin, etc.), even if broader OAuth scopes are requested.
+You should only request **permissions required** by your integration.
 
 ---
 
 ## Creating the Auth Config in Composio
 
-With your OAuth credentials ready, navigate to the [Composio dashboard](https://platform.composio.dev/) to configure Zendesk authentication.
+With your Dropbox credentials ready, navigate to the **Composio dashboard** at [https://platform.composio.dev/](https://platform.composio.dev/) to configure the authentication settings for Dropbox.
 
-1. Click **Create Auth Config** to view all available toolkits.
-
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
-
-1. In the sidebar that opens, choose **Xero** for the toolkit. Stick with all the default settings for now, as we'll configure it shortly.
+1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
 
-1. Ensure authentication is set to **OAuth2** (not Bearer Token).
+1. In the sidebar, choose **Dropbox** for the toolkit.
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
 
-1. Enable **Use your own developer authentication**.
+1. Ensure authentication is set to **OAuth2** (not API Key).
 
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_8.png)
 
-1. Click **Create Zendesk Auth Config**.
+1. Enable **Use your own developer authentication**.
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_9.png)
 
+1. Click **Create Dropbox Auth Config**.
+
+1. Once created, go to the **Manage Auth Config** tab and fill in the fields:
+
+  - **Client ID** → Paste the App key from Dropbox
+
+  - **Client Secret** → Paste the App secret
+
 ---
-
-### Configure the Auth Config
-
-1. Open the **Manage Auth Config** tab.
-
-1. Paste the **Client ID** and **Client Secret** you copied from Zendesk.
 
 ### Scopes Supported by Composio
 
-Below are the scopes supported by Composio for Zendesk. Add scopes based on your integration requirements:
-
-**Again Composio Zendesk scope list**:
+Below are resource‑level scopes Composio supports for Dropbox. Add only the ones your integration requires:
 
 ```plain text
-tickets.read
-tickets.write
-users.read
-users.write
-organizations.read
-organizations.write
-groups.read
-groups.write
-views.read
-views.write
-macros.read
-macros.write
-triggers.read
-triggers.write
-automations.read
-automations.write
-webhooks.read
-webhooks.write
+email
+profile
+account_info.write
+account_info.read
+files.metadata.write
+files.metadata.read
+files.content.write
+files.content.read
+openid
+file_requests.write
+file_requests.read
+sharing.write
+sharing.read
+contacts.write
+contacts.read
 ```
 
-## Base URL for Zendesk
+> Note: Composio will map these to the Dropbox scopes you enabled in the Dropbox app settings.
 
-All Zendesk API requests go through:
+---
+
+## Base URL for Dropbox
+
+All Dropbox API requests go through:
 
 ```plain text
-https://{your_subdomain}.zendesk.com/api/v2/
+https://api.dropboxapi.com/2/
 ```
 
-Replace `{your_subdomain}` with your Zendesk account subdomain.
+For file content operations, use:
 
-## How Scopes Are Applied
+```plain text
+https://content.dropboxapi.com/2/
+```
 
-When a user connects their Zendesk account, scopes are passed as part of the OAuth authorization process.
-
-While using **Composio**:
-
-- Composio automatically manages the authorization URL
-
-- You define scopes inside the **Auth Config → Scopes** field
-
-- Composio exposes **fine-grained, resource-level scopes**
-
-- Internally, Composio maps them to Zendesk’s coarse scopes:
-
-  - `*:read` → `read`
-
-  - `*:write` → `write`
-
-  - destructive actions → `delete` (if required)
-
-For **Zendesk**, Composio provides **fine-grained resource-level scopes** that map internally to Zendesk’s coarse OAuth scopes. These are the scopes you can select inside Composio’s Auth Config, even though Zendesk itself only recognizes the broad `read`, `write`, `delete` scopes.
-
-Final Step
-
-Once everything is set up:
-
-1. Copy the **Auth Config ID** (starts with `ac_`)
+These are the endpoints for Dropbox API calls.
 
 ![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
 
+---
+
+## Final Step
+
+Once done:
+
+1. Copy the **Auth Config ID** (which starts with `ac_`)
+
+![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_11.png)
+
 1. Store it securely using your secret manager
 
-1. Use it in your application code to authenticate Zendesk via Composio
-
-Your custom **Zendesk auth config** is now ready to go 
+1. Use it in your application code to authenticate Dropbox via Composio

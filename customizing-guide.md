@@ -1,207 +1,239 @@
-In this guide, we’ll walk through how to configure authentication for **Instantly** using **API Token–based authentication** with Composio.
-
-Instantly does **not** support OAuth or public app registration. Instead, it uses **API keys (Bearer tokens)** for authentication.
-
-## Setting Up Instantly
-
-In this section, we’ll generate an API key from Instantly that will be used to authenticate requests via Composio.
+In this guide, I’ll walk you through the process of customizing the auth config for **Zendesk**. So, let’s begin.
 
 ---
 
-### Step 1: Generate an API Key in Instantly
+## Setting up Zendesk
 
-1. Log in to your **Instantly Dashboard**
+In this section, we’ll go through the process of setting up Zendesk and creating an OAuth client.
+
+> NOTE: If you already have a Zendesk OAuth client and access to the Client ID and Client Secret, you can skip this section.
+
+---
+
+### Step 1: Create a Zendesk OAuth Client
+
+1. Log in to your **Zendesk Admin Center**.
+
+1. In the left sidebar, click **Apps and integrations**.
+
+1. Select **APIs**.
+
+1. Open the **OAuth clients** tab.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
 
-1. Navigate to **Settings**
-
-1. Open the **Integrations** or **API** section (label may vary by account)
-
-1. Click **Generate API Key**
+1. Click **Add OAuth client**.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_2.png)
 
-1. Copy the generated API key and store it securely
-
-### API Key Scopes in Instantly
-
-Instantly controls API access using **scoped API keys**.
-
-When generating an API key in Instantly, you must explicitly select the scopes that determine which resources and actions the key can access.
-
-Important
-
-  - Scopes are **fixed at the time of creation**
-
-  - Scopes **cannot be modified later**
-
-  - To change permissions, you must **create a new API key**
-
 ---
 
-### Full-Access Scope
+### Step 2: Register Your OAuth Client and Generate Credentials
 
-Instantly provides a single full-permission scope:
+After clicking **Add OAuth client**, you’ll see the OAuth client creation form.
 
-```plain text
-all:all
-```
+1. Fill in the required fields:
 
-- Grants unrestricted access to **all Instantly API endpoints**
+  - **Client Name:**
 
-- Includes read, create, update, and delete permissions across all resources
-
-- **Not recommended** unless your integration genuinely requires full access
-
-Use this scope with caution.
-
----
-
-### All Available Instantly API Scopes
-
-Below is the **list of API scopes available in Instantly**, as selectable when creating an API key:
-
-```plain text
-all:all | all:create | all:read | all:update | all:delete
-
-ai_agents:all | ai_agents:create | ai_agents:read | ai_agents:update | ai_agents:delete
-
-campaigns:all | campaigns:create | campaigns:read | campaigns:update | campaigns:delete
-
-leads:all | leads:create | leads:read | leads:update | leads:delete
-
-lead_lists:all | lead_lists:create | lead_lists:read | lead_lists:update | lead_lists:delete
-
-analytics:read
-
-accounts:all | accounts:create | accounts:read | accounts:update | accounts:delete
-
-inbox_tests:all | inbox_tests:create | inbox_tests:read | inbox_tests:update | inbox_tests:delete
-
-webhooks:all | webhooks:create | webhooks:read | webhooks:update | webhooks:delete
-
-api_keys:all | api_keys:create | api_keys:read | api_keys:update | api_keys:delete
-```
-
-### Best Practices for Scopes
-
-- Select **only the scopes required** for your integration
-
-- Prefer **resource-level scopes** over global scopes
-
-- Avoid using `all:all` unless absolutely necessary
-
-- Treat scoped API keys as **sensitive credentials**
-
-- Store API keys securely using a secret manager
+    Example: `Composio-Zendesk`
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
+
+  - **Description:**
+
+    Optional description for your integration
+
+  - **Redirect URLs:**
+
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
+
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
+
+1. Once saved, Zendesk will immediately generate:
+
+  - **Client ID(Identifier)**
+
+  - **Client Secret**
+
+Copy these values and store them securely, you’ll need them shortly.
+
+---
+
+### Step 3: Configure Redirect URI
+
+Ensure the following Redirect URL is present in your OAuth client configuration:
+
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
+
+**Important:**
+
+- No trailing slash
+
+- Must use `https`
+
+---
+
+### Step 4: OAuth Scopes
+
+Zendesk does **not** provide a UI to configure OAuth scopes in the Admin Center.
+
+Instead, OAuth scopes are **requested at authorization time** as part of the OAuth flow.
+
+Zendesk supports the following OAuth scopes:
+
+- `read` → Read access to Zendesk resources
+
+- `write` → Create and update Zendesk resources
+
+- `delete` → Delete Zendesk resources
+
+When using Composio:
+
+- You **do not select scopes in Zendesk**
+
+- You **define scopes in Composio’s Auth Config**
+
+- Composio automatically includes the selected scopes in the OAuth authorization request
+
+Example scopes configuration in Composio:
+
+```plain text
+read write
+```
+
+Here’s the **actual Composio supported Zendesk scope list**:
+
+```javascript
+tickets.read
+tickets.write
+users.read
+users.write
+organizations.read
+organizations.write
+groups.read
+groups.write
+views.read
+views.write
+macros.read
+macros.write
+triggers.read
+triggers.write
+automations.read
+automations.write
+webhooks.read
+webhooks.write
+```
+
+> Note: Zendesk permissions are also constrained by the user’s role (agent, admin, etc.), even if broader OAuth scopes are requested.
 
 ---
 
 ## Creating the Auth Config in Composio
 
-Once you have your Instantly API key, you can configure authentication in Composio.
+With your OAuth credentials ready, navigate to the [Composio dashboard](https://platform.composio.dev/) to configure Zendesk authentication.
 
----
-
-### Step 2: Create a New Auth Config
-
-1. Go to the **Composio Dashboard**
-
-1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
-
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
-
-1. Search for and select **Instantly** from the list of toolkits
+1. Click **Create Auth Config** to view all available toolkits.
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
 
-1. Ensure the authentication is API KEY.
+1. In the sidebar that opens, choose **Xero** for the toolkit. Stick with all the default settings for now, as we'll configure it shortly.
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
 
-### Step 3: Configure Authentication Type
-
-1. Click on the Connect Account and 
+1. Ensure authentication is set to **OAuth2** (not Bearer Token).
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
 
-1. Set **Authentication Type** to **Bearer Token**
-
-1. Paste your **Instantly API Key** into the token field
-
-1. Leave all other fields as default
+1. Enable **Use your own developer authentication**.
 
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_8.png)
 
-Instantly does not require:
-
-  - Client ID
-
-  - Client Secret
-
-  - Redirect URLs
-
-  - OAuth scopes
-
----
-
-### Scopes Supported by Composio for Instantly
-
-Instantly uses a **single API key** with account-level permissions.
-
-There are **no configurable OAuth scopes**.
-
-When using Composio:
-
-- Permission control is handled entirely by Instantly
-
-- Composio forwards the API key as a Bearer token in requests
-
-Example Authorization header:
-
-```plain text
-Authorization: Bearer <YOUR_INSTANTLY_API_KEY
-```
-
----
-
-## Base URL for Instantly
-
-All Instantly API requests are sent to:
-
-```plain text
-https://api.instantly.ai
-```
-
----
-
-## How Authentication Works
-
-When using Instantly with Composio:
-
-- The API key is stored securely in the **Auth Config**
-
-- Composio injects the key as a **Bearer token**
-
-- No OAuth consent screen is involved
-
-- No redirect flow is required
-
-This makes Instantly one of the **simplest integrations** to set up.
-
----
-
-## Final Step
-
-Once the Auth Config is created:
-
-1. Copy the **Auth Config ID** (starts with `ac_`)
+1. Click **Create Zendesk Auth Config**.
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_9.png)
 
+---
+
+### Configure the Auth Config
+
+1. Open the **Manage Auth Config** tab.
+
+1. Paste the **Client ID** and **Client Secret** you copied from Zendesk.
+
+### Scopes Supported by Composio
+
+Below are the scopes supported by Composio for Zendesk. Add scopes based on your integration requirements:
+
+**Again Composio Zendesk scope list**:
+
+```plain text
+tickets.read
+tickets.write
+users.read
+users.write
+organizations.read
+organizations.write
+groups.read
+groups.write
+views.read
+views.write
+macros.read
+macros.write
+triggers.read
+triggers.write
+automations.read
+automations.write
+webhooks.read
+webhooks.write
+```
+
+## Base URL for Zendesk
+
+All Zendesk API requests go through:
+
+```plain text
+https://{your_subdomain}.zendesk.com/api/v2/
+```
+
+Replace `{your_subdomain}` with your Zendesk account subdomain.
+
+## How Scopes Are Applied
+
+When a user connects their Zendesk account, scopes are passed as part of the OAuth authorization process.
+
+While using **Composio**:
+
+- Composio automatically manages the authorization URL
+
+- You define scopes inside the **Auth Config → Scopes** field
+
+- Composio exposes **fine-grained, resource-level scopes**
+
+- Internally, Composio maps them to Zendesk’s coarse scopes:
+
+  - `*:read` → `read`
+
+  - `*:write` → `write`
+
+  - destructive actions → `delete` (if required)
+
+For **Zendesk**, Composio provides **fine-grained resource-level scopes** that map internally to Zendesk’s coarse OAuth scopes. These are the scopes you can select inside Composio’s Auth Config, even though Zendesk itself only recognizes the broad `read`, `write`, `delete` scopes.
+
+Final Step
+
+Once everything is set up:
+
+1. Copy the **Auth Config ID** (starts with `ac_`)
+
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
+
 1. Store it securely using your secret manager
 
-1. Use it in your application code to authenticate Instantly via Composio
+1. Use it in your application code to authenticate Zendesk via Composio
+
+Your custom **Zendesk auth config** is now ready to go 

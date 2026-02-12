@@ -1,203 +1,113 @@
-LangChain recently introduced [LangSmith Agent Builder](https://smith.langchain.com/), a no-code tool to build agents with natural languages and its making quite the buzz.
+# How to create OAuth2 credentials for Workday
 
-Instead of relying on user setting up the nodes and edges, it allows a chat-based interactions, where user just need to define the goal and system generates the prompt, connects tools and setup triggers automatically.
+In this guide, I'll walk you through setting up OAuth2 credentials for Workday and configuring the authentication in Composio. So, let's begin.
 
-It built on top of [LangChain’s deep agent’s ](https://docs.langchain.com/oss/python/deepagents/overview) framework and supports planning, persistent memory, and multi-step tasks for complex workflow.
+## Setting up Workday
 
-However, when it comes to tool’s I felt it pretty limited, even connecting mcp was not straightforward, I had to struggle a bit to use remote MCPs.
+In this section, we'll go through the process of registering an API client in Workday and generating the Client ID, and Client Secret needed for OAuth2 authentication.
 
-So, I did a manual digging and found the issues to both problems, and this blog covers the fix along with few use cases.
+> **NOTE:** Workday recommends an Integration System User (ISU) with the right domain permissions to use API clients. If your Workday admin hasn't set this up yet, see the Additional: ISU & Security Group Setup section at the bottom of this guide.
 
-Let’s get started!
+### Step 1: Register an API Client
 
----
+1. Search for **Register API Client** in Workday and select the task.
 
-### TL; DR
+![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-- **LangSmith** Agent Builder lets you build AI agents through chat instead of wrestling with nodes and edges, but the MCP connection is secretly broken.
+1. Enter a **Client Name** (e.g., `Composio-Workday`), Select the **Non-Expiring Refresh Tokens** option, Add the below redirect URI if you are using our cloud.
 
-- Rube MCP unlocks 900+ tools instantly-Gmail, Calendar, LinkedIn, Exa-without auth headaches or tool selection chaos once you apply the manual fix.
-
-- Email triage becomes autopilot when agents fetch unread Gmail, categorize by urgency, and send consolidated summaries without you lifting a finger.
-
-- Calendar briefings turn intelligent when agents pull today's schedule, research external contacts via LinkedIn, and email you a personalized day-ahead report.
-
-- LinkedIn candidate sourcing gets surgical precision as agents calibrate with 5 samples, refine criteria iteratively, then deliver 30 qualified profiles matching your exact requirements.
-
----
-
-## Set Up MCP Server in LangSmith Agent Builder
-
-For demonstration, we will go with hosted[ Rube MCP](https://rube.app/) server as it allows me to access 900+ tools without worrying about auth, tool selection, query management and tool calling orchestration. 
-
-Here is what to do:
-
-- Head over to [Rube ](https://rube.app/chat)& Login / Create Account
-
-- In left side panel select Use Rube → MCP URL → Copy it!
-
-- Now head to LangSmith agent builder and Login / Create Account (important that you select no-code experience)
-
-- Within LangSmith Agent Builder, click ⚙️ Settings → MCP Servers → Add MCP Servers
-
-- In the new modal put 
-
-- After few seconds, a pop up will appear asking to verify, hit verify and you need to re-login to rube / the tool.
-
-However, it’s not over yet, you can’t use the tool yet!
-
-If you go now to agent builder workspace, select* Create manually instead,* you will only see default tools (probably a bug), so to fix it, you need to click on MCP → fill in same details and revalidate. 
-
-After few seconds you will see tools listed under the mcp server name you added, in our case it’s RUBE. 
-
-![Rube MCP Server Showing Tools](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
-
-> NOTE: Though I used rube mcp server for demo, you can use any other using same technique, till they don’t fix the issue!
-
-Now let’s see how mcp server work together with LangSmith Agent Builder to handle daily odd jobs.
-
----
-
-## How to Use MCP server with LangSmith Agent Builder 
-
-The process at Agent Builder is slightly different than rest of the tool you might have used!
-
-It actually a single [agent.md](http://agent.md/) file behind the scenes, with addition of folders like tools and skills as needed. 
-
-When you create agent, these file changes in real time based on instructions and can later be reviewed.
-
-However, the above complexity is hidden behind a chat interface that allow user to prompt what they want to build, and the system take care of the rest. 
-
-So, let’s use it for ease of understanding, by building 3 agents (easy, medium, complex).
-
-### 1. Email Triage Agent
-
-The 1st agent will be a simple one, use the agent to fetch all the emails and triage them into Important, General & Rubbish.
-
-Put in the following prompt to in the chat window & hit enter.
-
-```plain text
-Build a agent that uses Rube MCP to fetch only unread emails from Gmail. For each email, analyze the sender, subject, and content, then triage into exactly three labels: Important, General, Ignore based on urgency, relevance, and action required. After processing all unread emails, return a single consolidated summary with bullet points grouped by label, including sender, subject, and a one-line intent per email. Do not modify, reply, or archive emails. Output the summary only after the task fully completes.
+```javascript
+https://backend.composio.dev/api/v1/auth-apps/add
 ```
 
-Now the agent builder will ask you few clarifying questions:
+  Also, add the required scopes. At minimum, include the `Integration` scope and add any additional scopes based on what your integration needs. Click **OK** to generate the **Client ID** and **Client Secret**.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
+1. You will be redirected to the below page where you can find the Client ID and Client Secret along with REST API, Token and Authorization endpoints.
+
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
+
+> ⚠️ **Important:** Save the Client Secret immediately — you won't be able to see it again after leaving this page.
+
+That's all you need from the Workday portal.
+
+## Creating the Auth Config in Composio
+
+With your OAuth credentials ready, navigate to the [Composio dashboard](https://platform.composio.dev/) to configure the authentication settings for Workday.
+
+1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-Once you answer these, like I have done, it will combine metadata, toolbox, instructions and generate an agent overview. 
-
-Hit create and your agent is created just like that!
+1. In the sidebar that opens, choose **Workday** for the toolkit. Stick with all the default settings for now
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
 
-To test the agent, in the left chat window enter:
-
-```plain text
-Triage my unread Gmail emails using and email me the summary
-```
-
-Result:
-
-As can be seen, it calls the gmail tool via rube mcp we added and did the task for us!
-
-> **Note**: To keep things simple, I have kept the text in markdown (apparently no rendering support in Gmail). Feel free to optimize it further.
-
-
-
-### 2. Daily Calendar Briefing Agent
-
-Next up let’s spin up an agent that fetches the calendar and other tools, generates a daily briefer and send it to gmail. 
-
-Enter the following prompt in the chat window:
-
-```plain text
-You are a daily calendar assistant. Each morning, get today’s date (dd-mm-yyyy), fetch all events for the day, sort them by time and importance, and identify busy periods, gaps, and back-to-back meetings. Briefly research external meetings if needed using tavily_linkedin_search accessed via rube mcp. Send a concise email summary of the day via Gmail.
-```
-
-> Ensure you add the TAVILY_API_KEY & GEMINI_API_KEY by selecting ⚙️ at top as well, for it work fine.
-
-Now to test:
-
-```plain text
-send me 21/01/2016 briefing please
-```
-
-Results:
-
-As can be seen, it calls the rube calendar & Gmail tool via rube mcp we added and sent me a email. It seems I have a scheduled travel, so it wrote a customized message for me. (ignore markdowns)
-
-
-
-### 3. LinkedIn Candidate Sourcing Agent
-
-As for last agent, let’s make an agent that can filter out / source candidate from LinkedIn based on provided criteria. 
-
-We will use rube mcp to call exa-tool and pass in the inputs and let it handle the rest. 
-
-Paste the following prompt in chat window:
-
-```plain text
-You are an expert LinkedIn candidate sourcing agent. When a user requests candidates, first gather role requirements (skills, seniority, location, constraints) and ask clarifying questions if needed. Begin with a calibration search of exactly 5 candidates using the Exa search protocol via Rube MCP, returning real LinkedIn profiles only (name, role, company, qualifications, LinkedIn URL). 
-
-Never fabricate data. Ask for feedback and refine criteria iteratively until the user confirms alignment. Only after explicit confirmation, run a full-scale Exa search via Rube MCP (default 30 candidates), list candidates in chat. Exclude candidates already at the hiring company. Clearly state limitations if results are sparse. Prioritize precision, transparency, and iteration over volume.
-```
-
-> Ensure you add EXA_API_KEY and GEMINI_API_KEY in ⚙️ at top. Also select Gemini 3.0 Model from Model Selector 
-
-Let’s test it out:
-
-```plain text
-Source LinkedIn candidates for a Senior Backend Engineer. Focus on Python, Django, AWS, 5–8 years' experience, based in India.
-```
-
-Results:
-
-Amazing it called the exa tool via rube mcp, we added earlier and showed potential candidate in chat based on criteria's.
-
-This is just a glimpse of what is automations are possible with LangSmith Agent Builder & and rube mcp.  Feel free to expand these base examples as per your liking and get rid of those boring mundane task.
-
-Time to look at the final take!
-
----
-
-## Conclusion
-
-LangSmith Agent Builder paired with Rube MCP turns complex agent workflows into effortless no-code magic, handling everything from email triage to candidate sourcing.
-
-Though the toolset starts limited, a quick MCP server like rube unlocks 900+ tools, letting you automate daily mundane task with chat-based prompts.
-
-So, connect Rube to LangSmith, drop in a goal like "build me a reseach agent…” add API keys, connect to tools/ mcp’s and watch it build, run, and deliver - while you reclaim your time for high-impact work.
-
-Happy Automating.
-
----
-
-## FAQ
-
-**Q1: How do I fix LangSmith Agent Builder not showing MCP tools after connection?**
-
-A: Click "Create manually" in Agent Builder workspace, select MCP, re-enter server details and revalidate -tools will appear under your MCP server name after verification.
-
-**Q2: What is Rube MCP and why use it with LangSmith Agent Builder?**
-
-A: Rube MCP is a hosted server providing 900+ pre-authenticated tools (Gmail, Calendar, LinkedIn, Exa) that integrate with LangSmith through OAuth 2.1 without manual auth configuration.
-
-**Q3: Can LangSmith Agent Builder create agents without coding experience?**
-
-A: Yes, LangSmith uses chat-based prompts to auto-generate system prompts, connect tools, and build agents—no node setup required, built on LangChain's Deep Agents framework.
-
-**Q4: What agents can I build with LangSmith and Rube MCP integration?**
-
-A: You can build email triage agents, calendar briefing bots, LinkedIn candidate sourcing tools, and any automation combining 900+ tools through natural language instructions.
-
-- name: rube, 
-
-- URL: [https://mcp.notion.com/mcp](https://mcp.notion.com/mcp),
-
-- select OAuth 2.1 & hit save.
+1. Add your Client ID and Secret.
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
+
+1. Then, click **Create Workday Auth Config**.
+
+1. You can also update the existing configuration in the Manage Auth Config tab
+
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
+
+Once done, copy the auth config ID (which starts with `ac_`) and use it in your application code via a secret manager. Your Workday auth config is now ready to go! 
+
+## Additional: ISU & Security Group Setup
+
+> Most Workday tenants will have this configured by an admin. If you're unsure, check with your Workday admin before proceeding.
+
+### Create an Integration System User (ISU)
+
+An ISU is a dedicated service account for integrations — it keeps API operations separate from regular user accounts.
+
+1. Type **Create Integration System User** into Workday's search bar and select the task.
+
+1. Enter a **username** and set a **password**.
+
+1. Set **Session Timeout Minutes** to `0` to prevent the ISU from timing out.
+
+1. Select the **Do Not Allow UI Sessions** checkbox to restrict UI logins.
+
+1. Navigate to the **Maintain Password Rules** task and add the ISU to the **System Users exempt from password expiration** field.
+
+### Create a Security Group
+
+1. Search for **Create Security Group** in Workday and select the task.
+
+1. Select a security group type:
+
+  - **Integration System Security Group (Unconstrained)** — access to all data instances.
+
+  - **Integration System Security Group (Constrained)** — access scoped by context.
+
+1. Add your ISU as a member of the security group.
+
+1. Click **Done**.
+
+### Grant Domain Permissions
+
+1. Search for **Maintain Permissions for Security Group** and select the task.
+
+1. Choose your security group and go to the **Domain Security Policy Permissions** tab.
+
+1. Ensure the security group has **GET permissions** for:
+
+  - `Integration Build`
+
+  - `Integration Process`
+
+  - `Integration Debug`
+
+  - `Integration Event`
+
+  - `Worker Data: Current Staffing Information`
+
+  - `Worker Data: Public Worker Reports`
+
+1. Click **OK**, then **Done**.
+
+1. Search for **Activate Pending Security Policy Changes**, enter a comment, and confirm.

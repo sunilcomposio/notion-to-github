@@ -1,134 +1,162 @@
-In this guide, I’ll walk you through the process of customizing the auth config for **TickTick**. Let’s get started.
+In this guide, we’ll walk through how to configure authentication for **Notion** using **OAuth 2.0** and **API Key **with Composio.
 
-## Setting up TickTick
-
-In this section, we’ll go through the process of creating a TickTick OAuth application.
-
-> NOTE:
-
-  If you already have a TickTick OAuth app and access to the **Client ID** and **Client Secret**, you can skip this section.
-
-## Step 1: Create a TickTick Developer App
-
-1. Log in to your TickTick account.
-
-1. Open the TickTick Developer Console:
-
-```plain text
-https://developer.ticktick.com/
-```
-
-![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
-
-1. Navigate to **My Apps**.
-
-1. Click **Create App**.
+Notion supports **public OAuth integrations**, making it straightforward to set up and test.
 
 ---
 
-## Step 2: Register Your OAuth App and Generate Credentials
+## Setting up Notion
 
-While creating the app, fill in the following details:
+In this section, we’ll create a Notion integration to obtain the **Client ID** and **Client Secret**.
 
-- **App Name**
+> **NOTE:**
 
-  Example: `Composio-TickTick`
+  If you already have a Notion integration with OAuth credentials, you can skip to **Creating the Auth Config in Composio**.
+
+---
+
+## Step 1: Create a Notion Account (if needed)
+
+If you don’t already have one, sign up here:
+
+```plain text
+https://www.notion.so/
+```
+
+A free workspace is sufficient.
+
+---
+
+## Step 2: Create a Notion Integration
+
+1. Go to the Notion integrations page:
+
+```plain text
+https://www.notion.so/profile/integrations
+```
+
+1. Click **New integration**
+
+![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
+
+---
+
+## Step 3: Configure the Notion Integration
+
+After creating a new integration, configure the basic details as follows:
+
+### Basic Information
+
+- **Integration Name**
+
+```plain text
+Composio Notion Integration
+```
+
+- **Associated Workspace**
+
+  - Select the Notion workspace where this integration will be installed and tested.
+
+- **Integration Type**
+
+  - Select **Public**
+
+> **Why Public?**
+
+  Public integrations allow OAuth-based authentication and can be connected by multiple users or workspaces. This is required for Composio’s OAuth flow.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_2.png)
 
-- **App Description**
+---
 
-  Short description of your integration
+## Step 4: Configure OAuth Settings
 
-- **Redirect URI**
+1. Navigate to the **OAuth domains & URIs** section in the integration settings.
+
+1. Add the following **Redirect URI**:
 
 ```plain text
 https://backend.composio.dev/api/v3/toolkits/auth/callback
 ```
 
-> Important:
-
-  - Must be HTTPS
-
-  - No trailing slash
-
-1. Save the application.
-
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
 
-Once created, TickTick will generate:
+### Redirect URI Requirements
+
+- Must use **HTTPS**
+
+- Must match the URI exactly
+
+- No trailing slash
+
+- No URL fragments, wildcards, or relative paths
+
+This redirect URI is required so Notion can return the authorization code to Composio after the user successfully authenticates.
+
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
+
+---
+
+## Step 5: Select Capabilities (Permissions)
+
+Notion permissions are configured as **Capabilities**, not traditional scopes.
+
+Commonly enabled capabilities:
+
+- Read content
+
+- Update content
+
+- Insert content
+
+- Read user information
+
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
+
+> Select only the capabilities your integration requires.
+
+---
+
+## Step 6: Copy OAuth Credentials
+
+Once saved, Notion will generate:
 
 - **Client ID**
 
 - **Client Secret**
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
+- **Authorization URL**
 
-Copy both values and store them securely, you’ll need them shortly.
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
 
----
+> **Important:**
 
-## Step 3: Configure Redirect URI
-
-Ensure the following redirect URI is configured in your TickTick app:
-
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
-
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
-```
-
-## OAuth Scopes in TickTick
-
-TickTick uses **OAuth2** with **predefined API scopes**.
-
-Unlike some platforms:
-
-- TickTick does **not** provide a UI to manually select scopes per request
-
-- Scopes are implicitly granted based on the API endpoints accessed
-
-When using **Composio**, scopes are handled automatically during the OAuth flow.
-
-### Common TickTick API Permissions
-
-TickTick APIs typically cover access to:
-
-- Tasks
-
-- Projects (lists)
-
-- User profile information
-
-You **do not need to manually configure scopes** inside the TickTick dashboard.
-
-> All required permissions are requested automatically during authorization.
+  Store the Client Secret securely. Treat it like a password.
 
 ---
 
 ## Creating the Auth Config in Composio
 
-With your OAuth credentials ready, head to the Composio dashboard:
+Now that your Notion OAuth credentials are ready, configure them in Composio.
+
+---
+
+## Step 7: Create a Notion Auth Config
+
+1. Go to the **Composio Dashboard**:
 
 ```plain text
 https://platform.composio.dev/
 ```
 
-### Step 1: Create Auth Config
-
 1. Click **Create Auth Config**
-
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
-
-1. Select **TickTick** from the toolkit list
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
 
+1. Select **Notion** from the toolkit list
+
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_8.png)
 
-### Step 2: Configure Authentication Type
-
-1. Ensure authentication is set to **OAuth2**
+1. Ensure authentication type is **OAuth2**
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_9.png)
 
@@ -136,35 +164,141 @@ https://platform.composio.dev/
 
 ![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
 
-1. Click **Create TickTick Auth Config**
+1. Click **Create Notion Auth Config**
+
+---
+
+## Step 8: Configure the Auth Config
+
+Open the **Manage Auth Config** tab and fill in:
+
+- **Client ID** → from Notion
+
+- **Client Secret** → from Notion
+
+- **Redirect URI**
+
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
 
 ![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_11.png)
 
 ---
 
-## Base URL for TickTick
+## METHOD 2:  API Key (Internal Integration Secret) Authentication
 
-All TickTick API requests are made through:
-
-```plain text
-https://api.ticktick.com/open/v1/
-```
-
-## How OAuth Works with Composio
-
-When a user connects their TickTick account:
-
-- Composio manages the OAuth authorization flow
-
-- TickTick prompts the user to approve access
-
-- An access token is issued and securely stored by Composio
-
-- Composio automatically refreshes tokens when required
+In addition to OAuth, Notion also supports **API Key–based authentication** using an **Internal Integration Token**. This method is useful for server-to-server use cases or when OAuth is not required.
 
 ![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_12.png)
 
-You **do not** need to manually construct authorization URLs.
+> **Important:**
+
+  API Key authentication only works with **Internal integrations**. Public integrations **must use OAuth**.
+
+---
+
+### When to Use API Key Authentication
+
+Use an **Internal Integration Token** if:
+
+- You are integrating with **your own Notion workspace**
+
+- You do **not** need multi-user OAuth access
+
+- You want a **simpler, non-redirect** authentication flow
+
+- The integration will be used by a **single workspace**
+
+---
+
+### Creating an Internal Integration Token
+
+1. On the **Notion Integrations** page, click **New integration**
+
+1. Enter a name such as:
+
+```plain text
+Composio-API-Test
+```
+
+1. Select the **Associated Workspace**
+
+1. Set the **Integration Type** to **Internal**
+
+1. Click **Submit**
+
+Once created, Notion will generate an **Internal Integration Token**.
+
+![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_13.png)
+
+> **Save the token immediately,** it will not be shown again.
+
+---
+
+### Using API Key Authentication in Composio
+
+To configure API Key authentication in Composio:
+
+1. Choose **API Key** as the authentication method
+
+![Image 14](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_14.png)
+
+1. Click **Create Auth Config**
+
+---
+
+## How OAuth Works with Composio
+
+When a user connects their Notion account:
+
+- Composio handles the OAuth authorization flow
+
+- The user approves access to selected capabilities
+
+- Access and refresh tokens are securely stored by Composio
+
+- Tokens are refreshed automatically
+
+![Image 15](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_15.png)
+
+---
+
+## How Authentication Works (API Key)
+
+- The Internal Integration Token is stored securely in Composio
+
+- Composio sends the token in the request headers
+
+- No OAuth redirect or user consent flow is involved
+
+- Access is limited to explicitly shared pages only
+
+![Image 16](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_16.png)
+
+---
+
+## Base URL for Notion API
+
+All Notion API requests are sent to:
+
+```plain text
+https://api.notion.com/v1
+```
+
+## Test Notion Connection (Optional)
+
+You can verify the connection using **Composio Playground**.
+
+1. Open your **Notion Auth Config**
+
+1. Navigate to the **Playground**
+
+![Image 17](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_17.png)
+
+If configured correctly, Composio will successfully access your Notion workspace.
+
+---
 
 ## Final Step
 
@@ -172,8 +306,10 @@ Once everything is set up:
 
 1. Copy the **Auth Config ID** (starts with `ac_`)
 
-![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_13.png)
+![Image 18](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_18.png)
 
-1. Store it securely using a secret manager
+1. Store it securely in your secret manager
 
-1. Use it in your application code to authenticate TickTick via Composio
+1. Use it in your application code to authenticate Notion via Composio
+
+Your **Notion integration** is now ready to use!

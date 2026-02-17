@@ -1,183 +1,179 @@
-In this guide, I’ll share the process for customizing the auth config for **Dropbox**. So, let’s begin.
+In this guide, I’ll walk you through the process of customizing the auth config for **TickTick**. Let’s get started.
 
----
+## Setting up TickTick
 
-## Setting up Dropbox
+In this section, we’ll go through the process of creating a TickTick OAuth application.
 
-In this section, we’ll go through the process of setting up a Dropbox developer app and obtaining OAuth credentials.
+> NOTE:
 
-> NOTE: If you already have a Dropbox developer app and access to its Client ID and Client Secret, you can skip this section.
+  If you already have a TickTick OAuth app and access to the **Client ID** and **Client Secret**, you can skip this section.
 
----
+## Step 1: Create a TickTick Developer App
 
-### Step 1: Create a Dropbox App
+1. Log in to your TickTick account.
 
-1. Log in to your Dropbox account.
+1. Open the TickTick Developer Console:
 
-1. Visit the **Dropbox App Console**:
-
-  [https://www.dropbox.com/developers/apps](https://www.dropbox.com/developers/apps)
-
-1. Click **Create app**.
+```plain text
+https://developer.ticktick.com/
+```
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
 
-1. For **Choose an API**, select **Scoped access**.
+1. Navigate to **My Apps**.
+
+1. Click **Create App**.
+
+---
+
+## Step 2: Register Your OAuth App and Generate Credentials
+
+While creating the app, fill in the following details:
+
+- **App Name**
+
+  Example: `Composio-TickTick`
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_2.png)
 
-1. For **Choose the type of access you need**, select:
+- **App Description**
 
-  - **App folder** (access only to a specific folder), or
+  Short description of your integration
 
-  - **Full Dropbox** (access to all files)
-
-    depending on your use case.
-
-1. Enter an app name (e.g., `Composio‑Dropbox`), and click **Create app**.
-
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
-
----
-
-### Step 2: Client ID and Client Secret
-
-Once the app is created:
-
-1. You’ll be taken to the app’s settings page.
-
-1. Under the **App key** and **App secret** fields, you’ll see your **Client ID** and **Client Secret**.
-
-  - **App key** → **Client ID**
-
-  - **App secret** → **Client Secret**
-
-1. Copy both values and save them securely — you’ll need them in Composio.
-
----
-
-### Step 3: Configure Redirect URI
-
-In the Dropbox developer app settings:
-
-1. Scroll to the **OAuth 2** section.
-
-1. Under **Redirect URIs**, click **Add** and enter:
+- **Redirect URI**
 
 ```plain text
 https://backend.composio.dev/api/v3/toolkits/auth/callback
 ```
 
-1. Make sure the redirect URI matches exactly , otherwise Dropbox will reject the OAuth flow.
+> Important:
+
+  - Must be HTTPS
+
+  - No trailing slash
+
+1. Save the application.
+
+![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
+
+Once created, TickTick will generate:
+
+- **Client ID**
+
+- **Client Secret**
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
 
+Copy both values and store them securely, you’ll need them shortly.
+
 ---
 
-### Step 4: Configure OAuth Scopes (Permissions)
+## Step 3: Configure Redirect URI
 
-Dropbox lets you choose **scopes** that control what your app can access.
-
-1. In your app settings, go to the **Permissions** tab.
-
-1. Check the permissions your integration needs, for example:
-
-  - `files.metadata.read` → Read file metadata
-
-  - `files.content.read` → Read file contents
-
-  - `files.content.write` → Modify uploaded files
+Ensure the following redirect URI is configured in your TickTick app:
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
 
-You should only request **permissions required** by your integration.
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
+
+## OAuth Scopes in TickTick
+
+TickTick uses **OAuth2** with **predefined API scopes**.
+
+Unlike some platforms:
+
+- TickTick does **not** provide a UI to manually select scopes per request
+
+- Scopes are implicitly granted based on the API endpoints accessed
+
+When using **Composio**, scopes are handled automatically during the OAuth flow.
+
+### Common TickTick API Permissions
+
+TickTick APIs typically cover access to:
+
+- Tasks
+
+- Projects (lists)
+
+- User profile information
+
+You **do not need to manually configure scopes** inside the TickTick dashboard.
+
+> All required permissions are requested automatically during authorization.
 
 ---
 
 ## Creating the Auth Config in Composio
 
-With your Dropbox credentials ready, navigate to the **Composio dashboard** at [https://platform.composio.dev/](https://platform.composio.dev/) to configure the authentication settings for Dropbox.
+With your OAuth credentials ready, head to the Composio dashboard:
 
-1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
+```plain text
+https://platform.composio.dev/
+```
+
+### Step 1: Create Auth Config
+
+1. Click **Create Auth Config**
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
 
-1. In the sidebar, choose **Dropbox** for the toolkit.
+1. Select **TickTick** from the toolkit list
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
 
-1. Ensure authentication is set to **OAuth2** (not API Key).
-
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_8.png)
 
-1. Enable **Use your own developer authentication**.
+### Step 2: Configure Authentication Type
+
+1. Ensure authentication is set to **OAuth2**
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_9.png)
 
-1. Click **Create Dropbox Auth Config**.
-
-1. Once created, go to the **Manage Auth Config** tab and fill in the fields:
-
-  - **Client ID** → Paste the App key from Dropbox
-
-  - **Client Secret** → Paste the App secret
-
----
-
-### Scopes Supported by Composio
-
-Below are resource‑level scopes Composio supports for Dropbox. Add only the ones your integration requires:
-
-```plain text
-email
-profile
-account_info.write
-account_info.read
-files.metadata.write
-files.metadata.read
-files.content.write
-files.content.read
-openid
-file_requests.write
-file_requests.read
-sharing.write
-sharing.read
-contacts.write
-contacts.read
-```
-
-> Note: Composio will map these to the Dropbox scopes you enabled in the Dropbox app settings.
-
----
-
-## Base URL for Dropbox
-
-All Dropbox API requests go through:
-
-```plain text
-https://api.dropboxapi.com/2/
-```
-
-For file content operations, use:
-
-```plain text
-https://content.dropboxapi.com/2/
-```
-
-These are the endpoints for Dropbox API calls.
+1. Enable **Use your own developer authentication**
 
 ![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
 
----
-
-## Final Step
-
-Once done:
-
-1. Copy the **Auth Config ID** (which starts with `ac_`)
+1. Click **Create TickTick Auth Config**
 
 ![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_11.png)
 
-1. Store it securely using your secret manager
+---
 
-1. Use it in your application code to authenticate Dropbox via Composio
+## Base URL for TickTick
+
+All TickTick API requests are made through:
+
+```plain text
+https://api.ticktick.com/open/v1/
+```
+
+## How OAuth Works with Composio
+
+When a user connects their TickTick account:
+
+- Composio manages the OAuth authorization flow
+
+- TickTick prompts the user to approve access
+
+- An access token is issued and securely stored by Composio
+
+- Composio automatically refreshes tokens when required
+
+![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_12.png)
+
+You **do not** need to manually construct authorization URLs.
+
+## Final Step
+
+Once everything is set up:
+
+1. Copy the **Auth Config ID** (starts with `ac_`)
+
+![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_13.png)
+
+1. Store it securely using a secret manager
+
+1. Use it in your application code to authenticate TickTick via Composio

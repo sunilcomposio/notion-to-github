@@ -1,211 +1,183 @@
-In this guide, I’ll walk you through the process of customizing the auth config for **Calendly**. Let’s get started.
+In this guide, I’ll share the process for customizing the auth config for **Dropbox**. So, let’s begin.
 
-## Setting up Calendly
+---
 
-In this section, we’ll go through the process of creating a Calendly OAuth application.
+## Setting up Dropbox
 
-> NOTE:
+In this section, we’ll walk through setting up a Dropbox developer app and obtaining OAuth credentials.
 
-  If you already have a Calendly OAuth app and access to the **Client ID** and **Client Secret**, you can skip this section.
+> NOTE: If you already have a Dropbox developer app and access to its Client ID and Client Secret, you can skip this section.
 
-## Step 1: Create a Calendly Developer App
+---
 
-1. Log in to your Calendly account.
+### Step 1: Create a Dropbox App
 
-1. Navigate to the Calendly Developer Portal:
+1. Log in to your Dropbox account.
 
-```plain text
-https://developer.calendly.com/
-```
+1. Visit the **Dropbox App Console**:
 
-1. Click **My Apps**.
+  [https://www.dropbox.com/developers/apps](https://www.dropbox.com/developers/apps)
+
+1. Click **Create app**.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_1.png)
 
-1. Click **Create New App**.
-
----
-
-## Step 2: Register Your Calendly OAuth App
-
-After clicking **Create New App**, you’ll be asked to fill in the following fields:
-
-### App Details
-
-1. **Name of app**
-
-```plain text
-Composio-Calendly
-```
-
-1. **Kind of app**
-
-  Select:
-
-```plain text
-Web
-```
-
-1. **Environment type**
-
-  Choose based on your use case:
-
-```plain text
-Sandbox
-```
-
-> Use Sandbox for testing and development.
-
-    Switch to **Production** only when going live.
-
-1. **Redirect URI**
-
-  Enter the following redirect URL:
-
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
-```
-
-  **Important requirements:**
-
-  - Must use `https`
-
-  - No trailing slash
-
-  - Must exactly match the value used in Composio
+1. For **Choose an API**, select **Scoped access**.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_2.png)
 
-Once created, Calendly will generate:
+1. **Choose the type of access you need**, select:
 
-- **Client ID**
+  - **App folder** (access only to a specific folder), or
 
-- **Client Secret**
+  - **Full Dropbox** (access to all files)
+
+  Depending on your use case.
+
+1. Enter an app name (e.g., `Composio‑Dropbox`), and click **Create app**.
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_3.png)
 
-Copy both values and store them securely, you’ll need them shortly.
+---
+
+### Step 2: Client ID and Client Secret
+
+Once the app is created:
+
+1. You’ll be taken to the app’s settings page.
+
+1. Under the **App key** and **App secret** fields, you’ll see your **Client ID** and **Client Secret**.
+
+  - **App key** → **Client ID**
+
+  - **App secret** → **Client Secret**
+
+1. Copy both values and save them securely — you’ll need them in Composio.
 
 ---
 
-## Step 3: Configure Redirect URI
+### Step 3: Configure Redirect URI
 
-Ensure the following redirect URI is present in your Calendly app configuration:
+In the Dropbox developer app settings:
 
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
+1. Scroll to the **OAuth 2** section.
+
+1. Under **Redirect URIs**, click **Add** and enter:
 
 ```plain text
 https://backend.composio.dev/api/v3/toolkits/auth/callback
 ```
 
+1. Make sure the redirect URI matches exactly , otherwise Dropbox will reject the OAuth flow.
+
+![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_4.png)
+
 ---
 
-## OAuth Scopes in Calendly
+### Step 4: Configure OAuth Scopes (Permissions)
 
-Calendly uses **OAuth2 with explicit scopes** to control API access.
+Dropbox lets you choose **scopes** that control what your app can access.
 
-Scopes define what resources your integration can access during the OAuth authorization flow.
+1. In your app settings, go to the **Permissions** tab.
 
-### Common Calendly OAuth Scopes
+1. Check the permissions your integration needs, for example:
 
-Calendly supports the following scopes:
+  - `files.metadata.read` → Read file metadata
 
-- `default` → Access to the authenticated user’s Calendly data
+  - `files.content.read` → Read file contents
 
-- `users:read` → Read user profile information
+  - `files.content.write` → Modify uploaded files
 
-- `events:read` → Read scheduled events
+![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
 
-- `event_types:read` → Read event types
-
-- `webhook_subscriptions:write` → Create and manage webhooks
-
-> The actual scopes you should request depend on your integration’s requirements.
+You should only request **permissions required** by your integration.
 
 ---
 
 ## Creating the Auth Config in Composio
 
-With your OAuth credentials ready, navigate to the Composio dashboard:
+With your Dropbox credentials ready, navigate to the **Composio dashboard** at [https://platform.composio.dev/](https://platform.composio.dev/) to configure Dropbox authentication settings.
 
-```plain text
-https://platform.composio.dev/
-```
-
----
-
-### Step 1: Create Auth Config
-
-1. Click **Create Auth Config**
-
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_5.png)
-
-1. Select **Calendly** from the list of available toolkits
+1. Click the **Create Auth Config** button to view a list of all available toolkits.
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_6.png)
 
----
-
-### Step 2: Configure Authentication Type
-
-1. Ensure authentication is set to **OAuth2**
+1. In the sidebar, choose **Dropbox** for the toolkit.
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_7.png)
 
-1. Enable **Use your own developer authentication**
+1. Ensure authentication is set to **OAuth2** (not API Key).
 
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_8.png)
 
----
-
-### Step 3: Fill in Credentials
-
-1. Open the **Manage Auth Config** tab
-
-1. Paste:
-
-  - **Client ID**
-
-  - **Client Secret**
-
-1. Click **Create Calendly Auth Config**
+1. Enable **Use your own developer authentication**.
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_9.png)
+
+1. Click **Create Dropbox Auth Config**.
+
+1. Once created, go to the **Manage Auth Config** tab and fill in the fields:
+
+  - **Client ID** → Paste the App key from Dropbox
+
+  - **Client Secret** → Paste the App secret
 
 ---
 
 ### Scopes Supported by Composio
 
-Below are the Calendly scopes supported by Composio. Add only the scopes required for your integration:
+Below are the resource‑level scopes Composio supports for Dropbox. Add only the ones your integration requires:
 
 ```plain text
-default
-users:read
-events:read
-event_types:read
-webhook_subscriptions:write
+email
+profile
+account_info.write
+account_info.read
+files.metadata.write
+files.metadata.read
+files.content.write
+files.content.read
+openid
+file_requests.write
+file_requests.read
+sharing.write
+sharing.read
+contacts.write
+contacts.read
 ```
+
+> Note: Composio will map these to the Dropbox scopes you enabled in the Dropbox app settings.
 
 ---
 
-## Base URL for Calendly
+## Base URL for Dropbox
 
-All Calendly API requests go through:
+All Dropbox API requests go through:
 
 ```plain text
-https://api.calendly.com/
+https://api.dropboxapi.com/2/
 ```
+
+For file content operations, use:
+
+```plain text
+https://content.dropboxapi.com/2/
+```
+
+These are the endpoints for Dropbox API calls.
+
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
 
 ---
 
 ## Final Step
 
-Once everything is set up:
+Once done:
 
-1. Copy the **Auth Config ID** (starts with `ac_`)
+1. Copy the **Auth Config ID** (which starts with `ac_`)
 
-![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_10.png)
+![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/customizing/image_11.png)
 
 1. Store it securely using your secret manager
 
-1. Use it in your application code to authenticate Calendly via Composio
+1. Use it in your application code to authenticate Dropbox via Composio

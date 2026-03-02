@@ -50,6 +50,8 @@ Admin Settings → Integrations
 
 In the same **API** section, Apollo displays a list of available REST endpoints that your API key can access.
 
+Enable **Master key** to access all endpoints.
+
 Commonly used endpoints include:
 
 ```plain text
@@ -173,8 +175,6 @@ All Apollo API requests are sent to:
 ```plain text
 https://api.apollo.io
 ```
-
----
 
 ## Final Step
 

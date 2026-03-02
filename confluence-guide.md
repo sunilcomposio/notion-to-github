@@ -30,7 +30,8 @@ Next, go to the **Authorization** tab in the left sidebar and click **Configure*
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_3.png)
 
-There, you'll see an input field to add Composio's Callback URL. Enter the following URL:
+There, you'll see an input field to add Composio's Callback URL. Enter the following URL and click on 
+”**save changes**”:
 
 ```plain text
 https://backend.composio.dev/api/v1/auth-apps/add
@@ -57,7 +58,13 @@ Figure out all the scopes that you'll require in your workflow and keep a note o
 
 Now, head back to the [Atlassian Apps Console](https://developer.atlassian.com/console/myapps) and click on the **Permissions** tab in the left sidebar.
 
+
+Then you will see a page where all the Atlassian APIs are listed, as shown in the image below. From there, click the **“Add”** button next to the **Confluence API**, and then proceed to configure the required scopes.
+
+
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_5.png)
+
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_6.png)
 
 You'll mostly be configuring these scopes inside the **User Identity API** and the **Confluence API**. Click configure and tick the Classic or the Granular scopes that you plan on using from above.
 
@@ -69,7 +76,7 @@ Finally, head over to the **Settings** tab, and just a little below, you'll find
 
 Copy these as we will need them when setting up Composio (with custom developer credentials).
 
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_6.png)
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_7.png)
 
 ---
 
@@ -79,15 +86,16 @@ With your OAuth2 credentials ready, navigate to the Composio dashboard for your 
 
 1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
 
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_7.png)
+![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_8.png)
 
-In the sidebar that opens, choose Confluence for the toolkit. Ensure the authentication is set to **OAuth2**. There is no support for other authentication methods with Confluence.
+
+In the sidebar that opens, choose **Confluence** for the toolkit. Ensure that the authentication method is set to **OAuth2**, as Confluence also supports another authentication method (API Key).
 
 1. Here we are interested in setting up our own custom developer credentials with our defined scopes, so to do that, enable **Use your own developer credentials**.
 
 Now, in the respective fields, paste in the credentials you just copied from the Atlassian dashboard.
 
-![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_8.png)
+![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_9.png)
 
 > 💁 **NOTE:** If you don't care about setting up your own credentials and are fine with the defaults, just continue auth config creation without turning on **Use your own developer credentials**.
 
@@ -104,23 +112,21 @@ https://<subdomain>.atlassian.net
 
 The subdomain is what you'll need to enter here.
 
-![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_9.png)
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_10.png)
 
 If you chose to use custom credentials but didn't specify the relevant scopes, you will encounter this **Something went wrong** error.
 
-![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_10.png)
+![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_11.png)
 
 If everything went well, Composio can access your Confluence account and everything you've configured in the Confluence scopes.
 
 1. If you want to limit the scopes from the Composio end, you can do so by heading over to the **Manage Auth Config** tab and removing all the scopes that you don't need.
 
-![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_11.png)
+![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_12.png)
 
 Once done, copy the auth config ID (which starts with `ac_`) and use it in your application code via a secret manager.
 
 Your custom Confluence auth config is now ready to go! 🚀
-
----
 
 ## Test Confluence Connection (Optional)
 
@@ -132,6 +138,6 @@ Composio recently added support for Playground, where you can test the connectio
 
 1. Once you're there, try asking some related prompts, and if you did everything correctly, Composio should be able to access the details.
 
-![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_12.png)
+![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/confluence/image_13.png)
 
 And that's it! You're all set to go with Confluence! 🎉

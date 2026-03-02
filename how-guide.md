@@ -1,113 +1,177 @@
-# How to create OAuth2 credentials for Workday
+In this guide, I will share the process for customizing the auth config for Jira. So, let's begin.
 
-In this guide, I'll walk you through setting up OAuth2 credentials for Workday and configuring the authentication in Composio. So, let's begin.
+## Setting Up Jira
 
-## Setting up Workday
+In this section, we’ll go through the process of setting up Jira and creating a developer account.
 
-In this section, we'll go through the process of registering an API client in Workday and generating the Client ID, and Client Secret needed for OAuth2 authentication.
+> 💁 **NOTE:** If you already have a developer account and access to the Client ID and Client Secret, you can skip this section.
 
-> **NOTE:** Workday recommends an Integration System User (ISU) with the right domain permissions to use API clients. If your Workday admin hasn't set this up yet, see the Additional: ISU & Security Group Setup section at the bottom of this guide.
+### Step 1: Create an Atlassian Developer Account
 
-### Step 1: Register an API Client
+Visit the [Atlassian developer portal](https://developer.atlassian.com/console) and create a new developer account.
 
-1. Search for **Register API Client** in Workday and select the task.
+A developer account is required because you’ll need to create a new app, which must be linked to a developer account in order to work with the Jira API.
+
+> 💁 **NOTE:** If you don't plan to use your own custom developer credentials, you can skip this entire section.
+
+### Step 2: Create an Atlassian Application
+
+Now, head over to the [Atlassian Apps Console](https://developer.atlassian.com/console/myapps) and create an application of **OAuth 2.0 Integration** type.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-1. Enter a **Client Name** (e.g., `Composio-Workday`), Select the **Non-Expiring Refresh Tokens** option, Add the below redirect URI if you are using our cloud.
-
-```javascript
-https://backend.composio.dev/api/v1/auth-apps/add
-```
-
-  Also, add the required scopes. At minimum, include the `Integration` scope and add any additional scopes based on what your integration needs. Click **OK** to generate the **Client ID** and **Client Secret**.
+In the next section, name your application as you want and click **Create**.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
-1. You will be redirected to the below page where you can find the Client ID and Client Secret along with REST API, Token and Authorization endpoints.
+### Step 3: Configure Authorization with Callback URL
+
+Next, go to the **Authorization** tab in the left sidebar and click **Configure**. This will allow us to set up the Callback URL, which, in our case, will be Composio's Callback URL.
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
 
-> ⚠️ **Important:** Save the Client Secret immediately — you won't be able to see it again after leaving this page.
+There, you'll see an input field to add Composio's Callback URL. Enter the following URL and click on 
+”**save changes**”:
 
-That's all you need from the Workday portal.
+```plain text
+https://backend.composio.dev/api/v1/auth-apps/add
 
-## Creating the Auth Config in Composio
-
-With your OAuth credentials ready, navigate to the [Composio dashboard](https://platform.composio.dev/) to configure the authentication settings for Workday.
-
-1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
+```
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-1. In the sidebar that opens, choose **Workday** for the toolkit. Stick with all the default settings for now
+That's all the setup needed for the **Authorization** tab. Now, we just need to configure the application's scopes.
+
+### Step 4: Configure Scopes
+
+Configuring scopes in Jira can be a bit tricky. To identify the exact names of the scopes you'll be working with, I suggest this method to make it easier to select each one.
+
+Here are all the default scopes Composio supports for jira:
+
+```plain text
+read:jira-work
+
+write:jira-work
+
+manage:jira-project
+
+manage:jira-configuration
+
+read:jira-user
+
+manage:jira-webhook
+
+manage:jira-data-provider
+
+read:servicedesk-request
+
+manage:servicedesk-customer
+
+write:servicedesk-request
+
+read:servicemanagement-insight-objects
+
+offline_access
+
+read:sprint:jira-software
+
+write:sprint:jira-software
+
+read:board-scope:jira-software
+
+write:board-scope:jira-software
+
+read:project:jira
+
+read:issue-type-scheme:jira
+```
+
+> This is a lot to look at in one line. I suggest you check out the scopes properly in the **Manage Auth Config** tab once we set up the auth config for Jira inside Composio in the next section.
+
+Figure out all the scopes that you'll require in your workflow and keep a note of them.
+
+Now, head back to the [Atlassian Apps Console](https://developer.atlassian.com/console/myapps) and click on the **Permissions** tab in the left sidebar.
+
+
+Then you will see a page where all the Atlassian APIs are listed, as shown in the image below. From there, click the **“Add”** button next to the **Jira API**, and then proceed to configure the required scopes.
+
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
 
-1. Add your Client ID and Secret.
-
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
 
-1. Then, click **Create Workday Auth Config**.
+You'll mostly be configuring these scopes inside the **User Identity API** and the **Jira API**. Click configure and tick the Classic or the Granular scopes that you plan on using from above.
 
-1. You can also update the existing configuration in the Manage Auth Config tab
+Check the ones you need and click **Save**.
+
+### Step 5: Copy the OAuth Credentials
+
+Finally, head over to the **Settings** tab, and just a little below, you'll find the Client ID and Client Secret in the **Authentication Details** section.
+
+Copy these as we will need them when setting up Composio (with custom developer credentials).
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
 
-Once done, copy the auth config ID (which starts with `ac_`) and use it in your application code via a secret manager. Your Workday auth config is now ready to go! 
+---
 
-## Additional: ISU & Security Group Setup
+## Create the auth config in Composio
 
-> Most Workday tenants will have this configured by an admin. If you're unsure, check with your Workday admin before proceeding.
+With your OAuth2 credentials ready, navigate to the Composio dashboard for your project to configure the authentication settings for Jira.
 
-### Create an Integration System User (ISU)
+1. Click on the **Create Auth Config** button to get a list of all the toolkits available.
 
-An ISU is a dedicated service account for integrations — it keeps API operations separate from regular user accounts.
+![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_8.png)
 
-1. Type **Create Integration System User** into Workday's search bar and select the task.
 
-1. Enter a **username** and set a **password**.
+In the sidebar that opens, choose **Jira** for the toolkit. Ensure that the authentication method is set to **OAuth2**, as **Jira** also supports another authentication method (API Key).
 
-1. Set **Session Timeout Minutes** to `0` to prevent the ISU from timing out.
+1. For **Jira**, Composio does not provide managed OAuth credentials. Therefore, you will need to use your **own Custom developer credentials** to configure the authentication.
 
-1. Select the **Do Not Allow UI Sessions** checkbox to restrict UI logins.
+Now, in the respective fields, paste in the credentials you just copied from the Atlassian dashboard.
 
-1. Navigate to the **Maintain Password Rules** task and add the ISU to the **System Users exempt from password expiration** field.
+![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_9.png)
 
-### Create a Security Group
+1. Click **Create Jira Auth Config** and the auth config should be created successfully.
 
-1. Search for **Create Security Group** in Workday and select the task.
+1. Once that's done, click **Connect Account,** and it will prompt you for your Jira subdomain.
 
-1. Select a security group type:
+For this, visit your Jira profile, and the URL should look something like this:
 
-  - **Integration System Security Group (Unconstrained)** — access to all data instances.
+```plain text
+https://<subdomain>.atlassian.net
 
-  - **Integration System Security Group (Constrained)** — access scoped by context.
+```
 
-1. Add your ISU as a member of the security group.
+The subdomain is what you'll need to enter here.
 
-1. Click **Done**.
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_10.png)
 
-### Grant Domain Permissions
+If you chose to use custom credentials but didn't specify the relevant scopes, you will encounter this **Something went wrong** error.
 
-1. Search for **Maintain Permissions for Security Group** and select the task.
+![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_11.png)
 
-1. Choose your security group and go to the **Domain Security Policy Permissions** tab.
+If everything went well, Composio can access your **Jira **account and everything you've configured in the Jira scopes.
 
-1. Ensure the security group has **GET permissions** for:
+1. If you want to limit the scopes from the Composio end, you can do so by heading over to the **Manage Auth Config** tab and removing all the scopes that you don't need.
 
-  - `Integration Build`
+![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_12.png)
 
-  - `Integration Process`
+Once done, copy the auth config ID (which starts with `ac_`) and use it in your application code via a secret manager.
 
-  - `Integration Debug`
+Your custom Jira auth config is now ready to go! 🚀
 
-  - `Integration Event`
+---
 
-  - `Worker Data: Current Staffing Information`
+## Test Jira Connection (Optional)
 
-  - `Worker Data: Public Worker Reports`
+Composio recently added support for Playground, where you can test the connection and how the tools would work with an agent.
 
-1. Click **OK**, then **Done**.
+1. Navigate to your Jira Auth Config.
 
-1. Search for **Activate Pending Security Policy Changes**, enter a comment, and confirm.
+1. Click on the **Playground**.
+
+1. Once you're there, try asking some related prompts, and if you did everything correctly, Composio should be able to access the details.
+
+![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_13.png)
+
+And that's it! You're all set to go with Jira! 🎉

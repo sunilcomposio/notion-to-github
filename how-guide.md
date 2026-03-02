@@ -1,246 +1,233 @@
-## Workday OAuth API Client + Composio Integration Guide
+In this guide, I’ll walk through the process of setting up OAuth for Microsoft Outlook using the Azure App Registrations portal. 
 
-A step-by-step walkthrough for registering a Workday API Client, configuring OAuth 2.0, and connecting it to Composio using your own credentials.
+This lets your app connect securely to Microsoft Graph APIs (which power Outlook, OneDrive, Teams, etc.).
 
-> **NOTE:** Workday recommends an Integration System User (ISU) with the right domain permissions to use API clients. If your Workday admin hasn't set this up yet, see the Additional: ISU & Security Group Setup section at the bottom of this guide.
+> Note: You do not need a Microsoft 365 Developer sandbox for this. A free Microsoft personal account is enough to register an OAuth app.
 
-## Overview
+---
 
-This guide walks you through the complete process of registering a Workday API Client (OAuth 2.0 app ) in Workday and connecting it to Composio using your own developer credentials. By the end you will have a registered Workday API client, a Composio Auth Config backed by those credentials, and a live ACTIVE connected account ready for agents or automations.
+## Step 1: Create an Azure App Registration
 
-## What You Will Set Up:
+1. Go to the [Azure Portal](https://portal.azure.com/#home).
 
-- Search for ‘Register API Client’ in Workday and open the task.
-
-- Fill in the API Client registration form (name, grant type, redirect URI, scopes).
-
-- Copy the Client ID, Client Secret, Token Endpoint, and Authorization Endpoint.
-
-- Create a Workday Auth Config in Composio with OAUTH2.
-
-- Paste credentials and tenant-specific URLs into the Composio form.
-
-- Connect a user account by entering Workday tenant URLs in the Composio connect flow.
-
-- Verify the connection shows ACTIVE in Composio.
-
-> PREREQUISITE
-You need an active Workday tenant with administrator access to run the ‘Register API Client’ task. You also need access to your Composio project. Have your Workday tenant name ready (e.g., glean_dpt1) — it appears in the Workday URLs and is required when connecting the account in Composio.
-
-## 1.Step
-
-## Search for ‘Register API Client’ in Workday
-
-Sign in to your Workday tenant. In the search bar at the top of the page, type **Register API Client** and press Enter. Workday’s global search will return matching tasks and reports.
+1. In the left-hand menu, search for **App registrations** and click **+ New registration**.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-Type ‘Register API Client’ in the Workday search bar and press Enter.
+1. Fill in your app details:
 
-> **NOTE**
-The search bar is available from any page in Workday. Make sure you are logged in with an account that has administrator or integration security permissions - otherwise the ‘Register API Client’ task may not appear in results.
+  - **Name**: Example → `Outlook Integration`
 
-## 2.Step
+  - **Supported account types**:
 
-## Open the ‘Register API Client’ Task
+    - Choose **Accounts in any organizational directory and personal Microsoft accounts** (so both work/school and personal Outlook accounts can log in).
 
-In the search results, under the **Tasks and Reports** section, click **Register API Client**. You will see three related tasks - choose the first one simply labelled ‘Register API Client’ (not the Integrations variant or the External OAuth Client).
+  - **Redirect URI (optional)**: Choose **Web** and paste:
+
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
+
+1. Click **Register**.
+
+---
+
+## Step 2: Generate Client Credentials
+
+Once your app is created, you’ll be redirected to its Overview page.
+
+1. Copy the **Application (client) ID** — this is your **Client ID**.
+
+1. From the sidebar, go to **Certificates & secrets** → **+ New client secret**.
+
+  - Add a description and set expiry (6 or 12 months recommended).
+
+  - Copy the generated **Client Secret**  and save it securely.
+
+> **Note** : The client secret is **Value** not the secret ID.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
-The three tasks you may see and what they are for:
+> ⚠️ Important: You won’t be able to see the secret again once you leave the page.
 
-## 3.Step
+---
 
-## Fill In the API Client Registration Form - Part 1
+## Step 3: Configure API Permissions
 
-The Register API Client form opens. Fill in the required fields as follows:
+Now, we’ll give the app permissions to access Outlook data.
+
+1. In the sidebar, click **API Permissions** → **+ Add a permission**.
+
+1. Select **Microsoft Graph**.
+
+1. Choose **Delegated permissions**.
+
+1. Add the required common Outlook-related scopes, such as:
+
+  - `Mail.Read` → Read user’s emails
+
+  - `Mail.Send` → Send emails on behalf of the user
+
+  - `offline_access` → Enable refresh tokens
+
+  - `openid profile email` → Basic login profile
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
 
-The Register API Client form - set Client Name, Grant Type, Access Token Type, and Redirect URI.
+Click **Add permissions**.
 
-> **IMPORTANT - Redirect URI
-**The Redirection URI must match exactly what Composio sends during the OAuth flow. Copy it from your Composio Auth Config form to be sure. A single character mismatch will cause the connection to fail with a redirect_uri_mismatch error.
+---
 
-## 4.Step
+## Step 4: Authentication
 
-## Fill In the Registration Form - Part 2 (Scopes & Options)
+1. From the sidebar, open **Authentication**.
 
-Scroll down in the same form to configure token settings and functional scopes.
+1. Under **Redirect URIs**, make sure this URL is added:
+
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
+
+1. Under **settings**, enable **Allow public client flows** (this makes it easier to test).
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-Scroll down: enable Non-Expiring Refresh Tokens, set Scopes, and check Include Workday Owned Scope.
+**Save changes.**
 
-After completing all fields, click OK to register the client.
+---
 
-## 5.Step
+## Step 5: Create the Auth Config in Composio
 
-## Review the Registered Client Summary
+With your Client ID and Client Secret ready, head over to the [Composio Dashboard](https://platform.composio.dev/?utm_source=chatgpt.com).
 
-After clicking OK, Workday displays the confirmation summary of your registered API client. Verify the key settings match what you entered.
+1. Click **Create Auth Config**.
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
 
-The registered API Client summary — verify all settings before proceeding.
-
-Confirm the following are correct:
-
-- Client Name: composio-testing-1 (or your chosen name)
-
-- Client Grant Type: Authorization Code Grant
-
-- Support PKCE: No
-
-- Access Token Type: Bearer
-
-- Redirection URI: https://backend.composio.dev/api/v1/auth-apps/add
-
-- Non-Expiring Refresh Tokens: Yes (visible further down the page)
-
-Click Done to complete the registration and proceed to the credential screen.
-
-## 6.Step
-
-## Copy Your Client ID, Client Secret, and API Endpoints
-
-After clicking Done, Workday shows the full client detail page including your generated credentials and tenant-specific API endpoints. Copy all of these - you will need them in Composio.
+1. Select **Microsoft Outlook**.
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
 
-Copy the Client ID, Client Secret, REST API Endpoint, Token Endpoint, and Authorization Endpoint.
+1. Choose **OAuth2** as the authentication type.
 
-> **WARNING - Save All Values Now
-**The Client Secret may be masked if you navigate away. Copy all five values (Client ID, Client Secret, REST API Endpoint, Token Endpoint, Authorization Endpoint) into a secure location before proceeding. If you lose the Client Secret, you will need to regenerate it in Workday and update your Composio Auth Config.
+1. Check **Use your own developer authentication**.
 
-## 7.Step
+1. Paste in your:
 
-## Open Composio and Create a New Auth Config
+  - **Client ID** → from Azure App Registration
 
-Switch to your Composio dashboard. Navigate to **Auth Configs** and click + **Create Auth Config**. In the search drawer that opens, type **workday** and select **Workday** with the OAUTH2 badge.
+  - **Client Secret** → from Certificates & secrets
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
 
-In the Composio Auth Configs page, click + Create Auth Config.
+  - **Redirect URI** →
+
+```plain text
+https://backend.composio.dev/api/v3/toolkits/auth/callback
+```
+
+1. click on **create Outlook config**.
+
+---
+
+## Step 6: Authorize and Connect
+
+1. In Composio, click **Connect Account** for the Outlook config.
+
+1. You’ll be redirected to Microsoft’s login screen.
+
+1. Approve the requested permissions (Mail.Read, Mail.Send, etc.).
+
+1. Composio stores the tokens once authorization succeeds.
+
+1. now you can try using tool to check the connection.
+
+---
+
+## API Base URL
+
+For Microsoft Graph (which powers Outlook), the base URL is:
+
+```plain text
+https://graph.microsoft.com/v1.0
+```
+
+Example endpoints:
+
+- List user emails → `/me/messages`
+
+- Send email → `/me/sendMail`
+
+Once done, copy the auth config ID (which starts with `ac_`) and use it in your application code via a secret manager.
+
+---
+
+## Scopes for Other Microsoft Apps
+
+If you want to integrate with other Microsoft services, you can reuse the same Azure app. Just add the required **scopes** in both Azure and Composio:
+
+- **OneDrive** → `Files.ReadWrite`, `Files.read.all`
+
+- **Teams** → `Channel.Create, Channel.ReadBasic.All, ChannelMessage.Read.All, ChannelMessage.ReadWrite, ChannelMessage.Send, ChannelSettings.ReadWrite.All, Chat.Create, Chat.Read, Chat.ReadBasic, Chat.ReadWrite, Chat.ReadWrite.All, ChatMessage.Read, ChatMessage.Send, Directory.ReadWrite.All, Group.ReadWrite.All, offline_access, People.Read.All, Presence.ReadWrite, Team.Create, Team.ReadBasic.All, TeamMember.ReadWrite.All, TeamsActivity.Read, TeamsActivity.Send, User.Read, OnlineMeetings.ReadWrite`
+
+- **Sharepoint **→ `List.Read`
+
+- **Excel **→` Files.ReadWrite Sites.ReadWrite.All offline_access User.Read`
+
+Once scopes are added, you can configure additional auth configs in Composio for each service.
+
+
+
+# Additional: Restricting Access to Specific Tenants
+
+> *If you're using your own custom OAuth app and want to limit access to only your organization's tenant or specific customer tenants, follow the steps below.*
+
+When the OAuth app is set to **Multiple Entra ID tenants**, it uses the `/common` endpoint, which means any Microsoft organisation could potentially authenticate. To restrict this, you can use the **Allowed tenants** setting to whitelist only specific organisations.
+
+# Step 1: Set Supported Account Type
+
+1. Go to [portal.azure.com](https://portal.azure.com/) and navigate to your app registration.
+
+1. In the search bar, search for **App registrations** and click **+ New registration**.
 
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_8.png)
 
-Type ‘workday’ in the search drawer and select Workday (OAUTH2).
-
-## 8.Step
-
-## Fill In the Composio Workday Auth Config Form
-
-The Workday Auth Config form opens in the right panel. Fill in each field using the credentials you copied from Workday.
+1. In the following page, you will be asked add your App name and Authentication type.
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_9.png)
 
-The Composio Workday Auth Config form - paste your Workday credentials here.
+1. Under **Authentication**, click the **Supported account types** tab.
 
-**NOTE - Redirect URI in Composio**
-The Redirect URI field in the Composio form is shown for reference - it is the same URL you already added to Workday’s Redirection URI field. You do not need to change it here.
-
-## 9.Step
-
-## Connect a User Account - Enter External User ID
-
-After saving the Auth Config, open it in Composio and click **Connect Account**. A modal dialog appears asking for an **External User ID**. Enter a stable, unique identifier for the user from your own system, then click **Connect Account**.
+1. Select **Multiple Entra ID tenants**.
 
 ![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_10.png)
 
-Enter a stable External User ID for the user being connected, then click Connect Account.
+# Step 2: Restrict to Specific Tenants
 
-> **EXTERNAL USER ID
-**Use a consistent, stable ID such as a UUID from your own user database. Composio uses this to associate the Workday connection with the correct end user when your agents or apps make tool calls. Do not use temporary or session-based IDs.
+1. Under the **Supported accounts** tab, select **"Allow only certain tenants (Preview)"**.
 
-## 10.Step
-
-## Enter Workday Tenant URLs in the Composio Connect Screen
-
-Unlike most OAuth flows, Workday requires you to provide your tenant-specific API endpoints during the connection step. A Composio screen opens in the browser with three required fields. Copy the values from the Workday credential page you saved in Step 6.
+1. Click **Manage allowed tenants**.
 
 ![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_11.png)
 
-Enter your Workday tenant Token URL, Authorization URL, and REST API Endpoint, then click Connect Account.
-
-> **TENANT-SPECIFIC URLS
-**All three URLs are unique to your Workday tenant. Replace ‘glean_dpt1’ in the examples with your actual tenant name. These exact URLs were shown on the credential confirmation page after you registered the API Client in Step 6. Do not use generic Workday URLs - they will not work for OAuth token exchange.
-
-After entering all three fields, click **Connect Account**. Workday’s OAuth consent flow will complete the connection.
-
-## 11.Step
-
-## Verify the Active Connection in Composio
-
-After the OAuth flow completes, Composio returns you to the Auth Config detail page. The **Connected Accounts** tab now shows your connection with status **ACTIVE**.
+1. Add the **Tenant ID** of each organisation you want to allow.
 
 ![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_12.png)
 
-**The Composio Connected Accounts tab showing an ACTIVE Workday connection.**
+1. Click Apply.
 
-Confirm the following before using the connection:
+1. (Optional) Add call back URL. Select Web and paste your callback URL.
 
-- Account ID appears in the Connected Accounts list with status ACTIVE.
+1. Then click Register.
 
-- Authentication Method on the right panel shows OAUTH2.
+![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_13.png)
 
-- Toolkit Slug shows WORKDAY.
+# How to Find Your Tenant ID
 
-- Note the Auth Config ID (e.g., ac_geY005ZFyZo2) for use in SDK calls or API requests.
+1. Go to [portal.azure.com](https://portal.azure.com/).
 
-## Additional: ISU & Security Group Setup
+1. Search for **Microsoft Entra ID**.
 
-> Most Workday tenants will have this configured by an admin. If you're unsure, check with your Workday admin before proceeding.
+1. Your **Tenant ID** is listed on the Overview page.
 
-### Create an Integration System User (ISU)
-
-An ISU is a dedicated service account for integrations — it keeps API operations separate from regular user accounts.
-
-1. Type **Create Integration System User** into Workday's search bar and select the task.
-
-1. Enter a **username** and set a **password**.
-
-1. Set **Session Timeout Minutes** to `0` to prevent the ISU from timing out.
-
-1. Select the **Do Not Allow UI Sessions** checkbox to restrict UI logins.
-
-1. Navigate to the **Maintain Password Rules** task and add the ISU to the **System Users exempt from password expiration** field.
-
-### Create a Security Group
-
-1. Search for **Create Security Group** in Workday and select the task.
-
-1. Select a security group type:
-
-  - **Integration System Security Group (Unconstrained)** — access to all data instances.
-
-  - **Integration System Security Group (Constrained)** — access scoped by context.
-
-1. Add your ISU as a member of the security group.
-
-1. Click **Done**.
-
-### Grant Domain Permissions
-
-1. Search for **Maintain Permissions for Security Group** and select the task.
-
-1. Choose your security group and go to the **Domain Security Policy Permissions** tab.
-
-1. Ensure the security group has **GET permissions** for:
-
-  - `Integration Build`
-
-  - `Integration Process`
-
-  - `Integration Debug`
-
-  - `Integration Event`
-
-  - `Worker Data: Current Staffing Information`
-
-  - `Worker Data: Public Worker Reports`
-
-1. Click **OK**, then **Done**.
-
-1. Search for **Activate Pending Security Policy Changes**, enter a comment, and confirm.
+> *⚠️ ****Important:**** If you select ****"Allow all tenants"**** instead, any Microsoft organization will be able to authenticate with your app. Only use this if you intend for your app to be publicly accessible.*

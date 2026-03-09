@@ -1,242 +1,350 @@
-In this guide, I’ll walk through the process of setting up OAuth for Microsoft Outlook using the Azure App Registrations portal. 
+  This guide shows how to connect Composio with OpenClaw to unlock access to 860+ tools beyond the default set and some practical uses cases of it.
 
-This lets your app connect securely to Microsoft Graph APIs (which power Outlook, OneDrive, Teams, etc.).
-
-> Note: You do not need a Microsoft 365 Developer sandbox for this. A free Microsoft personal account is enough to register an OAuth app.
+  The focus is simple: expand capabilities while keeping authentication secure and data under your control.
 
 ---
 
-## Step 1: Create an Azure App Registration
+## Pre-Requires
 
-1. Go to the [Azure Portal](https://portal.azure.com/#home).
+  Before setting up openclaw, we need to configure the mcp server & install docker.
 
-1. In the left-hand menu, search for **App registrations** and click **+ New registration**.
+  For installing docker:
+
+  - Head to [Docker Desktop | Docker Docs](https://docs.docker.com/desktop/) and download you preferred version. I am using windows.
+
+  - Install and configure it (just keep defaults)
+
+  - Make sure the at bottom it says “Engine Running”
+
+  - This also install and registers docker cli tool. You can check this by typing docker in cmd and seeing list of args.
+
+  For configuring mcp server:
+
+  - **Create an account**
+
+    - Go to [https://dashboard.composio.dev/](https://dashboard.composio.dev/) and sign up / login
+
+  - **Set up MCP**
+
+    - Head to the **Connect to OpenClaw** and copy the prompt
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-1. Fill in your app details:
+    - Head to OpenClaw and paste the prompt:
 
-  - **Name**: Example → `Outlook Integration`
-
-  - **Supported account types**:
-
-    - Choose **Accounts in any organizational directory and personal Microsoft accounts** (so both work/school and personal Outlook accounts can log in).
-
-  - **Redirect URI (optional)**: Choose **Web** and paste:
-
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
+```c#
+Add a new MCP server called "composio" with transport type HTTP. Use the URL https://connect.composio.dev/mcp and add the header "x-consumer-api-key: your-api-key".
 ```
 
-1. Click **Register**.
+    - If first time login and authenticate and you are done!
+
+  Now all ready, we are ready to setup openclaw. 
 
 ---
 
-## Step 2: Generate Client Credentials
+## Setup OpenClaw in Docker
 
-Once your app is created, you’ll be redirected to its Overview page.
+  To reduce the hassle and secure ourselves, let’s install the open-claw in docker container. 
 
-1. Copy the **Application (client) ID** — this is your **Client ID**.
+> Ofc, if you can afford, buy a mac-min for max security and follow same steps
 
-1. From the sidebar, go to **Certificates & secrets** → **+ New client secret**.
+  Open terminal and paste the following command:
 
-  - Add a description and set expiry (6 or 12 months recommended).
+```c#
+bash <(curl -fsSL https://raw.githubusercontent.com/phioranex/openclaw-docker/main/install.sh)
+```
 
-  - Copy the generated **Client Secret**  and save it securely.
+  This will:
 
-> **Note** : The client secret is **Value** not the secret ID.
+  - ✅ Check prerequisites (Docker, Docker Compose)
+
+  - ✅ Download necessary files
+
+  - ✅ Pull the pre-built image
+
+  - ✅ Run the onboarding wizard
+
+  - ✅ Start the gateway
+
+  Source ([openclaw docker image](https://github.com/phioranex/openclaw-docker))
+
+  It takes some time, so be patient. 
+
+  Once installed, configure all the details as:
+
+  - **Initial Setup**
+
+    - **Confirm:** Select **Yes**
+
+      - Make sure to read the instructions!
+
+    - **Onboarding Mode:** Select **QuickStart**
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
 
-> ⚠️ Important: You won’t be able to see the secret again once you leave the page.
+  - **Model Provider: OpenAI (ChatGPT + Codex OAuth)**
 
----
+    - Select **OpenAI (ChatGPT + Codex OAuth)**
 
-## Step 3: Configure API Permissions
+      - Click verify and authenticate
 
-Now, we’ll give the app permissions to access Outlook data.
+      - Copy the verified URL and paste it back
 
-1. In the sidebar, click **API Permissions** → **+ Add a permission**.
+    - **Model:** Select the latest Codex model
 
-1. Select **Microsoft Graph**.
-
-1. Choose **Delegated permissions**.
-
-1. Add the required common Outlook-related scopes, such as:
-
-  - `Mail.Read` → Read user’s emails
-
-  - `Mail.Send` → Send emails on behalf of the user
-
-  - `offline_access` → Enable refresh tokens
-
-  - `openid profile email` → Basic login profile
+      - Go with **5.3** (default)
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
 
-Click **Add permissions**.
+  - **Bot: Telegram**
 
----
+    - Open Telegram and search **@BotFather**
 
-## Step 4: Authentication
+      - Select the verified one (blue checkmark)
 
-1. From the sidebar, open **Authentication**.
+    - Click **Start**, then send `/new_bot`
 
-1. Under **Redirect URIs**, make sure this URL is added:
+      - Enter bot name: `Harsh Bot`
 
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
-```
+      - Enter username: `devloper_hs_bot` *(must end with *`*bot*`*)*
 
-1. Under **settings**, enable **Allow public client flows** (this makes it easier to test).
+      - Copy the generated **API key**
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
 
-**Save changes.**
+    - Head to the terminal
 
----
+      - Select **Telegram**
 
-## Step 5: Create the Auth Config in Composio
-
-With your Client ID and Client Secret ready, head over to the [Composio Dashboard](https://platform.composio.dev/?utm_source=chatgpt.com).
-
-1. Click **Create Auth Config**.
+      - Paste the **API key** when prompted
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
 
-1. Select **Microsoft Outlook**.
+  - **Remaining Options**
+
+    - **Skills:** Select **No**
+
+    - **Hooks:** Select **No**
+
+    - Rest of the settings keep default!
+
+  Once all done, you will be greeted with this screen!
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
 
-1. Choose **OAuth2** as the authentication type.
+  However, work is not done, you need to run:
 
-1. Check **Use your own developer authentication**.
-
-1. Paste in your:
-
-  - **Client ID** → from Azure App Registration
-
-  - **Client Secret** → from Certificates & secrets
-
-![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_7.png)
-
-  - **Redirect URI** →
-
-```plain text
-https://backend.composio.dev/api/v3/toolkits/auth/callback
+```c#
+cd /home/devloper_hs/openclaw && docker compose up -d
 ```
 
-1. click on **create Outlook config**.
-
----
-
-## Step 6: Authorize and Connect
-
-1. In Composio, click **Connect Account** for the Outlook config.
-
-1. You’ll be redirected to Microsoft’s login screen.
-
-1. Approve the requested permissions (Mail.Read, Mail.Send, etc.).
-
-1. Composio stores the tokens once authorization succeeds.
-
-1. now you can try using tool to check the connection.
-
----
-
-## API Base URL
-
-For Microsoft Graph (which powers Outlook), the base URL is:
-
-```plain text
-https://graph.microsoft.com/v1.0
+```c#
+cd /home/devloper_hs/openclaw && docker compose restart openclaw-gateway
 ```
 
-Example endpoints:
+  and then you can access the dashboard from: [http://localhost:18790/?token=YOUR_TOKEN](http://localhost:18790/?token=cc62a6f9d336373dc5b50f48928d924215b2377f5a7dbe5e)
 
-- List user emails → `/me/messages`
+  Now time to add skills!
 
-- Send email → `/me/sendMail`
-
-Once done, copy the auth config ID (which starts with `ac_`) and use it in your application code via a secret manager.
+> Note: replace devloper_hs with your username.
 
 ---
 
-## Scopes for Other Microsoft Apps
+## Adding Composio MCP 
 
-If you want to integrate with other Microsoft services, you can reuse the same Azure app. Just add the required **scopes** in both Azure and Composio:
+  Composio can be used with openclaw in 2 ways, let’s look at them!
 
-- **OneDrive** → `Files.ReadWrite`, `Files.read.all`
+### **Using Plugin**
 
-- **Teams** → `Channel.Create, Channel.ReadBasic.All, ChannelMessage.Read.All, ChannelMessage.ReadWrite, ChannelMessage.Send, ChannelSettings.ReadWrite.All, Chat.Create, Chat.Read, Chat.ReadBasic, Chat.ReadWrite, Chat.ReadWrite.All, ChatMessage.Read, ChatMessage.Send, Directory.ReadWrite.All, Group.ReadWrite.All, offline_access, People.Read.All, Presence.ReadWrite, Team.Create, Team.ReadBasic.All, TeamMember.ReadWrite.All, TeamsActivity.Read, TeamsActivity.Send, User.Read, OnlineMeetings.ReadWrite`
+  Composio recently allowed support for open claw plugin, i.e. no headache of configuration, simple one liner command set it all!
 
-- **Sharepoint **→ `List.Read`
+  So head to terminal and type
 
-- **Excel **→` Files.ReadWrite Sites.ReadWrite.All offline_access User.Read`
+```c#
+openclaw plugins install @composio/openclaw-plugin
+```
 
-Once scopes are added, you can configure additional auth configs in Composio for each service.
+  Once done, setup your api key, following the steps:
 
-## **Here are some additional steps to follow when connecting to SharePoint**: 
+  - Log in at [**dashboard.composio.dev**](https://dashboard.composio.dev/)**.**
 
-You'll need to enter your SharePoint subdomain, which you can find in your SharePoint dashboard, as shown in the image below.
+  - Choose your preferred client (OpenClaw, Claude Code, Cursor, etc.).
 
+  - Copy your consumer key (`ck_...`).
 
-![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_8.png)
+  In terminal run:
 
-You can now use this subdomain value when connecting your account in Composio.
+```c#
+openclaw config set plugins.entries.composio.config.consumerKey "ck_your_key_here"
+```
 
-![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_9.png)
+  Finally restart the gateway:
 
-# Additional: Restricting Access to Specific Tenants
+```c#
+openclaw gateway restart
+```
 
-> *If you're using your own custom OAuth app and want to limit access to only your organization's tenant or specific customer tenants, follow the steps below.*
+  All this does is setup the open claw configuration with consumer key in the composio MCP.
 
-When the OAuth app is set to **Multiple Entra ID tenants**, it uses the `/common` endpoint, which means any Microsoft organisation could potentially authenticate. To restrict this, you can use the **Allowed tenants** setting to whitelist only specific organisations.
+  Or alternatively, you can directly setup the mcp server , for more granular control.
 
-# Step 1: Set Supported Account Type
+### **Using MCP**
 
-1. Go to [portal.azure.com](https://portal.azure.com/) and navigate to your app registration.
+  As a secondary measure, you can activate mcp support through [*mcp_porter*](https://skillsmp.com/skills/openclaw-openclaw-skills-mcporter-skill-md)[ ](https://skillsmp.com/skills/openclaw-openclaw-skills-mcporter-skill-md) and then add composio. This keep things organized and simple.
 
-1. In the search bar, search for **App registrations** and click **+ New registration**.
+  → Head to Skills section, and search MCP Portal and click install.
 
-![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_10.png)
+  → Now go to terminal and restart the containers (openclaw & socat-proxy) using:
 
-1. In the following page, you will be asked add your App name and Authentication type.
+```c#
+ cd /home/devloper_hs/openclaw && docker compose restart openclaw-gateway 
+```
 
-![Image 11](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_11.png)
+  → Then again go to skills and in MCP Porter, refresh the page. make sure it shows eligible
 
-1. Under **Authentication**, click the **Supported account types** tab.
+  → Now go to home folder where opencalw is installed: `/home/username/.openclaw/workspace/config`
 
-1. Select **Multiple Entra ID tenants**.
+  → Open the `mcporter.json` in any ide and paste the following & save: 
 
-![Image 12](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_12.png)
+```c#
+{
+  "mcpServers": {
+    "composio": {
+      "baseUrl": "url_from",
+      "headers": {
+        "x-api-key": "api_key"
+      }
+    }
+  },
+  "imports": []
+}
 
-# Step 2: Restrict to Specific Tenants
+```
 
-1. Under the **Supported accounts** tab, select **"Allow only certain tenants (Preview)"**.
+> The **url** and **api **key are the one from the pre-require step.
 
-1. Click **Manage allowed tenants**.
+  or if you want a stdio server setup you can use (might cause issue):
 
-![Image 13](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_13.png)
+```c#
+npm install -g composio-mcp
+```
 
-1. Add the **Tenant ID** of each organisation you want to allow.
+```c#
+{
+  "mcpServers": {
+    "composio": {
+      "command": "composio-mcp",
+      "args": ["--api-key", "api_key"],
+      "transport": "stdio"
+    }
+  }
+}
+```
 
-![Image 14](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_14.png)
+```c#
+# usage
+npx mcporter call --stdio "npx @composio/mcp@latest setup https://backend.composio.dev/tool_router/<api-key>/mcp" <tool_name> <arg1>=<value1>
+```
 
-1. Click Apply.
+  Now to make sure agent pick up the mcp servers perfectly let’s top the setup with skills file!
 
-1. (Optional) Add call back URL. Select Web and paste your callback URL.
+```c#
+npx skills add https://github.com/composiohq/skills --skill composio --yes
+```
 
-1. Then click Register.
+  Now we are all setup to experience openclaw seamlessly.
 
-![Image 15](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_15.png)
+  💡Fact: You can do all the steps in section through prompt in openclaw, but as it stores logs that ate accessible to other, it causes security concern, so cli approach is better. 
 
-# How to Find Your Tenant ID
+> Note: For safety purpose, I have only enabled few tools, rather than all, so test will be limited!
 
-1. Go to [portal.azure.com](https://portal.azure.com/).
+---
 
-1. Search for **Microsoft Entra ID**.
+## Using OpenClaw 
 
-1. Your **Tenant ID** is listed on the Overview page.
+  Head back to the the dashboard and go to chat.
 
-> *⚠️ ****Important:**** If you select ****"Allow all tenants"**** instead, any Microsoft organization will be able to authenticate with your app. Only use this if you intend for your app to be publicly accessible.*
+  The nicest thing about clawd bot is you can chat with it to get things done, rather than prompting, and it understand you close to human. 
+
+  However, for this test, I just want it to fetch me hackathon emails, so here is my chat session!
+
+> Note: It might hallucinate, as it's a personal project, however, take care of security as these chats are visible to anyone if they know your token.
+
+  You can even try it use with telegram. Steps are simple:
+
+  - Head to the telegram `BotFather`  channel and select your bot
+
+  - Click start and copy the pairing code
+
+  - Head to the terminal and paste:
+
+```c#
+cd /home/devloper_hs/openclaw && docker compose run --rm openclaw-cli pairing approve telegram pairing-code
+```
+
+  Replace the pairing-code with one you copied.
+
+  In few seconds you will see an output like:
+
+```c#
+Container openclaw-openclaw-cli-run-58c012ca9af1 Creating
+Container openclaw-openclaw-cli-run-58c012ca9af1 Created
+
+🦞 OpenClaw 2026.2.17 (4134875) — Your AI assistant, now without the $3,499 headset.
+
+Approved telegram sender [bot_id].
+```
+
+  Now you can easily interact with openclaw, like I am doing!
+
+  I even tried using it to get some trendy tweets:
+
+  **Prompt**
+
+```markdown
+Use OpenClaw as an autonomous agent connected through Composio tools. 
+
+Continuously monitor trending topics from Google Trends, X trending feeds, and other available trend sources, filter for high-engagement AI/tech/startup discussions, and extract concise context (keywords, sentiment, why it’s trending). 
+
+Generate 2–4 short, opinion-neutral social posts per trend in a natural human tone optimized for Telegram readability, avoid hashtags spam, avoid misinformation, and deduplicate similar topics. 
+
+Schedule execution every few hours, keep outputs brief (max ~4–5 lines each), and send the final approved posts directly to a specified Telegram chat using the Composio Telegram integration. 
+
+Include lightweight safety checks, rate limits, and logging of sources used for each generated post.
+```
+
+  **Output**
+
+  and even to create my own task-board (inspired by AlexFinn).
+
+  Prompt:
+
+```markdown
+Please build a task board for us that tracks all the tasks we are working on. I should be able to see the status of every task and who the task is assigned to, me or you. Movingg forward please we will put all tasks you and I work on into this board and update it in real time.
+```
+
+  Output:
+
+  Best thing I like about it is, if done right, it can do things!
+
+  I hope you enjoy your days with open-claw securely using docker and have fun.
+
+  Make sure to stop the session once done using:
+
+```c#
+cd /home/devloper_hs/openclaw && docker compose down
+```
+
+  With this let’s end this article with a key takeaway.
+
+---
+
+## Key Take Away!
+
+  Tools like open-claw seem amazing at first glance but can easily become a nightmare if not handled right - especially around security. 
+
+  The moment you hand broad permissions or API keys to an agent; you've opened a door you might forget, but it is even there. It doesn't know what's sensitive, it just acts. 
+
+  That’s where tool like [Composio ](https://composio.dev/)sidesteps this quietly by handling scoped access and managed credentials under the hood, so the agent does its job without holding the master keys to everything.
+
+  What other approach you find safeguards your privacy and sensitive data, do share in comments!

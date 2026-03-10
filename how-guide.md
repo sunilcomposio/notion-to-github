@@ -1,210 +1,90 @@
-  This guide shows how to connect Composio with OpenClaw to unlock access to 860+ tools beyond the default set and some practical uses cases of it.
+This guide shows how to connect Composio with OpenClaw to unlock access to 860+ tools beyond the default set and some practical use cases of it.
 
-  The focus is simple: expand capabilities while keeping authentication secure and data under your control.
+The focus is simple: expand capabilities while keeping authentication secure and data under your control. No fluff, no complex infrastructure - just plug in, connect your tools, and start building things that actually matter.
+
+So let's get started with the setup!
 
 ---
 
-## Pre-Requires
+## Adding Composio MCP to OpenClaw
 
-  Before setting up openclaw, we need to configure the mcp server & install docker.
+Assuming you have open claw installed already, there are 3 ways to enable composio in open claw. I have listed all of them, though I prefer the 1st one the most!
 
-  For installing docker:
+In case you don’t have openclaw install you check out Docker Install Section of [Install OpenClaw](https://composio.dev/blog/how-to-setup-openclaw-and-use-saas-apps)
 
-  - Head to [Docker Desktop | Docker Docs](https://docs.docker.com/desktop/) and download you preferred version. I am using windows.
+Get it done and then follow along.
 
-  - Install and configure it (just keep defaults)
+### 1. Using direct prompt with your API Key
 
-  - Make sure the at bottom it says “Engine Running”
+Before setting up openclaw, we need to configure the mcp server 
 
-  - This also install and registers docker cli tool. You can check this by typing docker in cmd and seeing list of args.
+For configuring mcp server:
 
-  For configuring mcp server:
+- **Create an account: **Go to [https://dashboard.composio.dev/](https://dashboard.composio.dev/) and sign up / login
 
-  - **Create an account**
-
-    - Go to [https://dashboard.composio.dev/](https://dashboard.composio.dev/) and sign up / login
-
-  - **Set up MCP**
-
-    - Head to the **Connect to OpenClaw** and copy the prompt
+- **Set up MCP: **Head to the **Connect to OpenClaw** and copy the prompt
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_1.png)
 
-    - Head to OpenClaw and paste the prompt:
+  - Head to OpenClaw and paste the prompt:
 
-```c#
+```markdown
 Add a new MCP server called "composio" with transport type HTTP. Use the URL https://connect.composio.dev/mcp and add the header "x-consumer-api-key: your-api-key".
 ```
 
-    - If first time login and authenticate and you are done!
+If first time login and authenticate and you are done!
 
-  Now all ready, we are ready to setup openclaw. 
+### **2. Using Composio **`**npm**`** Plugin**
 
----
+Composio recently allowed support for open claw plugin, i.e. no headache of configuration, simple one liner command set it all!
 
-## Setup OpenClaw in Docker
-
-  To reduce the hassle and secure ourselves, let’s install the open-claw in docker container. 
-
-> Ofc, if you can afford, buy a mac-min for max security and follow same steps
-
-  Open terminal and paste the following command:
-
-```c#
-bash <(curl -fsSL https://raw.githubusercontent.com/phioranex/openclaw-docker/main/install.sh)
-```
-
-  This will:
-
-  - ✅ Check prerequisites (Docker, Docker Compose)
-
-  - ✅ Download necessary files
-
-  - ✅ Pull the pre-built image
-
-  - ✅ Run the onboarding wizard
-
-  - ✅ Start the gateway
-
-  Source ([openclaw docker image](https://github.com/phioranex/openclaw-docker))
-
-  It takes some time, so be patient. 
-
-  Once installed, configure all the details as:
-
-  - **Initial Setup**
-
-    - **Confirm:** Select **Yes**
-
-      - Make sure to read the instructions!
-
-    - **Onboarding Mode:** Select **QuickStart**
-
-![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_2.png)
-
-  - **Model Provider: OpenAI (ChatGPT + Codex OAuth)**
-
-    - Select **OpenAI (ChatGPT + Codex OAuth)**
-
-      - Click verify and authenticate
-
-      - Copy the verified URL and paste it back
-
-    - **Model:** Select the latest Codex model
-
-      - Go with **5.3** (default)
-
-![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_3.png)
-
-  - **Bot: Telegram**
-
-    - Open Telegram and search **@BotFather**
-
-      - Select the verified one (blue checkmark)
-
-    - Click **Start**, then send `/new_bot`
-
-      - Enter bot name: `Harsh Bot`
-
-      - Enter username: `devloper_hs_bot` *(must end with *`*bot*`*)*
-
-      - Copy the generated **API key**
-
-![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_4.png)
-
-    - Head to the terminal
-
-      - Select **Telegram**
-
-      - Paste the **API key** when prompted
-
-![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_5.png)
-
-  - **Remaining Options**
-
-    - **Skills:** Select **No**
-
-    - **Hooks:** Select **No**
-
-    - Rest of the settings keep default!
-
-  Once all done, you will be greeted with this screen!
-
-![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how/image_6.png)
-
-  However, work is not done, you need to run:
-
-```c#
-cd /home/devloper_hs/openclaw && docker compose up -d
-```
-
-```c#
-cd /home/devloper_hs/openclaw && docker compose restart openclaw-gateway
-```
-
-  and then you can access the dashboard from: [http://localhost:18790/?token=YOUR_TOKEN](http://localhost:18790/?token=cc62a6f9d336373dc5b50f48928d924215b2377f5a7dbe5e)
-
-  Now time to add skills!
-
-> Note: replace devloper_hs with your username.
-
----
-
-## Adding Composio MCP 
-
-  Composio can be used with openclaw in 2 ways, let’s look at them!
-
-### **Using Plugin**
-
-  Composio recently allowed support for open claw plugin, i.e. no headache of configuration, simple one liner command set it all!
-
-  So head to terminal and type
+So, head to terminal and type
 
 ```c#
 openclaw plugins install @composio/openclaw-plugin
 ```
 
-  Once done, setup your api key, following the steps:
+Once done, setup your api key, following the steps:
 
-  - Log in at [**dashboard.composio.dev**](https://dashboard.composio.dev/)**.**
+- Log in at [**dashboard.composio.dev**](https://dashboard.composio.dev/)**.**
 
-  - Choose your preferred client (OpenClaw, Claude Code, Cursor, etc.).
+- Choose your preferred client (OpenClaw, Claude Code, Cursor, etc.).
 
-  - Copy your consumer key (`ck_...`).
+- Copy your consumer key (`ck_...`).
 
-  In terminal run:
+In terminal run:
 
 ```c#
 openclaw config set plugins.entries.composio.config.consumerKey "ck_your_key_here"
 ```
 
-  Finally restart the gateway:
+Finally restart the gateway:
 
 ```c#
 openclaw gateway restart
 ```
 
-  All this does is setup the open claw configuration with consumer key in the composio MCP.
+All this does is setup the open claw configuration with consumer key in the Composio MCP.
 
-  Or alternatively, you can directly setup the mcp server , for more granular control.
+Or alternatively, you can directly setup the mcp server , for more granular control.
 
-### **Using MCP**
+### **3. Using MCP Porter**
 
-  As a secondary measure, you can activate mcp support through [*mcp_porter*](https://skillsmp.com/skills/openclaw-openclaw-skills-mcporter-skill-md)[ ](https://skillsmp.com/skills/openclaw-openclaw-skills-mcporter-skill-md) and then add composio. This keep things organized and simple.
+As a secondary measure, you can activate mcp support through [*mcp_porter*](https://skillsmp.com/skills/openclaw-openclaw-skills-mcporter-skill-md)[ ](https://skillsmp.com/skills/openclaw-openclaw-skills-mcporter-skill-md) and then add composio. This keeps things organized and simple.
 
-  → Head to Skills section, and search MCP Portal and click install.
+→ Head to Skills section, and search MCP Portal and click install.
 
-  → Now go to terminal and restart the containers (openclaw & socat-proxy) using:
+→ Now go to terminal and restart the containers (openclaw & socat-proxy) using:
 
 ```c#
  cd /home/devloper_hs/openclaw && docker compose restart openclaw-gateway 
 ```
 
-  → Then again go to skills and in MCP Porter, refresh the page. make sure it shows eligible
+→ Then again go to skills and in MCP Porter, refresh the page. make sure it shows eligible
 
-  → Now go to home folder where opencalw is installed: `/home/username/.openclaw/workspace/config`
+→ Now go to home folder where opencalw is installed: `/home/username/.openclaw/workspace/config`
 
-  → Open the `mcporter.json` in any ide and paste the following & save: 
+→ Open the `mcporter.json` in any ide and paste the following & save: 
 
 ```c#
 {
@@ -223,7 +103,7 @@ openclaw gateway restart
 
 > The **url** and **api **key are the one from the pre-require step.
 
-  or if you want a stdio server setup you can use (might cause issue):
+or if you want a stdio server setup you can use (might cause issue):
 
 ```c#
 npm install -g composio-mcp
@@ -246,45 +126,43 @@ npm install -g composio-mcp
 npx mcporter call --stdio "npx @composio/mcp@latest setup https://backend.composio.dev/tool_router/<api-key>/mcp" <tool_name> <arg1>=<value1>
 ```
 
-  Now to make sure agent pick up the mcp servers perfectly let’s top the setup with skills file!
+Now to make sure agent pick up the mcp servers perfectly let’s top the setup with skills file!
 
 ```c#
 npx skills add https://github.com/composiohq/skills --skill composio --yes
 ```
 
-  Now we are all setup to experience openclaw seamlessly.
+Now we are all setup to experience openclaw seamlessly.
 
-  💡Fact: You can do all the steps in section through prompt in openclaw, but as it stores logs that ate accessible to other, it causes security concern, so cli approach is better. 
-
-> Note: For safety purpose, I have only enabled few tools, rather than all, so test will be limited!
+💡Fact: You can do all the steps in section through prompt in openclaw, but as it stores logs that ate accessible to other, it causes security concern, so cli approach is better. 
 
 ---
 
 ## Using OpenClaw 
 
-  Head back to the the dashboard and go to chat.
+Head back to the the dashboard and go to chat.
 
-  The nicest thing about clawd bot is you can chat with it to get things done, rather than prompting, and it understand you close to human. 
+The nicest thing about clawd bot is you can chat with it to get things done, rather than prompting, and it understand you close to human. 
 
-  However, for this test, I just want it to fetch me hackathon emails, so here is my chat session!
+However, for this test, I just want it to fetch me hackathon emails, so here is my chat session!
 
 > Note: It might hallucinate, as it's a personal project, however, take care of security as these chats are visible to anyone if they know your token.
 
-  You can even try it use with telegram. Steps are simple:
+You can even try it use with telegram. Steps are simple:
 
-  - Head to the telegram `BotFather`  channel and select your bot
+- Head to the telegram `BotFather`  channel and select your bot
 
-  - Click start and copy the pairing code
+- Click start and copy the pairing code
 
-  - Head to the terminal and paste:
+- Head to the terminal and paste:
 
 ```c#
 cd /home/devloper_hs/openclaw && docker compose run --rm openclaw-cli pairing approve telegram pairing-code
 ```
 
-  Replace the pairing-code with one you copied.
+Replace the pairing-code with one you copied.
 
-  In few seconds you will see an output like:
+In few seconds you will see an output like:
 
 ```c#
 Container openclaw-openclaw-cli-run-58c012ca9af1 Creating
@@ -295,11 +173,11 @@ Container openclaw-openclaw-cli-run-58c012ca9af1 Created
 Approved telegram sender [bot_id].
 ```
 
-  Now you can easily interact with openclaw, like I am doing!
+Now you can easily interact with openclaw, like I am doing!
 
-  I even tried using it to get some trendy tweets:
+I even tried using it to get some trendy tweets:
 
-  **Prompt**
+**Prompt**
 
 ```markdown
 Use OpenClaw as an autonomous agent connected through Composio tools. 
@@ -313,38 +191,38 @@ Schedule execution every few hours, keep outputs brief (max ~4–5 lines each), 
 Include lightweight safety checks, rate limits, and logging of sources used for each generated post.
 ```
 
-  **Output**
+**Output**
 
-  and even to create my own task-board (inspired by AlexFinn).
+and even to create my own task-board (inspired by AlexFinn).
 
-  Prompt:
+Prompt:
 
 ```markdown
 Please build a task board for us that tracks all the tasks we are working on. I should be able to see the status of every task and who the task is assigned to, me or you. Movingg forward please we will put all tasks you and I work on into this board and update it in real time.
 ```
 
-  Output:
+Output:
 
-  Best thing I like about it is, if done right, it can do things!
+Best thing I like about it is, if done right, it can do things!
 
-  I hope you enjoy your days with open-claw securely using docker and have fun.
+I hope you enjoy your days with open-claw securely using docker and have fun.
 
-  Make sure to stop the session once done using:
+Make sure to stop the session once done using:
 
 ```c#
 cd /home/devloper_hs/openclaw && docker compose down
 ```
 
-  With this let’s end this article with a key takeaway.
+With this let’s end this article with a key takeaway.
 
 ---
 
 ## Key Take Away!
 
-  Tools like open-claw seem amazing at first glance but can easily become a nightmare if not handled right - especially around security. 
+Tools like open-claw seem amazing at first glance but can easily become a nightmare if not handled right - especially around security. 
 
-  The moment you hand broad permissions or API keys to an agent; you've opened a door you might forget, but it is even there. It doesn't know what's sensitive, it just acts. 
+The moment you hand broad permissions or API keys to an agent; you've opened a door you might forget, but it is even there. It doesn't know what's sensitive, it just acts. 
 
-  That’s where tool like [Composio ](https://composio.dev/)sidesteps this quietly by handling scoped access and managed credentials under the hood, so the agent does its job without holding the master keys to everything.
+That’s where tool like [Composio ](https://composio.dev/)sidesteps this quietly by handling scoped access and managed credentials under the hood, so the agent does its job without holding the master keys to everything.
 
-  What other approach you find safeguards your privacy and sensitive data, do share in comments!
+What other approach you find safeguards your privacy and sensitive data, do share in comments!

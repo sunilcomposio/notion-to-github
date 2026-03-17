@@ -1,199 +1,326 @@
-If you’ve built agent workflows with pure prompting, you’ve likely run into hard limits. The model can generate logic, but it cannot securely execute code, call authenticated APIs, persist state, or orchestrate multi-step tool chains on its own.
+If you've worked with OpenClaw, you already know [Skills](https://composio.dev/content/top-openclaw-skills), the task-level instructions that let your agent send emails, query APIs, or pull live data. But plugins operate at a deeper layer. They hook into the agent's lifecycle, reshape how it reasons, authenticates, and interacts with the outside world.
+
+Though OpenClaw currently has a very limited set of official plugins but there are many independent devs who have built some really cool plugins for OpenClaw. And it seems OpenClaw plugins are going to get huge push from OpenClaw.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_1.png)
 
-Claude Code Skills provides that missing execution layer. They let Claude interface with external systems, manage authentication, query databases, automate browser operations, and maintain structured context across sessions. You move from simulated workflows to real system interactions.
+## Top OpenClaw Plugins
 
-For developers and teams building production-grade AI agents, skills define what the system can actually do. 
+As an OpenClaw enthusiast I collated some of the actually useful plugins for OpenClaw.
 
-Here are the top 10 Claude Code skills that matter.
+- **Composio** - Connect OpenClaw with 850+ on-demand SaaS Apps
 
-## TL;DR
+- **memU (Memory Framework)** - Hierarchical Knowledge Graph That Makes Your Agent Proactive
 
-- Claude Code Skills extends Claude with modular execution capabilities such as tool access, sandboxed code, memory, and structured workflows.
+- **SecureClaw** - OWASP-Aligned Security Auditing and Runtime Hardening
 
-- Composio serves as the integration backbone with 1000+ tools, OAuth lifecycle management, scoped credentials, and standardized action schemas.
+- **Lobster** - Typed Workflow Pipelines with Approval Gates for Reliable Automation
 
-- GitHub Automation, Database Querying, Browser Automation, and Code Execution Sandbox handle core development and data execution tasks.
+- **Memory LanceDB** - Vector-Backed Long-Term Memory with Auto-Recall and Auto-Capture
 
-- Memory, File Processing, Web Search, Multi-Agent Orchestration, and Media Automation support persistence, documents, live data, coordination, and content workflows.
+- **MemOS Cloud** - Cloud-Hosted Cross-Agent Memory with Async Recall and Isolation
 
-- Choose your stack by anchoring on a strong integration layer, then layering execution and data skills based on your automation goals.
+- **OpenClaw Foundry** - Self-Writing Meta-Extension That Learns and Builds Its Own Tools
 
-## What Are Claude Code Skills?
+- **Better Gateway** - Auto-Reconnect, Embedded IDE, and Browser Terminal for Stable Ops
 
-Claude Code Skills package execution logic into structured, reusable modules that extend an agent’s capabilities. They move workflow logic out of oversized prompts and into versioned units you can inspect, update, and reuse.
+- **Voice Call** - Outbound Phone Calls and Multi-Turn Voice Conversations via Twilio
+
+## 1. [Composio](/20df261a6dfe80d6aa55fca03849a949) - Connect OpenClaw with 850+ on-demand SaaS Apps
+
+Instead of installing individual skills for every app (Slack, GitHub, Outlook, Notion), this single plugin connects to Composio’s managed MCP server and handles all OAuth and authentication logic automatically.
+
+This plugin is the official bridge that allows your OpenClaw agent to discover and call any SaaS tools dynamically.
+
+**Pre-requisites**
+
+1. Log in at [dashboard.composio.dev](https://dashboard.composio.dev/)
+
+1. Choose your preferred client (OpenClaw.)
+
+1. Copy your consumer key (`ck_...`)
+
+**Install Composio plugin**
+
+```shell
+openclaw plugins install @composio/openclaw-plugin
+```
+
+**Set OpenClaw Config **
+
+```shell
+openclaw config set plugins.entries.composio.config.consumerKey "ck_your_key_here"
+```
+
+Then allow Composio tools in your agent's tool list. This works with any tool profile (`coding`, `minimal`, `messaging`, etc.). Without this step, Composio tools will only be available on the `full` tool profile:
+
+```shell
+openclaw config set tools.alsoAllow '["composio"]'
+```
+
+After setting your key and allowing the tools, restart the gateway:
+
+```shell
+openclaw gateway restart
+```
+
+Result (in `~/openclaw/openclaw.json` file):
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_2.png)
 
-A skill defines how Claude should perform a specific class of tasks. Inside a skill, you can include:
-
-- Metadata for discovery
-
-- Explicit operational steps
-
-- Domain constraints
-
-- Supporting reference files
-
-- Executable scripts
-
-This structure lets you codify repeatable workflows once and apply them consistently. You reduce prompt sprawl, cut token overhead, and gain tighter control over the agent's behaviour.
-
-When you build with skills, you stop embedding fragile logic in long prompts. You encapsulate behaviour into clear modules and let Claude load them when needed.
-
-### Skill Architecture and Execution Model
-
-Each skill lives in its own directory and starts with a `SKILL.md` file. That file defines the skill’s name, purpose, and step-by-step execution logic. Claude reads the metadata first to determine relevance. When the task matches, Claude loads the full instructions and any supporting files.
+## 2. memU (Memory Framework) - Hierarchical Knowledge Graph That Makes Your Agent Proactive
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_3.png)
 
-You can attach scripts to a skill and run them in a sandbox. Claude can execute deterministic logic, call APIs, process files, and manage multi-step workflows reliably.
+A proactive long-term memory plugin that replaces standard flat-file memory. 
 
-Claude combines skills on a task basis, so you can build complex workflows without bloated prompts. This modular setup keeps execution structured and easier to scale.
+It builds a hierarchical knowledge graph of your preferences and projects, allowing the agent to anticipate needs rather than just reacting to prompts.
 
-## Top 10 Claude Code Skills for Production Grade Agents
+Simple examples include: "You have a meeting in 10 minutes; should I pull the latest briefing?" 
 
-These skills consistently appear in real-world builds. They cover infrastructure, execution, data access, and orchestration. These layers move agents from demo to deployment.
+If you want to add robust memory layer for agent to handle missing context go for it.
 
-Let us now look at the 10 Claude Code skills teams rely on to build and ship production-grade agents.
+Learn more at: [Memu Bot](https://github.com/NevaMind-AI/memUBot) (Community)
 
-### 1. [Composio Skills](https://docs.composio.dev/docs)
+GitHub Repo: [https://github.com/duxiaoxiong/memu-engine-for-OpenClaw](https://github.com/duxiaoxiong/memu-engine-for-OpenClaw)
 
-Composio functions as an agent-native integration and execution layer. It standardizes external APIs into structured, callable tools that Claude can discover and invoke through a consistent schema.
+**Installation**
+
+openclaw plugins install @memu/memu-engine
+
+```shell
+# Set memU as the memory backend
+openclaw config set plugins.slots.memory "memu-engine"
+
+# Restart gateway
+openclaw gateway restart
+```
+
+## 3. SecureClaw - OWASP-Aligned Security Auditing and Runtime Hardening
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_4.png)
 
-You register integrations once and expose them as normalized tool interfaces. The agent selects tools dynamically based on task context and passes structured arguments that map directly to validated API operations.
+The industry-standard security plugin.
 
-Technical capabilities include:
+It hardens the agent's runtime by mapping actions to the OWASP Top 10 for Agents. It provides real-time auditing and prevents prompt injection attacks from reaching your system shell.
 
-- [1000+ prebuilt toolkits](https://platform.composio.dev/) mapped to typed action schemas
+If you are concerned about OpenClaw security while running on vm’s or locals (not recommended), this plugin can give you a sigh of relief.
 
-- OAuth 2.0 and API key lifecycle management with automatic token refresh
+GitHub Repo: [https://github.com/adversa-ai/secureclaw](https://github.com/adversa-ai/secureclaw)
 
-- Scoped credential isolation per agent, environment, or workflow
+Learn more at: [SecureCalw](https://github.com/adversa-ai/secureclaw) (Community)
 
-- Tool discovery via metadata indexing and semantic matching
+**Installation**
 
-- Deterministic request construction with validated input parameters
+```shell
+# Install the plugin
+openclaw plugins install @adversa/secureclaw
 
-- Structured JSON responses for downstream chaining
+# Run the security audit
+npx openclaw secureclaw audit
 
-- Sandboxed execution environment for safe tool invocation
+# Apply hardening fixes
+npx openclaw secureclaw harden
 
-- Execution logs, traceability, and observability for debugging
+# Restart gateway
+openclaw gateway restart
+```
 
-Composio abstracts API heterogeneity into a uniform execution layer. Claude emits structured tool calls, and Composio validates, authenticates, executes, and returns machine-readable outputs.
-
-For cross-system orchestration, transactional workflows, and enterprise-grade automation, Composio provides the control plane that connects model reasoning to authenticated external state changes.
-
-### 2. GitHub Automation Skill
-
-The GitHub Automation Skill gives Claude structured control over repository-level operations. It connects the agent to source control workflows and CI pipelines through authenticated API actions.
-
-This skill enables:
-
-- Repository scanning and structured codebase analysis
-
-- Issue creation, labelling, and triage workflows
-
-- Pull request generation with diff-aware commits
-
-- Automated code review comments
-
-- Branch management and merge operations
-
-- CI pipeline triggering and status monitoring
-
-Claude can read repository metadata, analyze file structures, generate commits, and open pull requests using validated API calls. The skill enforces permission scopes, ensuring the agent only performs actions allowed by the configured credentials.
-
-For engineering teams, this skill supports automated refactoring, documentation updates, dependency upgrades, test generation, and PR based workflow automation. It connects model reasoning directly to version-controlled system changes, making it critical for development-focused agents.
-
-### 3. Database Querying and Analytics Skill
-
-Production agents need direct access to structured data. The Database Querying and Analytics Skill allows Claude to execute validated, parameterised SQL queries against relational databases and warehouses using scoped credentials.
-
-Claude can inspect schemas, understand table relationships, and generate context-aware queries aligned with business intent. It can aggregate metrics, compute derived values, and return structured JSON outputs that plug into downstream workflows.
-
-Because results stay machine-readable, you can chain them into reporting pipelines, alerts, or additional tool calls. This skill connects model reasoning directly to live operational data, which makes it critical for analytics-driven automation.
-
-### 4. Browser Automation Skill
-
-Not every system exposes clean APIs. The Browser Automation Skill gives Claude controlled interaction with web interfaces, allowing it to navigate pages, fill forms, extract data, and trigger UI based workflows programmatically.
-
-The agent can simulate structured user actions such as clicking elements, submitting forms, handling session cookies, and scraping dynamic content. It operates within defined boundaries, which helps maintain predictable execution across multi-step flows.
-
-This capability becomes critical when teams rely on legacy systems, third-party dashboards, or internal tools without direct API access. Claude can log in, retrieve information, update fields, and complete tasks that would otherwise require manual intervention.
-
-For automation-heavy environments, this skill extends agent reach beyond API first ecosystems and into real web-based operational workflows.
-
-### 5. Memory and Context Management Skill
-
-Serious agents cannot rely on a single prompt window. The Memory and Context Management Skill allows Claude to persist structured state across sessions, tasks, and workflows.
-
-The agent can store key variables, intermediate outputs, user preferences, workflow checkpoints, and system responses in a retrievable format. When a new task begins, Claude can reference prior context without reprocessing everything from scratch. That reduces redundancy and improves continuity in long-running operations.
-
-This skill also enables multi-step execution flows where one action depends on earlier results. For example, an agent can retrieve stored configuration data, use it to construct a database query, then pass the result into a reporting pipeline. The workflow remains coherent because context persists beyond a single interaction.
-
-### 6. File System and Document Processing Skill
-
-Most enterprise processes revolve around documents and structured files. This skill gives Claude controlled access to file environments so it can work directly with PDFs, spreadsheets, CSVs, and structured reports.
-
-Claude can extract tables from PDFs, normalize spreadsheet data, validate structured fields, generate formatted outputs, and transform raw files into machine readable formats. It operates on actual file contents, which keeps results verifiable and consistent.
-
-Structured outputs allow seamless integration with databases, analytics pipelines, and workflow engines. Document-heavy operations become programmable components inside broader automation systems rather than isolated manual tasks.
-
-### 7. Web Search and Live Data Retrieval Skill
-
-Many production workflows depend on current information. The Web Search and Live Data Retrieval Skill enables Claude to access up-to-date data from external sources and incorporate it into structured tasks.
-
-The agent can query search services, retrieve documents, extract specific data points, and validate information before triggering downstream actions. This supports use cases such as market monitoring, competitive analysis, regulatory tracking, and research automation.
-
-Results return in structured formats that integrate cleanly with reporting pipelines, analytics systems, or decision engines. Live data access ensures the agent operates with current inputs.
-
-### 8. Code Execution Sandbox Skill
-
-Some workflows require deterministic computation, data transformation, or validation that text generation alone cannot guarantee. The Code Execution Sandbox Skill allows Claude to run controlled Python or JavaScript code inside an isolated runtime.
-
-The agent can process datasets, perform statistical calculations, transform JSON payloads, validate schemas, generate structured outputs, and execute rule-based logic as part of a larger pipeline. The sandbox enforces execution boundaries and isolates runtime behavior from core systems.
-
-This capability increases precision in data-heavy operations and removes guesswork from computational tasks. Claude executes real code, captures structured results, and passes them into downstream tools or workflows with predictable behavior.
-
-### 9. Multi-Agent Orchestration Skill
-
-As workflows grow more complex, a single agent handling everything can become inefficient. The Multi-Agent Orchestration Skill allows you to split responsibilities across specialized agents and coordinate them through structured task routing.
-
-You can assign roles such as planner, researcher, executor, or validator. One agent breaks down the objective into steps, another performs tool calls, and a third verifies outputs before completion. This separation improves clarity and reduces cascading errors in long workflows.
-
-The orchestration layer manages task delegation, intermediate state sharing, and execution sequencing. Each agent operates within defined boundaries, which keeps responsibilities clear and reduces context overload.
-
-Complex automation pipelines benefit from this structure. Coordinated agents can handle multi-stage processes such as research, data extraction, analysis, reporting, and system updates without collapsing into a single oversized prompt.
-
-### 10. Media and Creative Automation Skill
-
-Not all agent workflows revolve around data and infrastructure. Many teams use Claude to generate visual assets, structured content, and formatted outputs as part of broader pipelines. The Media and Creative Automation Skill supports these production-oriented tasks.
-
-The agent can generate image prompts, create structured design briefs, format long-form content, adapt tone across channels, and prepare assets for publishing workflows. When paired with execution and file handling layers, it can store outputs, version them, and route them into distribution systems.
-
-This skill becomes useful in marketing automation, content operations, product documentation, and internal communications. Creative generation moves from isolated prompt outputs into repeatable, system-integrated workflows that tie directly into production environments.
-
-## Choosing the Right Claude Code Skills for Your Use Case
-
-Every production agent needs a control layer that connects reasoning to real systems. In most stacks, that layer starts with[ Composio](https://docs.composio.dev/docs). It centralizes authentication, normalizes tool schemas, and provides the integration backbone that other skills plug into.
-
-Once that foundation is in place, you layer additional capabilities based on the workflow. GitHub Automation supports development pipelines. Database Querying handles structured data access. Browser Automation covers UI driven systems. The Code Execution Sandbox manages deterministic logic. Memory maintains state across sessions.
-
-If your focus is operational automation, Composio, Browser Automation, File Processing, and Web Search tend to matter more. They connect the agent to external tools, interfaces, and real-time data sources.
-
-Most production systems combine infrastructure skills with execution and data layers. The strongest agents do not rely on one capability. They compose multiple skills into a controlled, observable workflow that matches the environment they operate in.
-
-## Conclusion
-
-Claude Code Skills determines whether your agent can actually execute inside real systems. Reasoning matters, but secure access, controlled execution, and structured integrations define production readiness.
+## 4. Lobster - Typed Workflow Pipelines with Approval Gates for Reliable Automation
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_5.png)
 
-Strong architectures focus on modular capabilities, clear permission boundaries, and observable workflows. When execution stays structured and traceable, automation scales without becoming fragile.
+A powerful scripting plugin that turns complex multi-step skills into repeatable, typed pipelines.
 
-Most production-grade agent stacks depend on a unified integration backbone that connects model decisions to authenticated system actions. Platforms like Composio provide that core layer and enable agents to operate reliably across tools and environments.
+This means, instead of the agent "guessing" the next step, Lobster ensures high-reliability execution for production-grade automations.
+
+It does it through typed JSON-first pipelines, jobs, and approval gates & let OpenClaw call the workflows in one step.
+
+If you like to automate tasks using your skills, this will make your job easier than ever.
+
+Learn more at: [Lobster](https://github.com/openclaw/lobster) (Official)
+
+GitHub Repo: [https://github.com/openclaw/lobster](https://github.com/openclaw/lobster)
+
+**Installation**
+
+Lobster is a bundled tool — enable it in your config:
+
+```shell
+# Enable Lobster in your plugin config
+openclaw config set plugins.entries.lobster.enabled true
+
+# Allow Lobster tools
+openclaw config set tools.alsoAllow '["lobster"]'
+
+# Restart gateway
+openclaw gateway restart
+```
+
+## 5. Memory LanceDB - Vector-Backed Long-Term Memory with Auto-Recall and Auto-Capture
+
+![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_6.png)
+
+The default memory-core plugin stores memory as flat Markdown files. memory-lancedb replaces it with a proper vector-backed long-term memory store using LanceDB.
+
+Set `plugins.slots.memory = "memory-lancedb"` and your agent gets auto-recall (relevant memories injected before every turn) and auto-capture (important facts stored after every turn) — without you manually writing to MEMORY.md.
+
+It supports multiple embedding providers (OpenAI, Gemini, Ollama), includes prompt injection detection on captured memories, and has a CLI for searching and managing stored memories.
+
+If your agent keeps "forgetting" things between sessions or after context compaction, this is the first plugin you should install.
+
+GitHub Repo: [https://github.com/noncelogic/openclaw-memory-lancedb](https://github.com/noncelogic/openclaw-memory-lancedb)
+
+**Installation**
+
+```shell
+# Install the plugin
+openclaw plugins install @noncelogic/memory-lancedb
+
+# Set as memory backend
+openclaw config set plugins.slots.memory "memory-lancedb"
+
+# Configure embeddings (OpenAI example)
+openclaw config set plugins.entries.memory-lancedb.config.embedding.apiKey "$OPENAI_API_KEY"
+openclaw config set plugins.entries.memory-lancedb.config.embedding.model "text-embedding-3-small"
+
+# Restart gateway
+openclaw gateway restart
+```
+
+## 6. MemOS Cloud - Cloud-Hosted Cross-Agent Memory with Async Recall and Isolation
+
+![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_7.png)
+
+MemOS Cloud is a lifecycle plugin that recalls relevant memories from the MemOS Cloud API before each agent run and saves new conversation data after each run.
+
+It works asynchronously, supports cross-agent memory isolation via agent_id, and lets you configure limits on how many memories are injected per turn.
+
+Where memory-lancedb stores everything locally, MemOS Cloud is the right choice when you need cloud-hosted memory that persists across devices, or when you're running multi-agent setups where agents need isolated but centrally managed memory.
+
+It's a great complement to LanceDB — use LanceDB for local-first setups, and MemOS Cloud when you need cloud persistence or multi-agent coordination.
+
+GitHub Repo: [https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
+
+**Installation**
+
+```shell
+# Install the plugin
+openclaw plugins install @memtensor/memos-cloud-openclaw-plugin
+
+# Add your MemOS API key
+openclaw config set plugins.entries.memos-cloud-openclaw-plugin.enabled true
+openclaw config set plugins.entries.memos-cloud-openclaw-plugin.config.apiKey "YOUR_MEMOS_API_KEY"
+
+# Restart gateway
+openclaw gateway restart
+```
+
+## 7. OpenClaw Foundry - Self-Writing Meta-Extension That Learns and Builds Its Own Tools
+
+![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_8.png)
+
+Foundry is a self-writing meta-extension. It observes your workflows, researches the OpenClaw docs, and writes new skills, extensions, hooks, and tools directly into your setup.
+
+The self-modification loop actually works: Foundry validates generated code in a sandbox before deploying it, records patterns from successes and failures, and can even extend its own capabilities.
+
+It includes tools like 
+
+- foundry_implement (end-to-end research + build), 
+
+- foundry_write_skill, foundry_write_hook, and 
+
+- foundry_extend_self — making it the closest thing to an agent that builds its own tools.
+
+GitHub Repo: [https://github.com/lekt9/openclaw-foundry](https://github.com/lekt9/openclaw-foundry)
+
+**Installation**
+
+```shell
+# Install the plugin
+openclaw plugins install @getfoundry/foundry
+
+# Enable in config
+openclaw config set plugins.entries.foundry.enabled true
+
+# Restart gateway
+openclaw gateway restart
+```
+
+---
+
+## 8. Better Gateway - Auto-Reconnect, Embedded IDE, and Browser Terminal for Stable Ops
+
+The stock OpenClaw gateway drops WebSocket connections under load. Better Gateway fixes this with automatic reconnection, configurable retry intervals, and a status indicator that shows connection health in real time.
+
+Beyond stability, it adds a Monaco-based IDE and a full xterm.js terminal directly into the gateway UI — no extra ports, no SSH tunneling needed. Everything runs on the main gateway port.
+
+It also exposes a file API for workspace read/write/list/delete operations, making it a practical all-in-one development environment for your OpenClaw setup.
+
+If you run OpenClaw on a remote server or VPS, this plugin is essential for a smooth development experience.
+
+GitHub Repo: [https://github.com/ThisIsJeron/openclaw-better-gateway](https://github.com/ThisIsJeron/openclaw-better-gateway)
+
+**Installation**
+
+```shell
+# Install the plugin
+openclaw plugins install @thisisjeron/openclaw-better-gateway
+
+# Enable in config
+openclaw config set plugins.entries.openclaw-better-gateway.enabled true
+
+# Restart gateway
+openclaw gateway restart
+```
+
+## 9. Voice Call - Outbound Phone Calls and Multi-Turn Voice Conversations via Twilio
+
+![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_9.png)
+
+I have kept the best one for the last and it's the most transformative plugin of the year. 
+
+Voice Call moves OpenClaw beyond text by enabling outbound phone calls and multi-turn voice conversations via Twilio or Telnyx. 
+
+It’s widely used for "reach me anywhere" notifications and real-world task execution like booking appointments, shown in youtube / X demo videos.
+
+Throw it leads, client, follow up, it handles all, with just a single setup. Game changer in voice call automations.
+
+So, if you are a business owner who have to call a lot of people, this plugin is for you. 
+
+Learn more at: [Voice Call - OpenClaw Plugin](https://openclawdir.com/plugins/voice-call-st5alw).
+
+In case you want speed, you can check community one: [VoiceClaw- DeepGram Plugin](https://github.com/deepgram/deepclaw)
+
+**Installation**
+
+```shell
+# Install the voice-call plugin (bundled)
+openclaw config set plugins.entries.voice-call.enabled true
+
+# Configure Twilio credentials
+openclaw config set plugins.entries.voice-call.config.provider "twilio"
+openclaw config set plugins.entries.voice-call.config.twilio.accountSid "YOUR_TWILIO_SID"
+openclaw config set plugins.entries.voice-call.config.twilio.authToken "YOUR_TWILIO_AUTH_TOKEN"
+openclaw config set plugins.entries.voice-call.config.twilio.from "+1XXXXXXXXXX"
+
+# Restart gateway
+openclaw gateway restart
+```
+
+GitHub Repo: [https://github.com/openclaw/openclaw/tree/main/extensions/voice-call](https://github.com/openclaw/openclaw/tree/main/extensions/voice-call)
+
+
+And with this we have come to an end of this short and definitive plugin list.
+
+## Final Thoughts
+
+Plugins run silently in the background, shaping how your agent thinks and responds at a system level. It’s really a more integrated experience than just skills.
+
+But when your agent starts touching external services, that's where **Composio** quietly handles scoped access and managed credentials under the hood, so your plugins stay focused on behavior while Composio handles the connectivity layer cleanly.
+
+The insight worth keeping in mind: 
+
+> plugins modify the *agent;* tools extend its *reach -* knowing this boundary is what separates a well-architected workflow from a tangled one.
+
+What plugins or tool combos are you running with OpenClaw? Drop them in the comments!

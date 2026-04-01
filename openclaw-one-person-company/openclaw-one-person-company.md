@@ -4,7 +4,7 @@ Before OpenClaw, that would have sounded completely silly, but with it, it's pos
 
 You can automate your entire company or simulate a fully functioning one with just OpenClaw and your VPS, Mac Mini, or local system for testing.
 
-![owner_employee.jpg](images/1.png)
+![owner_employee.jpg](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/1.png)
 
 ---
 
@@ -25,7 +25,7 @@ Ready to become a one-person company?
 
 ## What's OpenClaw?
 
-![Screenshot From 2026-03-23 17-40-37.png](images/2.png)
+![Screenshot From 2026-03-23 17-40-37.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/2.png)
 
 > I assume you already know what OpenClaw is. If not, why are you even here? Just kidding... The blog itself is completely beginner friendly. If you already have an idea of what OpenClaw is, just skip this section.
 
@@ -39,7 +39,7 @@ Take this as a mental model:
 
 It provides the model with a runtime that can call tools, maintain state, and appear where you already chat (WhatsApp, Telegram, Slack, Discord, etc.). Now, that's just the gist. There's much more to understand. I assume you've already worked with it, so I'm not going any deeper than this in the intro.
 
-![CUppegYiSe9jWYNTlDjudQzO8Q.jpg](images/3.png)
+![CUppegYiSe9jWYNTlDjudQzO8Q.jpg](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/3.png)
 
 For installation, visit the OpenClaw [installation guide](https://docs.openclaw.ai/install), and based on your distro and installation choice, install it on your machine.
 
@@ -73,7 +73,7 @@ Yeah, in theory, you can actually automate or run an entire company. Can't guara
 
 The only human in the process is going to be yourself. All your employees will be **OpenClaw Agents**.
 
-![openclaw_arch.png](images/4.png)
+![openclaw_arch.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/4.png)
 
 As you can see, most day-to-day operations of running a company, such as sales, team meetings, and customer care, can be managed with OpenClaw Agents. And there are many more than just the ones in the image, of course. This is just a quick sketch to give you an idea.
 
@@ -90,7 +90,7 @@ What's actually gone wrong in the wild (already):
 - **Malicious skills on ClawHub:** researchers found hundreds to thousands of skills that were straight-up malware or had critical issues, including credential theft and prompt injection patterns.
 - **Prompt injection turning into installs:** there's been at least one high-profile incident where a prompt injection was used to push OpenClaw onto machines via an agent workflow.
 
-![Screenshot From 2026-02-16 21-18-24.png](images/5.png)
+![Screenshot From 2026-02-16 21-18-24.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/5.png)
 
 For the above reasons, I recommend that you use some hosted service which in my case, **Composio.** It lets you authenticate using OAuth, which is the most secure option over pasting keys locally.
 
@@ -116,7 +116,7 @@ openclaw plugins install @composio/openclaw-plugin
 2. Choose OpenClaw as the client.
 3. Copy your consumer key (`ck_...`) from the Composio dashboard settings, then set it:
 
-![Screenshot From 2026-03-04 16-53-06.png](images/6.png)
+![Screenshot From 2026-03-04 16-53-06.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/6.png)
 
 ```bash
 openclaw config set plugins.entries.composio.config.consumerKey "ck_your_key_here"
@@ -137,7 +137,7 @@ openclaw logs --follow
 
 You're looking for something like "Composio loaded" and a "tools registered" message.
 
-![comp_3.png](images/7.png)
+![comp_3.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/7.png)
 
 If the plugin is "loaded", it means you can now successfully access Composio.
 
@@ -178,11 +178,11 @@ Now, to test if it works, head over to the Control UI chat and send a message, s
 
 > "List the Composio tools you have available."
 
-![comp_final.png](images/8.png)
+![comp_final.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/8.png)
 
 If it asks you to connect the tools, head over to [dashboard.composio.dev](https://dashboard.composio.dev/) and connect each of the tools you require. It's as simple as clicking **Connect**.
 
-![Screenshot From 2026-03-04 16-26-55.png](images/9.png)
+![Screenshot From 2026-03-04 16-26-55.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/9.png)
 
 All the integrations you use are OAuth-hosted, and only the tools you connect will be available to OpenClaw. Nothing more than that.
 
@@ -208,11 +208,11 @@ For the model, use **Claude Sonnet 4.6** (`claude-sonnet-4-6`).
 Please ensure that the existing main agent remains untouched and unchanged.
 ```
 
-![Screenshot From 2026-03-23 16-45-35.png](images/10.png)
+![Screenshot From 2026-03-23 16-45-35.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/10.png)
 
 And it will create a new agent, which you can view in the `Agents` tab in the OpenClaw dashboard or by running `/agents` in the OpenClaw TUI.
 
-![Screenshot From 2026-03-23 16-47-33.png](images/11.png)
+![Screenshot From 2026-03-23 16-47-33.png](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/openclaw-one-person-company/images/11.png)
 
 Similarly, do it for all your different work types. Create a separate agent for each type of work.
 

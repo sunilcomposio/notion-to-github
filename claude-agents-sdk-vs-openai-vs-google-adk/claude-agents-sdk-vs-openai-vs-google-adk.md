@@ -69,11 +69,45 @@ It is **Python & TS-first**. Developers use built-in language features to orches
 
 I used OpenA Agents SDK to build me a job search agent, that fetches me jobs based on the user persona it created by asking me relevant questions.
 
-By default, openai agents is unable to use exa search, google sheets, this is where composio handle’s that, not only that, but you can also connect it to over 850+ tools and integrations.
+By default, Openai agents is unable to use exa search, google sheets, this is where composio handle’s that, not only that, but you can also connect it to over 850+ tools and integrations.
+
+```python
+# imports 
+from composio import Composio
+from composio_openai_agents import OpenAIAgentsProvider
+
+# Initialize Composio
+composio = Composio(api_key=api_key, provider=OpenAIAgentsProvider())
+
+# Create Tool Router session (connection tools + wait so OAuth can finish before continuing)
+session = composio.create(
+    user_id=user_id,
+    toolkits=["GITHUB", "exa", "googlesheets", "browser_tool" ],
+    manage_connections={"enable": True, "wait_for_connections": True},
+)
+mcp_url = session.mcp.url
+
+# add tool_configs
+agent = Agent(
+    name="Assistant",
+    model="gpt-5",
+    instructions=("..."),
+    tools=[
+        HostedMCPTool(
+            tool_config={
+                "type": "mcp",
+                "server_label": "tool_router",
+                "server_url": mcp_url,
+                "headers": {"x-api-key": api_key},
+                "require_approval": "never",
+            }
+        )
+    ],
+```
 
 One thing that stand out was, not only agent created a right persona based on screening question, but also fetched me list of relevant job description along with my skills relevancy, without explicitly told to do so.
 
-[Video](https://prod-files-secure.s3.us-west-2.amazonaws.com/35adec70-dbef-4f42-9214-62ac8cdc4d75/d7fb3e27-3462-4af7-a6ae-ae3ffae7152f/openai_agents_sdk.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4662662M6UW%2F20260402%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260402T135513Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCICRIBGkP5OJkaji%2FEnKwMBW0ZBLlhg4rkD%2BykoTD%2BR6XAiEA1zza%2B73Szw154eT9tntKZUpMDU5WD7ivuUxE%2FkzVy9Iq%2FwMIaxAAGgw2Mzc0MjMxODM4MDUiDDjgN0gRND1djYWGTyrcA%2BMZ98jdmIVVUfd%2FQDrd5BEy5QG6CpQLvKgv1%2FeIILrkjVISsl9gNKBR%2Fy6j4iY5186fE8Z5jOFE10OtB%2F2MTjuceA4RmZPjjAjGkm72duHJO5aGaUZR%2F5MtwuQ25BvA0zNyTBfyaljfR3F%2FR53Ug%2BXNHMJR%2F6sBhwm9u7ZCJkh3Bg25itu7e43qx%2BAmGOfTYpqmXlRPLMBQ891eqSMmIb3bJbRkUxkiSHdVb5Z9AQJsPp3zP%2FrqZb1ER3i7ChyEsA4pMHjkgajp0bj%2F%2Bb2O1ktBKJZUVh3fnMMmvSt6FkPhe4Bh%2BQCJnNW1ZMlDGPKVSy59VArieG52VMFl%2FPv%2Buvu4x9gey%2BKSBI%2BlSmG3Ezw75uQUDv6hc6toxVDs%2B9JMpfrtRZVvgQEDFZr7EHYbk3Y5mmkbhR3VJQ9GDIdKA5bYD21zKe516WfDUH2R1i3WMQj7qpcxLZK2AN5sFRgXtZyo8eqcHOpEamMjswZ2Riuo828i5rIMKXp8bZSjyqXbEkyfJ57sIQ9uAWnLRG%2F9NtWei84XndVldp%2BSZY1nRuJBh%2BvO2fmDP5NmNJKZxKLuRzIxU76SwdBVqAgypxIyZwQBV1MHPdvLeK%2BM9gbGIm5mvj1ekCStELrR7QWlMOuFuc4GOqUBeQruZIg3LhhtfzGfgwVx6wFmHzJDv2vZxKjeZgLTu7Fwzr2yZ6yTphX1fhEflZXpH72nL9EjEqTIgInS%2FnrTkjC%2FnEdbArlYM9WqVpftPWhPx9tlQTWABf6D4XNBWrHwzSW%2BYR6uBbDx29wvzbH00gbC0IoFT%2BXnlFzHAJpE9ZbLogn%2B5RN%2FN1XIspI0uJvk%2FTd4gq2hhOKMNEQwC7Emlnchnjv4&X-Amz-Signature=795eb2d60431ce3c4f603c734d204f6855a1b7b1df4d252c57f265710fd1f658&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
+[Video](https://prod-files-secure.s3.us-west-2.amazonaws.com/35adec70-dbef-4f42-9214-62ac8cdc4d75/d7fb3e27-3462-4af7-a6ae-ae3ffae7152f/openai_agents_sdk.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4662CSDDG62%2F20260403%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260403T123416Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELz%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIQDt6EQUzHoLY6woUhst09uOGc5JMH8UaLrp%2BG6qG7m7agIgGgn2OgY7vYRrmqUSIsSmpObKyH8a4CrmDDxqKDoVs2kqiAQIhf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDD7YmzQbdZDevGXxfyrcA%2FqFc3EIH5TaeScxSbhID8uMLd87UQzwaBJ0WNuZTpryZjy4fuquP5mqCvGw%2FGO6xFSdG3wFLlTGJI2vi9UcvqcvwJgsIiqFJUF6yCVz9HoyxB%2BSbDYhda9%2F%2BPMl%2B2GXkhG09ZOQt91m9PKwoSvn81vwhq1lohH23VCAI9020vEyM8%2F8ep7LF8w7pj3%2FhyxrRFMrgyWQHNK8bwJFHHrGCWCYMyHs0qmKBa5rYTLVmmDBeKRywwb7SfYpwCWMWqRLZrmmwYFZ1v3Cq2M59XAegeF1xvTp97Enk%2Bv8PwYL1tYa2QvILfRHtF1unHcHO6iRwLJe%2BKFQcIUDcqehp22JaJ%2FQHhyB5Ouz6Ezj8yBT697ovS5za7zjZC2psFVv83%2FikPrLdVTXHR5H3LlFIxYMb1LLZhW7ZGuH%2B4JxFCyKtANBYFqJQK9en1Q2hBlr1oJSj298zUWjrTZMPJHIFhDdGh%2BBm6mADql7qLEUMIyVV6m1FQ9WrD0fxEnsPjx6rA%2FVqv45OFLtaDG1ZQLupmGqnFRT50dsaweZOlibY6i0wgYyL1Kf6vM2yj6esAM%2FD7KxYw7FDM7Mw9VR0JPKSyrzNqLNqIPN7V7SPtPJPpyyWDkVs4F4uwihjp7Dtyu8MNfKvs4GOqUB4rk0aVxPKPDtTHnPafPWvzWQGyB2ZsXwR5NR0f7PvaqwlLTV1MMfCRh0a24pjmN8hfSDRxtVd9CkascGWOYSLWORzoCiidYZkh4mcovrdgqMGq0u%2FGja4%2Bmv5%2Bcx0GxQVxTtVLovyvScbgL7edONPSG8OXWk3ok9kgHy6J955vKSocqZRv%2BcxGTbMkDja7KwOjnfGAx%2BGMwTJj7CJEUg9fW%2BmOFn&X-Amz-Signature=df6af09cd35b9000a230ff485141194b1bc33e722ea7b62e0fd460de00632c06&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
 
 ---
 
@@ -109,13 +143,66 @@ It evolved from Claude Code. The core principle is simple: **give your agent a c
 - **Cost Controls**: `max_budget_usd` parameter caps spend per session.
 ### Example
 
-I used Claude Agent’s SDK to build an open-source contributor, which takes a repo name, fetches a good issue listed, reads the contribution file, fork’s the repo, create the code fix that matches orignal repo style, push the code to forked repo and raises a PR.
+I used Claude Agent’s SDK to build an open-source contributor, which takes a repo name, fetches a good issue listed, reads the contribution file, fork’s the repo, create the code fix that matches original repo style, push the code to forked repo and raises a PR.
 
-By default, calude agents is unable to use github, this is where composio handle’s that, not only that, but you can also connect it to over 850+ tools and integrations.
+Out of the box, Claude Agents SDK can’t interact with GitHub. Composio fills that gap, and also lets you connect to 850+ tools and integrations.
+
+```python
+# imports
+from composio import Composio
+from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
+
+# fetch all composio toolkits name
+def _toolkits() -> list[str]:
+    raw = os.getenv("OSS_COMPOSIO_TOOLKITS")
+    if raw:
+        return [t.strip() for t in raw.split(",") if t.strip()]
+    return list(DEFAULT_TOOLKITS)
+
+# create a async chat, connect to composio, fetch user id, define toolkits and mcp server url + configs.
+async def chat_with_oss_stack() -> None:
+    api_key = os.getenv("COMPOSIO_API_KEY")
+    if not api_key:
+        raise RuntimeError("COMPOSIO_API_KEY is not set")
+
+    composio = Composio(api_key=api_key)
+
+    user_id = os.getenv("COMPOSIO_USER_ID") or os.getenv("USER_ID")
+    if not user_id:
+        raise RuntimeError(
+            "Set COMPOSIO_USER_ID (or USER_ID) in the environment or .env — Composio needs a stable user id string."
+        )
+
+    kits = _toolkits()
+    mcp_server = composio.create(
+        user_id=user_id,
+        toolkits=kits,
+    )
+
+    url = mcp_server.mcp.url
+    if not url:
+        raise ValueError("Session URL not found")
+
+    options = ClaudeAgentOptions(
+        permission_mode="bypassPermissions",
+        mcp_servers={
+            "composio": {
+                "type": "http",
+                "url": url,
+                "headers": {
+                    "x-api-key": os.getenv("COMPOSIO_API_KEY", ""),
+                },
+            }
+        },
+        system_prompt=OSS_SYSTEM_PROMPT,
+        max_turns=int(os.getenv("OSS_MAX_TURNS", "40")),
+    )
+    
+```
 
 I asked it to operate on “gemini-cli” repository, and it create a pr for me. 
 
-[Video](https://prod-files-secure.s3.us-west-2.amazonaws.com/35adec70-dbef-4f42-9214-62ac8cdc4d75/51f013d8-1afa-45ec-9f88-fcf74506dc4d/claude_agents_sdk.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4662662M6UW%2F20260402%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260402T135514Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCICRIBGkP5OJkaji%2FEnKwMBW0ZBLlhg4rkD%2BykoTD%2BR6XAiEA1zza%2B73Szw154eT9tntKZUpMDU5WD7ivuUxE%2FkzVy9Iq%2FwMIaxAAGgw2Mzc0MjMxODM4MDUiDDjgN0gRND1djYWGTyrcA%2BMZ98jdmIVVUfd%2FQDrd5BEy5QG6CpQLvKgv1%2FeIILrkjVISsl9gNKBR%2Fy6j4iY5186fE8Z5jOFE10OtB%2F2MTjuceA4RmZPjjAjGkm72duHJO5aGaUZR%2F5MtwuQ25BvA0zNyTBfyaljfR3F%2FR53Ug%2BXNHMJR%2F6sBhwm9u7ZCJkh3Bg25itu7e43qx%2BAmGOfTYpqmXlRPLMBQ891eqSMmIb3bJbRkUxkiSHdVb5Z9AQJsPp3zP%2FrqZb1ER3i7ChyEsA4pMHjkgajp0bj%2F%2Bb2O1ktBKJZUVh3fnMMmvSt6FkPhe4Bh%2BQCJnNW1ZMlDGPKVSy59VArieG52VMFl%2FPv%2Buvu4x9gey%2BKSBI%2BlSmG3Ezw75uQUDv6hc6toxVDs%2B9JMpfrtRZVvgQEDFZr7EHYbk3Y5mmkbhR3VJQ9GDIdKA5bYD21zKe516WfDUH2R1i3WMQj7qpcxLZK2AN5sFRgXtZyo8eqcHOpEamMjswZ2Riuo828i5rIMKXp8bZSjyqXbEkyfJ57sIQ9uAWnLRG%2F9NtWei84XndVldp%2BSZY1nRuJBh%2BvO2fmDP5NmNJKZxKLuRzIxU76SwdBVqAgypxIyZwQBV1MHPdvLeK%2BM9gbGIm5mvj1ekCStELrR7QWlMOuFuc4GOqUBeQruZIg3LhhtfzGfgwVx6wFmHzJDv2vZxKjeZgLTu7Fwzr2yZ6yTphX1fhEflZXpH72nL9EjEqTIgInS%2FnrTkjC%2FnEdbArlYM9WqVpftPWhPx9tlQTWABf6D4XNBWrHwzSW%2BYR6uBbDx29wvzbH00gbC0IoFT%2BXnlFzHAJpE9ZbLogn%2B5RN%2FN1XIspI0uJvk%2FTd4gq2hhOKMNEQwC7Emlnchnjv4&X-Amz-Signature=316655b8cc7eedfd1f79ba7399941764b77a4fe3fc50bf3592f2f6f382c703a0&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
+[Video](https://prod-files-secure.s3.us-west-2.amazonaws.com/35adec70-dbef-4f42-9214-62ac8cdc4d75/51f013d8-1afa-45ec-9f88-fcf74506dc4d/claude_agents_sdk.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4662CSDDG62%2F20260403%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260403T123417Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELz%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJHMEUCIQDt6EQUzHoLY6woUhst09uOGc5JMH8UaLrp%2BG6qG7m7agIgGgn2OgY7vYRrmqUSIsSmpObKyH8a4CrmDDxqKDoVs2kqiAQIhf%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw2Mzc0MjMxODM4MDUiDD7YmzQbdZDevGXxfyrcA%2FqFc3EIH5TaeScxSbhID8uMLd87UQzwaBJ0WNuZTpryZjy4fuquP5mqCvGw%2FGO6xFSdG3wFLlTGJI2vi9UcvqcvwJgsIiqFJUF6yCVz9HoyxB%2BSbDYhda9%2F%2BPMl%2B2GXkhG09ZOQt91m9PKwoSvn81vwhq1lohH23VCAI9020vEyM8%2F8ep7LF8w7pj3%2FhyxrRFMrgyWQHNK8bwJFHHrGCWCYMyHs0qmKBa5rYTLVmmDBeKRywwb7SfYpwCWMWqRLZrmmwYFZ1v3Cq2M59XAegeF1xvTp97Enk%2Bv8PwYL1tYa2QvILfRHtF1unHcHO6iRwLJe%2BKFQcIUDcqehp22JaJ%2FQHhyB5Ouz6Ezj8yBT697ovS5za7zjZC2psFVv83%2FikPrLdVTXHR5H3LlFIxYMb1LLZhW7ZGuH%2B4JxFCyKtANBYFqJQK9en1Q2hBlr1oJSj298zUWjrTZMPJHIFhDdGh%2BBm6mADql7qLEUMIyVV6m1FQ9WrD0fxEnsPjx6rA%2FVqv45OFLtaDG1ZQLupmGqnFRT50dsaweZOlibY6i0wgYyL1Kf6vM2yj6esAM%2FD7KxYw7FDM7Mw9VR0JPKSyrzNqLNqIPN7V7SPtPJPpyyWDkVs4F4uwihjp7Dtyu8MNfKvs4GOqUB4rk0aVxPKPDtTHnPafPWvzWQGyB2ZsXwR5NR0f7PvaqwlLTV1MMfCRh0a24pjmN8hfSDRxtVd9CkascGWOYSLWORzoCiidYZkh4mcovrdgqMGq0u%2FGja4%2Bmv5%2Bcx0GxQVxTtVLovyvScbgL7edONPSG8OXWk3ok9kgHy6J955vKSocqZRv%2BcxGTbMkDja7KwOjnfGAx%2BGMwTJj7CJEUg9fW%2BmOFn&X-Amz-Signature=556ec87fe27f36dd438579e54c01e3b3e467800906f168dc1877a16618025ef6&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
 
 Raise Pr: [fix(ui): show helpful guidance when no skills are available by DevloperHS · Pull Request #23669 · google-gemini/gemini-cli](https://github.com/google-gemini/gemini-cli/pull/23669)
 
@@ -165,9 +252,63 @@ For demos these are cool, heard people say, can be used in production, but it fa
 
 Yes, its developer friendly, but really lacks a lot in terms of performance and newbies can easily stuck with `adk web`  or `adk cli`  as it requires a specific folder structure.
 
-However for simpler task it did quite well. Built an email agent that maps promotional education mails (like coursera, deeplearning) to well optimised developer roadmap, which beginner devs can use  to learn in a structured manner.  
+However for simpler task it did quite well. Built an email agent that maps promotional education mails (like Coursera, Deeplearning) to well optimised developer roadmap, which beginner devs can use  to learn in a structured manner.  
 
-[Video](https://prod-files-secure.s3.us-west-2.amazonaws.com/35adec70-dbef-4f42-9214-62ac8cdc4d75/47d7a319-cfc7-4de1-8459-419f4972d786/google_adk.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466U2ENJG2I%2F20260402%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260402T135515Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJGMEQCIER9JC6iPHeN2A9%2Bz8GND1ZMCXOZFv7K2HqlV%2FqCK%2FGmAiACdPxuuDqYHNuKiM4LmT%2B23gK%2F3BmEQXUL%2BNF1BKZpRir%2FAwhrEAAaDDYzNzQyMzE4MzgwNSIMR5hqMVH%2FTJ64byrHKtwDL0BifhES5i%2FR9NWQIQYoG1vcFkFlUTSyoRzSjFbUxrXZ9VZmTeiBCTIepe65CGDgONlewjp2RZ8byhNOob9yYUElPl7sP8o2YCMSjJWKRXNytuQkAdSZj0NV64k910S1r94VOkvUJGiGrD9ol%2FVKnNB68kU7A9n6jN8%2BOUE03iXkUl1dXYnWMizvQba%2BcWk9g56Wm6QcbIUkuFIVa3wd6K692RAaX%2B3GAouDo2SfxgPfueEsM1uIC6hPCGzjSGJcXusunbkClFyl3dHK6RX%2Bf07jH8%2F4BbYciLW1L98rauySAvCJwcHkLY4hDn4A7TayXrQl7Eo1dHrHymq7QN1H99kmvD%2FiJOg2gBx1GuDY2X19Ck2wNjf4y%2BuQlZ6m%2FFaupIak63cr0ZMSjiLNSJpPlLnKelzEqy2pAQErpBg9siOHUcM02b5AXrXhY9jxdvJXohHpmkpKH3n%2BBElylE%2Fkw%2FGDvj61YKk4S4BeKDZc5wLUASqfHUogV%2FbnBL1Y8y0VO59Bk14SloTXf4p2RXZ4A40BWn1vbI3SzlzfDSGgYJqCEs1yC%2FtZ8OBbNvA2R03LMq%2F%2BGp7pGOa%2BCu4NHsquPwJcpaQyVuU%2BxxcJtchL4HnH%2BfPXvQZzyZa2j0IwrYO5zgY6pgHvkKNMOmD8XhmD9NqvTyApq1593cS8JLAhT%2FCoXpu892PVuk8kSHw3fdyqHQiekeqcqCU3foBNpNOyqd8%2Fmj3GyDm3ZbyBgKzqCLz4og1izIWKt%2BVjaY9zFMsVebpG4Eu0ED6AVWskQvrPRJ136tzosb39qRyAVD2YWIQ28ZZXC44%2BljjR93%2BA2mkD41WHPpw2dFJTm4R8H6NEab5NMYfu95PeOWMy&X-Amz-Signature=22a03a831b8c44d36e7010a519f5d8f89159a1db8f8e83dea3a21d3375dc1f0b&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
+Suprisingly code to use Composio tools here is quite simple and easy to use:
+
+```python
+# imports
+from composio import Composio
+from composio_google import GoogleProvider
+
+# load envs
+COMPOSIO_API_KEY = os.getenv("COMPOSIO_API_KEY")
+COMPOSIO_USER_ID = os.getenv("COMPOSIO_USER_ID")
+
+# create composio client
+composio_client = Composio(
+    api_key=COMPOSIO_API_KEY,
+    provider=GoogleProvider(),
+    timeout=120,
+    max_retries=5,
+)
+
+# create a client session with tools
+composio_session = composio_client.create(
+    user_id=COMPOSIO_USER_ID,
+    toolkits=["gmail"],
+)
+
+# store sessiom url
+COMPOSIO_MCP_URL = composio_session.mcp.url
+
+# add composio mcp server connection
+composio_toolset = McpToolset(
+    connection_params=StreamableHTTPConnectionParams(
+        url=COMPOSIO_MCP_URL,
+        headers={"x-api-key": COMPOSIO_API_KEY},
+        timeout=30.0,
+        sse_read_timeout=600.0,
+    )
+)
+
+# include it in the agents
+root_agent = Agent(
+    model="gemini-2.5-flash",
+    name="composio_agent",
+    description="An agent that uses Composio tools to perform actions.",
+    instruction=(
+        "You are a helpful assistant connected to Composio. "
+        "You have the following tools available: "
+        "COMPOSIO_SEARCH_TOOLS, COMPOSIO_MULTI_EXECUTE_TOOL, "
+        "COMPOSIO_MANAGE_CONNECTIONS, COMPOSIO_REMOTE_BASH_TOOL, COMPOSIO_REMOTE_WORKBENCH. "
+        "Use these tools to help users with GMAIL operations."
+    ),  
+    tools=[composio_toolset],
+)
+```
+
+[Video](https://prod-files-secure.s3.us-west-2.amazonaws.com/35adec70-dbef-4f42-9214-62ac8cdc4d75/47d7a319-cfc7-4de1-8459-419f4972d786/google_adk.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4663R7JEXLQ%2F20260403%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260403T123417Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjELz%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQCKd5IA9x4Ar%2BBOZVDN0o%2FHeoF4QjyQqoZ1NFWsyuQkIAIhAPrZXRCJVJzqQ%2BoOKY1mUgktIu0FvLCRYD45la6BGL3uKogECIX%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNjM3NDIzMTgzODA1IgxXPXzIfxmmxUCRkfsq3ANUuworQRaX1ckx2x0kpw7Wt7klx2yGReYUUSM0ahkXhxmku4NBrJf9XC86V%2BLvmP0%2BsNnF6BUtEzzFTkjG1O%2FfNhmHBzZuQSgbaz46%2BLAuQC5vWZj4x2u%2BLWPUG30PWQdCfEUKfU%2F%2BSHAcszQlD7Fq8ZGh7HZdk%2FGcfDBuaaQCzdrnHRAIZq7uVq64XgDvAcTaWgvTSYbKco0bcB8CCzmf8GPynI8fs1%2BtKI3YCdq2AlrdhOliXyMKyg6LMcHpBv4xe3LsLFlHbG9Bc5N%2BXr5fP4u9yNkHYhsANsZIDM2%2B3FLX18UagdWgs7gbCjetNMJ%2Fs%2FbpUJULerl6Dd%2BYm3b0zKDewAvxmbKam7O%2Bazi%2BM7CNH4ukAsF4soOLYuLb0qT6f8oNKvHMg4%2FvXhf7522G7S1oiiWMXuTaKPnwQ0CnRIWMkPmzACWVMaAX4he4DpYyXVI2VEEL1LR0im5pHU9ecPV%2B7JVMHRpmr1pN%2BKMHs%2Fwyw5v0PvhSlnxRjDKvKJ1buzr45fS9dnoNgf0%2BnEm9nJ2tr%2FVTOKlT4pI5PINHBU0mGSCkD4lMvJ3QETWraNMTiKy%2FceSnsYxAF%2B7q4dUVel6k992qGE1wwHPdtRdEFuNNjLpfQ09PwGRzhDC3y77OBjqkAQ2GL66pG47QRPk8beTVX9Rk4p0317c%2FFc%2Bs8ts3QM7Z0iYAtjW%2FyjvhiD71j7UAFSK5NBMz7mA7k7PtvsArGlUQsO6tomw6ICNjD%2FTFA5mxeduQ9y9jVochQzl7pWxWofia%2F3RJrJEKQftGhIHhUpqZFVkzjukw87wg6phtkqRk35tK2k2n3KhePOlRCPL2U1TeHsuaNzzjWYd%2FXvodNNqLm%2FEg&X-Amz-Signature=a73bd3615328e60bc1a62c1c4c75f05df90e2d0598bce3dd95e16cfe9b7863b3&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject)
 
 ---
 
@@ -205,3 +346,5 @@ All agents source code can be seen at [https://github.com/DevloperHS/agents-sdk-
 **Happy Building.**
 
 ---
+
+

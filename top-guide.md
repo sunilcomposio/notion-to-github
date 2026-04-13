@@ -1,326 +1,331 @@
-If you've worked with OpenClaw, you already know [Skills](https://composio.dev/content/top-openclaw-skills), the task-level instructions that let your agent send emails, query APIs, or pull live data. But plugins operate at a deeper layer. They hook into the agent's lifecycle, reshape how it reasons, authenticates, and interacts with the outside world.
+AI agents are easy to demo, but getting them to work in real use is a different challenge.
 
-Though OpenClaw currently has a very limited set of official plugins but there are many independent devs who have built some really cool plugins for OpenClaw. And it seems OpenClaw plugins are going to get huge push from OpenClaw.
+Many setups can give good answers. Very few can finish a task, deal with errors, and keep track of what is going on across steps. To build that kind of agent, you need the right skills, such as using tools, managing memory, handling data, deploying your setup, and shaping how people use it.
+
+This article covers the **top 10 skills you need** to build AI agents that actually work outside demos. Let’s get started!
+
+## Summary
+
+1. **Tool integration (Composio):** Connect agents to real apps and APIs with reliable auth, sessions, and event handling.
+
+1. **Frontend and deployment (Vercel):** Ship fast, accessible React and Next.js apps with production-ready deployment practices.
+
+1. **Memory and retrieval (Weaviate):** Build dependable semantic and hybrid search for RAG with correct schemas and query tuning.
+
+1. **Model and ML workflows (Hugging Face):** Manage datasets, training, evaluation, and deployment across the full ML lifecycle.
+
+1. **Web data and automation (Olostep):** Extract and structure web data at scale, including crawling and automated browser actions.
+
+1. **Infrastructure and edge (Cloudflare):** Deploy and run apps at the edge with Workers, storage, security, and performance tooling.
+
+1. **Monitoring and debugging (Sentry):** Instrument systems for error tracking and traceable workflows to speed up production debugging.
+
+1. **Backend and databases (Supabase):** Implement Postgres-backed apps with auth, storage, realtime, and secure access controls.
+
+1. **Payments and billing (Stripe):** Create safe payment flows, subscriptions, and webhook-driven billing without costly mistakes.
+
+1. **Video and media generation (Remotion):** Produce videos programmatically with React compositions, timelines, and CLI rendering.
+
+## 1. Tool Integration with Composio
+
+[Composio ](https://dashboard.composio.dev/)helps your agent connect to external tools and APIs without dealing with complex setup. You can plug your agent into **1000+ tools** like [Gmail](https://composio.dev/toolkits/gmail), [Slack](https://composio.dev/toolkits/slack), [GitHub](https://composio.dev/toolkits/github), and more, and start executing real actions quickly.
 
 ![Image 1](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_1.png)
 
-## Top OpenClaw Plugins
+[Composio’s skill](https://github.com/ComposioHQ/skills) pack is built from real production use. It handles things that most agents get wrong, such as tool routing, session handling, authentication, and real-time events.
 
-As an OpenClaw enthusiast I collated some of the actually useful plugins for OpenClaw.
+**What the agent learns:**
 
-- **Composio** - Connect OpenClaw with 850+ on-demand SaaS Apps
+- **Tool Routing:** Picking the right tool at the right time with proper session control
 
-- **memU (Memory Framework)** - Hierarchical Knowledge Graph That Makes Your Agent Proactive
+- **Authentication Flows: **OAuth, API keys, auto vs manual auth, and connection handling
 
-- **SecureClaw** - OWASP-Aligned Security Auditing and Runtime Hardening
+- **Session Management:** Keeping user data isolated across multi-user setups
 
-- **Lobster** - Typed Workflow Pipelines with Approval Gates for Reliable Automation
+- **Webhook And Trigger Handling: **Creating triggers, verifying requests, and managing lifecycle
 
-- **Memory LanceDB** - Vector-Backed Long-Term Memory with Auto-Recall and Auto-Capture
+- **Framework Integration:** Working with LangChain, OpenAI Agents SDK, CrewAI, and Claude
 
-- **MemOS Cloud** - Cloud-Hosted Cross-Agent Memory with Async Recall and Isolation
+**Why it matters:**
 
-- **OpenClaw Foundry** - Self-Writing Meta-Extension That Learns and Builds Its Own Tools
+Without this skill, agents often mix up user sessions, break authentication, or call tools out of order. These issues may not show up in testing, but they cause serious failures in real use.
 
-- **Better Gateway** - Auto-Reconnect, Embedded IDE, and Browser Terminal for Stable Ops
+**Install:**
 
-- **Voice Call** - Outbound Phone Calls and Multi-Turn Voice Conversations via Twilio
-
-## 1. [Composio](/20df261a6dfe80d6aa55fca03849a949) - Connect OpenClaw with 850+ on-demand SaaS Apps
-
-Instead of installing individual skills for every app (Slack, GitHub, Outlook, Notion), this single plugin connects to Composio’s managed MCP server and handles all OAuth and authentication logic automatically.
-
-This plugin is the official bridge that allows your OpenClaw agent to discover and call any SaaS tools dynamically.
-
-**Pre-requisites**
-
-1. Log in at [dashboard.composio.dev](https://dashboard.composio.dev/)
-
-1. Choose your preferred client (OpenClaw.)
-
-1. Copy your consumer key (`ck_...`)
-
-**Install Composio plugin**
-
-```shell
-openclaw plugins install @composio/openclaw-plugin
+```plain text
+npx skills add composiohq/skills
 ```
 
-**Set OpenClaw Config **
+This is the layer that turns your agent from a chatbot into a system that can actually get work done.
 
-```shell
-openclaw config set plugins.entries.composio.config.consumerKey "ck_your_key_here"
-```
+## 2. Frontend And Deployment Skills with [Vercel](https://github.com/vercel-labs/agent-skills)
 
-Then allow Composio tools in your agent's tool list. This works with any tool profile (`coding`, `minimal`, `messaging`, etc.). Without this step, Composio tools will only be available on the `full` tool profile:
-
-```shell
-openclaw config set tools.alsoAllow '["composio"]'
-```
-
-After setting your key and allowing the tools, restart the gateway:
-
-```shell
-openclaw gateway restart
-```
-
-Result (in `~/openclaw/openclaw.json` file):
+[Vercel’s agent skills ](https://github.com/vercel-labs/agent-skills)focus on building and deploying fast web apps using React and Next.js. It covers performance, UX, accessibility, and deployment best practices. This is a core skill set for any agent working on frontend or full-stack projects.
 
 ![Image 2](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_2.png)
 
-## 2. memU (Memory Framework) - Hierarchical Knowledge Graph That Makes Your Agent Proactive
+**What the agent learns:**
+
+- **React And Next.js Performance: **40+ rules across multiple areas, from fixing render waterfalls to better caching patterns
+
+- **Bundle Optimization: **Reducing bundle size, using dynamic imports, and avoiding unnecessary client components
+
+- **Server and Client Boundary: **Sending only required data across components and avoiding over-serialization
+
+**Why it matters:**
+
+Frontend is where most agent-generated code breaks first. Code may work locally but fail in real-world use due to slow load times, poor structure, or bad UX. Without this skill, agents create apps that feel slow and unstable at scale.
+
+**Install:**
+
+```plain text
+npx skills add vercel-labs/agent-skills
+```
+
+## 3. Memory And Retrieval Skills with Weaviate
+
+[The Weaviate agent skill pack](https://github.com/weaviate/agent-skills) connects your agent to Weaviate’s infrastructure and fixes a common issue where agents guess outdated syntax or misuse search settings. It helps your agent build reliable semantic search and retrieval systems without errors.
 
 ![Image 3](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_3.png)
 
-A proactive long-term memory plugin that replaces standard flat-file memory. 
+**What the agent learns:**
 
-It builds a hierarchical knowledge graph of your preferences and projects, allowing the agent to anticipate needs rather than just reacting to prompts.
+- **Cluster Management:** Inspecting schemas, creating collections, and managing metadata
 
-Simple examples include: "You have a meeting in 10 minutes; should I pull the latest briefing?" 
+- **Data Lifecycle: **Importing and structuring CSV, JSON, and JSONL data with clean pipelines
 
-If you want to add robust memory layer for agent to handle missing context go for it.
+- **Semantic Search:** Choosing between keyword, semantic, and hybrid search with correct tuning
 
-Learn more at: [Memu Bot](https://github.com/NevaMind-AI/memUBot) (Community)
+- **Agentic Search:** Using natural language queries with built-in search and citation support
 
-GitHub Repo: [https://github.com/duxiaoxiong/memu-engine-for-OpenClaw](https://github.com/duxiaoxiong/memu-engine-for-OpenClaw)
+- **Advanced Retrieval:** Working with multivector embeddings and combining BM25 with vector search
 
-**Installation**
+- **End-to-End Cookbooks:** Building full RAG pipelines, chat systems, and deployable services
 
-openclaw plugins install @memu/memu-engine
+**Why it matters:**
 
-```shell
-# Set memU as the memory backend
-openclaw config set plugins.slots.memory "memu-engine"
+Without this skill, agents often use outdated syntax, break search queries, or miss key setup steps. With it, an agent can set up a working search system, load data, and build a usable retrieval pipeline in minutes.
 
-# Restart gateway
-openclaw gateway restart
+**Install:**
+
+```plain text
+npx skills add weaviate/agent-skills
 ```
 
-## 3. SecureClaw - OWASP-Aligned Security Auditing and Runtime Hardening
+## 4. Model And ML Workflow Skills with Hugging Face
+
+The [Hugging Face agent](https://github.com/huggingface/skills) skill pack connects your agent to the full Hugging Face ecosystem. It supports tools like Claude Code, Codex, Gemini CLI, and Cursor, and covers the complete ML workflow from datasets to training to deployment.
 
 ![Image 4](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_4.png)
 
-The industry-standard security plugin.
+**What the agent learns:**
 
-It hardens the agent's runtime by mapping actions to the OWASP Top 10 for Agents. It provides real-time auditing and prevents prompt injection attacks from reaching your system shell.
+- HF CLI: Managing models, datasets, repositories, and authentication using tokens
 
-If you are concerned about OpenClaw security while running on vm’s or locals (not recommended), this plugin can give you a sigh of relief.
+- Dataset Workflows: Fetching data, filtering, searching, and downloading structured datasets
 
-GitHub Repo: [https://github.com/adversa-ai/secureclaw](https://github.com/adversa-ai/secureclaw)
+- Model Training: Fine-tuning with SFT, DPO, GRPO, reward models, and handling deployment formats like GGUF
 
-Learn more at: [SecureCalw](https://github.com/adversa-ai/secureclaw) (Community)
+- Gradio UIs: Building demos, chat interfaces, and interactive web apps
 
-**Installation**
+- HF Jobs: Running GPU workloads, batch jobs, and tracking experiments
 
-```shell
-# Install the plugin
-openclaw plugins install @adversa/secureclaw
+- Transformers.js: Running models directly in the browser
 
-# Run the security audit
-npx openclaw secureclaw audit
+- Paper Publishing: Managing and linking research papers with models and datasets
 
-# Apply hardening fixes
-npx openclaw secureclaw harden
+**Why it matters:**
 
-# Restart gateway
-openclaw gateway restart
+ML workflows include many connected steps where small mistakes can break results. Issues like wrong configs, poor batching, or missed auth steps can affect training and output quality. This skill helps agents follow correct patterns and produce reliable results across the workflow.
+
+**Install:**
+
+```plain text
+npx skills add huggingface/skills
 ```
 
-## 4. Lobster - Typed Workflow Pipelines with Approval Gates for Reliable Automation
+## 5. Web Data And Automation Skills with Olostep
+
+[Olostep](https://github.com/olostep/olostep-mcp-server) is a web scraping, crawling, and search API built for AI workflows. The Olostep setup works through MCP, so you can plug it into any MCP-compatible agent and grant it access to real-time web data.
 
 ![Image 5](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_5.png)
 
-A powerful scripting plugin that turns complex multi-step skills into repeatable, typed pipelines.
+**What the agent learns:**
 
-This means, instead of the agent "guessing" the next step, Lobster ensures high-reliability execution for production-grade automations.
+- Single URL Scraping: Extracting content from any page in Markdown, HTML, JSON, or plain text with JavaScript support
 
-It does it through typed JSON-first pipelines, jobs, and approval gates & let OpenClaw call the workflows in one step.
+- Batch Extraction: Processing up to 100,000 URLs in parallel with structured outputs
 
-If you like to automate tasks using your skills, this will make your job easier than ever.
+- Site Crawling: Moving across pages to collect data from full websites
 
-Learn more at: [Lobster](https://github.com/openclaw/lobster) (Official)
+- Structured Parsers: Using ready-made extractors for sources like Amazon, Google Search, and Maps
 
-GitHub Repo: [https://github.com/openclaw/lobster](https://github.com/openclaw/lobster)
+- Natural Language Extraction: Asking for data in plain English and getting structured results
 
-**Installation**
+- Web Agents: Automating steps like form filling, clicking, and navigation
 
-Lobster is a bundled tool — enable it in your config:
+**Why it matters:**
 
-```shell
-# Enable Lobster in your plugin config
-openclaw config set plugins.entries.lobster.enabled true
+Web data is messy, inconsistent, and often blocked. Agents that try to scrape on their own spend time on retries, broken parsing, and access issues. Olostep handles these problems and returns clean, usable data in a single step.
 
-# Allow Lobster tools
-openclaw config set tools.alsoAllow '["lobster"]'
+## 6. Infrastructure And Edge Skills with Cloudflare
 
-# Restart gateway
-openclaw gateway restart
-```
-
-## 5. Memory LanceDB - Vector-Backed Long-Term Memory with Auto-Recall and Auto-Capture
+The [Cloudflare agent skill ](https://github.com/cloudflare/skills)**pack** covers a full platform for building, deploying, and running applications at the edge. It includes compute, storage, AI tools, networking, and security, all in one place. Skills load based on what your agent is working on, so there is no manual setup.
 
 ![Image 6](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_6.png)
 
-The default memory-core plugin stores memory as flat Markdown files. memory-lancedb replaces it with a proper vector-backed long-term memory store using LanceDB.
+**What the agent learns:**
 
-Set `plugins.slots.memory = "memory-lancedb"` and your agent gets auto-recall (relevant memories injected before every turn) and auto-capture (important facts stored after every turn) — without you manually writing to MEMORY.md.
+- Workers And Pages: Deploying serverless functions and static sites with proper configs, routes, and secrets
 
-It supports multiple embedding providers (OpenAI, Gemini, Ollama), includes prompt injection detection on captured memories, and has a CLI for searching and managing stored memories.
+- Storage: Using KV, D1, and R2 based on the type of data and access pattern
 
-If your agent keeps "forgetting" things between sessions or after context compaction, this is the first plugin you should install.
+- Durable Objects: Managing stateful logic, coordination, and real-time features with WebSockets and storage
 
-GitHub Repo: [https://github.com/noncelogic/openclaw-memory-lancedb](https://github.com/noncelogic/openclaw-memory-lancedb)
+- AI On The Edge: Running inference, vector search, and building stateful agents with built-in tools
 
-**Installation**
+- MCP Server Creation: Creating remote MCP servers with tool access and OAuth support
 
-```shell
-# Install the plugin
-openclaw plugins install @noncelogic/memory-lancedb
+- Performance: Improving load times, caching responses, and fixing render-blocking issues
 
-# Set as memory backend
-openclaw config set plugins.slots.memory "memory-lancedb"
+- Security: Setting up WAF, handling DDoS protection, and applying Zero Trust patterns
 
-# Configure embeddings (OpenAI example)
-openclaw config set plugins.entries.memory-lancedb.config.embedding.apiKey "$OPENAI_API_KEY"
-openclaw config set plugins.entries.memory-lancedb.config.embedding.model "text-embedding-3-small"
+**Why it matters:**
 
-# Restart gateway
-openclaw gateway restart
+Cloudflare has many moving parts and strict runtime rules. Agents often use unsupported APIs, misconfigure storage, or deploy incorrectly. This skill helps the agent follow correct patterns and build systems that run reliably at the edge.
+
+**Install:**
+
+```plain text
+npx skills add cloudflare/skills
 ```
 
-## 6. MemOS Cloud - Cloud-Hosted Cross-Agent Memory with Async Recall and Isolation
+## 7. Monitoring And Debugging Skills with Sentry
+
+The [Sentry agent skill](https://github.com/getsentry/skills) pack is based on real patterns used by the Sentry engineering team. It is not basic documentation. It reflects how production systems are monitored, debugged, and maintained at scale.
 
 ![Image 7](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_7.png)
 
-MemOS Cloud is a lifecycle plugin that recalls relevant memories from the MemOS Cloud API before each agent run and saves new conversation data after each run.
+**What the agent learns:**
 
-It works asynchronously, supports cross-agent memory isolation via agent_id, and lets you configure limits on how many memories are injected per turn.
+- AGENTS.md Generation: Creating and updating agent docs that match real project structure
 
-Where memory-lancedb stores everything locally, MemOS Cloud is the right choice when you need cloud-hosted memory that persists across devices, or when you're running multi-agent setups where agents need isolated but centrally managed memory.
+- Claude Settings Auditing: Checking configs early to catch issues before they reach production
 
-It's a great complement to LanceDB — use LanceDB for local-first setups, and MemOS Cloud when you need cloud persistence or multi-agent coordination.
+- Sentry SDK Integration: Setting up error tracking, DSNs, source maps, and capturing useful context
 
-GitHub Repo: [https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin](https://github.com/MemTensor/MemOS-Cloud-OpenClaw-Plugin)
+- Error Triage Patterns: Managing issues, grouping errors, setting alerts, and tracking releases
 
-**Installation**
+- Observability For Agents: Making workflows traceable and easy to debug with distributed tracing
 
-```shell
-# Install the plugin
-openclaw plugins install @memtensor/memos-cloud-openclaw-plugin
+**Why it matters:**
 
-# Add your MemOS API key
-openclaw config set plugins.entries.memos-cloud-openclaw-plugin.enabled true
-openclaw config set plugins.entries.memos-cloud-openclaw-plugin.config.apiKey "YOUR_MEMOS_API_KEY"
+Agents that ship code without monitoring create failures that are hard to detect and fix. This skill ensures your agent sets up tracking from the start, so errors are visible and easier to debug in real use.
 
-# Restart gateway
-openclaw gateway restart
+**Install:**
+
+```plain text
+npx skills add getsentry/skills
 ```
 
-## 7. OpenClaw Foundry - Self-Writing Meta-Extension That Learns and Builds Its Own Tools
+## 8. Backend And Database Skills with Supabase
+
+The [Supabase agent skill pack](https://github.com/supabase/supabase/tree/master/.agents/skills/vitest) teaches your agent how to work with a full backend platform built on Postgres. It covers database, auth, storage, real-time features, and serverless functions. It is widely used in modern full-stack apps.
 
 ![Image 8](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_8.png)
 
-Foundry is a self-writing meta-extension. It observes your workflows, researches the OpenClaw docs, and writes new skills, extensions, hooks, and tools directly into your setup.
+**What the agent learns:**
 
-The self-modification loop actually works: Foundry validates generated code in a sandbox before deploying it, records patterns from successes and failures, and can even extend its own capabilities.
+- Postgres Best Practices: Writing efficient queries, using indexes, and avoiding slow patterns
 
-It includes tools like 
+- Row Level Security: Defining access rules correctly to protect user data
 
-- foundry_implement (end-to-end research + build), 
+- Auth Patterns: Managing sessions, JWTs, OAuth, and protected routes
 
-- foundry_write_skill, foundry_write_hook, and 
+- Storage: Handling file uploads, access control, and signed URLs
 
-- foundry_extend_self — making it the closest thing to an agent that builds its own tools.
+- Edge Functions: Deploying serverless logic with proper configs and secrets
 
-GitHub Repo: [https://github.com/lekt9/openclaw-foundry](https://github.com/lekt9/openclaw-foundry)
+- Realtime: Subscribing to changes, tracking presence, and managing connections
 
-**Installation**
+- Client Libraries: Using Supabase SDKs with proper typing and error handling
 
-```shell
-# Install the plugin
-openclaw plugins install @getfoundry/foundry
+**Why it matters:**
 
-# Enable in config
-openclaw config set plugins.entries.foundry.enabled true
+Supabase is used in many production apps, but small mistakes can cause serious issues. Poor queries can slow systems down, and incorrect access rules can expose data. This skill helps your agent follow correct patterns for both performance and security.
 
-# Restart gateway
-openclaw gateway restart
+**Install:**
+
+```plain text
+npx skills add supabase/skills
 ```
 
----
+## 9. Payments And Billing Skills with Stripe
 
-## 8. Better Gateway - Auto-Reconnect, Embedded IDE, and Browser Terminal for Stable Ops
-
-The stock OpenClaw gateway drops WebSocket connections under load. Better Gateway fixes this with automatic reconnection, configurable retry intervals, and a status indicator that shows connection health in real time.
-
-Beyond stability, it adds a Monaco-based IDE and a full xterm.js terminal directly into the gateway UI — no extra ports, no SSH tunneling needed. Everything runs on the main gateway port.
-
-It also exposes a file API for workspace read/write/list/delete operations, making it a practical all-in-one development environment for your OpenClaw setup.
-
-If you run OpenClaw on a remote server or VPS, this plugin is essential for a smooth development experience.
-
-GitHub Repo: [https://github.com/ThisIsJeron/openclaw-better-gateway](https://github.com/ThisIsJeron/openclaw-better-gateway)
-
-**Installation**
-
-```shell
-# Install the plugin
-openclaw plugins install @thisisjeron/openclaw-better-gateway
-
-# Enable in config
-openclaw config set plugins.entries.openclaw-better-gateway.enabled true
-
-# Restart gateway
-openclaw gateway restart
-```
-
-## 9. Voice Call - Outbound Phone Calls and Multi-Turn Voice Conversations via Twilio
+The [Stripe agent skill](https://github.com/stripe/ai) pack teaches your agent how to build secure payment flows, manage subscriptions, and handle billing systems correctly. It covers the full lifecycle of payments and helps avoid costly mistakes.
 
 ![Image 9](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_9.png)
 
-I have kept the best one for the last and it's the most transformative plugin of the year. 
+**What the agent learns:**
 
-Voice Call moves OpenClaw beyond text by enabling outbound phone calls and multi-turn voice conversations via Twilio or Telnyx. 
+- **Payment Intents:** Creating and confirming payments, handling authentication flows, and avoiding duplicate charges
 
-It’s widely used for "reach me anywhere" notifications and real-world task execution like booking appointments, shown in youtube / X demo videos.
+- **Subscriptions And Billing:** Managing recurring payments, plan changes, trials, and cancellations
 
-Throw it leads, client, follow up, it handles all, with just a single setup. Game changer in voice call automations.
+- **Webhook Handling:** Verifying signatures, handling retries, and processing events in the correct order
 
-So, if you are a business owner who have to call a lot of people, this plugin is for you. 
+- **Connect And Payouts: **Routing payments in marketplace setups and handling transfers
 
-Learn more at: [Voice Call - OpenClaw Plugin](https://openclawdir.com/plugins/voice-call-st5alw).
+- **Fraud Detection: **Using risk signals and rules to prevent fraud without blocking valid users
 
-In case you want speed, you can check community one: [VoiceClaw- DeepGram Plugin](https://github.com/deepgram/deepclaw)
+- **Test Mode Patterns: **Simulating real payment scenarios and testing failure cases
 
-**Installation**
+- **Error Handling:** Managing declines, network issues, and retries without breaking the flow
 
-```shell
-# Install the voice-call plugin (bundled)
-openclaw config set plugins.entries.voice-call.enabled true
+**Why it matters:**
 
-# Configure Twilio credentials
-openclaw config set plugins.entries.voice-call.config.provider "twilio"
-openclaw config set plugins.entries.voice-call.config.twilio.accountSid "YOUR_TWILIO_SID"
-openclaw config set plugins.entries.voice-call.config.twilio.authToken "YOUR_TWILIO_AUTH_TOKEN"
-openclaw config set plugins.entries.voice-call.config.twilio.from "+1XXXXXXXXXX"
+Payments are a critical part of any product. Small mistakes can lead to failed transactions, duplicate charges, or broken billing flows. This skill helps your agent follow safe and reliable patterns from the start.
 
-# Restart gateway
-openclaw gateway restart
+**Install:**
+
+```plain text
+npx skills add stripe/agent-toolkit
 ```
 
-GitHub Repo: [https://github.com/openclaw/openclaw/tree/main/extensions/voice-call](https://github.com/openclaw/openclaw/tree/main/extensions/voice-call)
+## 10. Video And Media Generation Skills with Remotion
 
+The [Remotion agent skill](https://github.com/remotion-dev/remotion) pack teaches your agent how to create videos using code. It uses React to build, structure, and render videos, which opens up a new type of output that most agents cannot handle.
 
-And with this we have come to an end of this short and definitive plugin list.
+![Image 10](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top/image_10.png)
 
-## Final Thoughts
+**What the agent learns:**
 
-Plugins run silently in the background, shaping how your agent thinks and responds at a system level. It’s really a more integrated experience than just skills.
+- Composition Model: Structuring videos using React components, sequences, and layouts
 
-But when your agent starts touching external services, that's where **Composio** quietly handles scoped access and managed credentials under the hood, so your plugins stay focused on behavior while Composio handles the connectivity layer cleanly.
+- Timeline API: Controlling animation with frame-based logic and timing functions
 
-The insight worth keeping in mind: 
+- Rendering Pipeline: Generating videos in formats like MP4, WebM, and GIF using the CLI
 
-> plugins modify the *agent;* tools extend its *reach -* knowing this boundary is what separates a well-architected workflow from a tangled one.
+- Audio And Video Assets: Adding and syncing audio, clips, and visual elements
 
-What plugins or tool combos are you running with OpenClaw? Drop them in the comments!
+- Dynamic Content: Creating videos that change based on data or inputs
+
+- Walkthrough Generation: Producing product demos and app walkthrough videos from UI flows
+
+**Why it matters:**
+
+Video creation has mostly been manual and tool-heavy. This skill allows your agent to generate videos directly from code, enabling automation of content such as demos, reports, and visual stories.
+
+**Install:**
+
+```plain text
+npx skills add remotion-dev/remotion
+```
+
+## Conclusion
+
+The agent skills ecosystem is moving fast. Fine-tuning changes how an AI behaves and is costly to maintain. Agent skills are simple instruction files. You can update, swap, or share them at any time without changing the model.
+
+Each skill pack in this list carries real engineering knowledge. It includes production patterns, lessons from real systems, and platform-specific practices, all in a form an agent can use right away.
+
+Install the ones that match your stack. Your agents will spend less time making errors and more time getting work done.

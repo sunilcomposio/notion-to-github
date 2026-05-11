@@ -1,15 +1,13 @@
 ---
-title: "10 Claude Cowork Plugins I Actually Use (And One I Turned Off After a Day)"
-source: https://www.notion.so/10-Claude-Cowork-Plugins-I-Actually-Use-And-One-I-Turned-Off-After-a-Day-358f261a6dfe804b9c0cd1fab7216aa0
+title: "10 Claude Cowork Plugins I Actually Use"
+source: https://www.notion.so/composio/10-Claude-Cowork-Plugins-I-Actually-Use-358f261a6dfe804b9c0cd1fab7216aa0
 notion_page_id: 358f261a-6dfe-804b-9c0c-d1fab7216aa0
-last_synced: 2026-05-07T08:58:51Z
+last_synced: 2026-05-11T10:50:12Z
 ---
 
-I installed Claude Cowork the day it dropped. First week I was genuinely surprised. It finished things I'd half-started, cleaned up docs I'd been avoiding, handled tasks I'd normally context-switch three times to complete. 
+Cowork without plugins felt so incomplete. If I have to point the single cause of Claude Codes astronomical growth, it has to be the ecosystem — Plugins, MCPs, Skills, Subagents. They make it so efficient that you could actually replace much of your daily chors with it.
 
-Second week I realized it didn't know anything about how I actually work. It couldn't check Slack for me. It didn't know our CRM. Every task started with me explaining context it should have already had.
-
-Then Anthropic released plugins. I spent a full weekend testing them. Some were really impressive. Some were fine.
+Now, Anthropic finally dropped official support for plugins. 
 
 Here are the ten worth actually installing, who they're for, and what they do and if they’re any good for your use cases.
 
@@ -51,8 +49,6 @@ This comes up constantly so worth clearing up before we go further.<br>A **skill
 
 ---
 
----
-
 ### How to Install Claude Cowork Plugins
 
 Installing a plugin takes under two minutes. Here's how:
@@ -74,8 +70,6 @@ claude plugin install sales@knowledge-work-plugins
 
 If you've built your own plugin or downloaded one, go to Customize → upload the plugin file directly.
 
-Searches across all your connected work tools simultaneously Slack, Teams, Outlook, Jira, everything.
-
 Once installed, plugins activate automatically. Skills fire when relevant, slash commands become available in your session, and connected tools stay authorized across sessions, you only authorize once.
 
 **Note:** If you're on a Team or Enterprise plan, your admin may have restricted which plugins you can install or auto-installed specific ones for your organization.
@@ -86,7 +80,7 @@ Once installed, plugins activate automatically. Skills fire when relevant, slash
 
 Most plugins ship with Claude Connectors that let you connect Claude to data sources like Google Drive, Notion, and GitHub. However, what works for an individual quickly breaks down at enterprise scale. 
 
-Connectors authenticate per-user but offer little visibility into what Claude actually does once connected — which records were read, which actions were taken, which data left the building. 
+Connectors authenticate per-user but offer little visibility into what Claude actually does once connected, which records were read, which actions were taken, which data left the building. 
 
 It works for individual use cases. However, for a 500-person company deploying Claude across legal, finance, and engineering teams, the absence of an audit trail is the difference between a sanctioned rollout and a security incident waiting to happen.
 
@@ -98,7 +92,9 @@ Check out here at [dashboard.composio.dev](https://dashboard.composio.dev)
 
 ### **1. Enterprise Search Plugin for Claude Cowork**
 
-I asked it a dumb test question: "What's the oldest unanswered customer question in our Slack?" It came back with a thread from 11 days ago where three people had tagged support but nobody replied. I answered it in 90 seconds. That alone was worth the install. The more tools you have connected, the more useful it gets.
+I asked it a test question: "What's the oldest unanswered customer question in our Slack?" It came back with a thread from 11 days ago where three people had tagged support but nobody replied. I answered it in 90 seconds. That alone was worth the install. The more tools you have connected, the more useful it gets.
+
+**Who it's for:** Anyone who searches across Gmail, Slack, Notion, Drive, and Confluence.
 
 **What it does:**
 
@@ -126,6 +122,8 @@ I hate logging meeting notes in HubSpot. This plugin writes the note, creates th
 
 (Note: Salesforce integration may require Enterprise API access depending on your plan. HubSpot and Pipedrive may be easier to connect, but exact requirements depend on your workspace and CRM plan.)
 
+**Who it's for:** Sales reps, account executives, founders.
+
 **What it does:**
 
 - Writes CRM notes, creates follow-up tasks, and updates deal stages from your conversation
@@ -140,7 +138,7 @@ I hate logging meeting notes in HubSpot. This plugin writes the note, creates th
 1. Open Claude Desktop → Cowork tab → Customize
 2. Search "Sales" → click Install
 3. Connect your CRM via the Connectors menu
-4. Key commands: `/sales:pipeline-review`, `/sales:forecast`, `/sales:follow-up`
+4. Key commands: `/sales:pipeline-review`, `/sales:forecast`
 
 **Resource: **[github.com/anthropics/knowledge-work-plugins/tree/main/sales](https://github.com/anthropics/knowledge-work-plugins/tree/main/sales)
 
@@ -148,7 +146,9 @@ I hate logging meeting notes in HubSpot. This plugin writes the note, creates th
 
 ### **3. Legal, Contract Review Before It Goes to Counsel**
 
-I sent a vendor NDA through it before passing it to our lawyer. She came back and said it caught the two problem clauses but missed a jurisdiction issue she had to add herself. Then she said "honestly not bad" and moved on. She still reviewed it properly, but she spent seven minutes instead of twenty, because she already knew where to look.
+Contract review is slow and expensive. Lawyers spend hours reading boilerplate to find the small number of clauses that actually need attention. Legal teams can use this plugin to review contracts clause by clause. It flags terms with GREEN (standard), YELLOW (review recommended), or RED (needs attention before signing). Handles NDAs, vendor agreements, and compliance checks. Separates standard boilerplate from the parts that actually need human attention.
+
+**Who it's for:** In‑house legal teams, commercial counsel, compliance staff.
 
 **What it does:**
 
@@ -170,9 +170,13 @@ I sent a vendor NDA through it before passing it to our lawyer. She came back an
 
 ---
 
-### **4. Finance, I Don't Work in Finance and Still Used It**
+### **4. Finance Plugin for Claude Cowork**
 
-I run a small side consulting thing. Quarterly I have to reconcile expenses across three credit cards and a business bank account. Normally that's a Saturday morning of cursing. I connected the Finance plugin to my BigQuery read-only, asked for a variance analysis, and it spat out a spreadsheet with actual vs expected by category. Then I asked it to turn that into a slide deck for my partner. It did. I did not touch Excel or PowerPoint. That's not nothing.
+Finance teams can connect this plugin directly to their data warehouse (Snowflake, Databricks, BigQuery). It runs variance analysis, reconciles accounts, and prepares journal entries. Works with Excel and PowerPoint cross-app workflows, so you can go from analysis to presentation without manually switching apps.
+
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/claude-cowork-plugins/4676801409.png)
+
+**Who it's for:** Finance teams doing reporting, reconciliation, variance analysis.
 
 **What it does:**
 
@@ -200,6 +204,8 @@ Our PM can't write SQL. I don't mean that as a dig. She just shouldn't have to. 
 
 Read-only mode is configurable. Don't let anyone tell you otherwise.
 
+**Who it's for:** Product managers, growth teams, operations, marketing analysts.
+
 **What it does:**
 
 - Translates plain English questions into SQL queries and runs them
@@ -222,9 +228,9 @@ Read-only mode is configurable. Don't let anyone tell you otherwise.
 
 ### **6. Marketing research plugin for Cowork**
 
-Our content person spends every Monday morning pulling competitor news. I told her to try /marketing:competitive-brief for our main rival. It pulled their last three product launches, a pricing change, and a recent exec interview into a structured brief. She said "that's basically what I do manually until 10am." Now she starts at 10am and spends the first hour on actual strategy.
+Marketing teams can generate competitive briefs from recent news, product launches, and positioning changes. The plugin drafts content in your brand voice connected to your content calendar. It also pulls campaign performance data and surfaces actionable insights. Some integrations are still being rolled out, so check Anthropic's connector docs for what's available for your stack.
 
-Some integrations are still being rolled out. Check Anthropic's connector docs for the latest on what's available for your stack.
+**Who it's for:** Content marketers, brand managers, growth teams.
 
 **What it does:**
 
@@ -248,9 +254,9 @@ Some integrations are still being rolled out. Check Anthropic's connector docs f
 
 ### **7. HR Plugin for Cowork**
 
-We were hiring a customer support lead. I used /hr:job-description and fed it our standard template plus a few notes about the role. The plugin added a line about "Spanish fluency preferred" that I had not mentioned. I almost deleted it. Then I remembered our support volume from Latin America had doubled in six months. I left it in. The candidate we hired spoke Spanish. That line is why she applied. I would have forgotten it entirely.
+HR teams can use this plugin to draft job descriptions that go beyond generic templates, catching requirements you might overlook. It generates offer letters, onboarding plans, and performance review summaries. Keeps hiring documentation consistent in structure and tone across roles. Covers the full employee lifecycle from recruitment through performance management.
 
-The onboarding plan feature is fine. But that one catch is why I keep the plugin around.
+**Who it's for:** HR teams, hiring managers, people operations.
 
 **What it does:**
 
@@ -278,6 +284,8 @@ I asked our lead engineer what he thought of this plugin. He said "I used it to 
 
 The /engineering:incident-writeup command turns a Slack post-mortem into a structured document. We used it after a small outage last week. Someone just typed what happened, Claude made it look official, and we moved on.
 
+**Who it's for:** Engineering teams, tech leads, engineering managers.
+
 **What it does:**
 
 - Generates architecture decision records (ADRs) from technical context and notes
@@ -300,7 +308,9 @@ The /engineering:incident-writeup command turns a Slack post-mortem into a struc
 
 ### **9. Productivity plugin for Claude Cowork**
 
-I wake up to 40 Slack messages, 12 emails, and a calendar that's already changed twice. The /update command scans everything from the last 12 hours and tells me what actually needs attention. Yesterday it surfaced a client who'd moved a deadline in a late night email, I would have missed that until the afternoon. Before a hard conversation last week, /meeting-prep pulled relevant docs, recent Slack threads, and attendee context. Changed how I opened.
+I wake up to 20 Slack messages, 10 emails, and a calendar that's already changed twice. The /update command scans everything from the last 12 hours and tells me what actually needs attention. Yesterday it surfaced a client who'd moved a deadline in a late night email, I would have missed that until the afternoon. Before a hard conversation last week, /meeting-prep pulled relevant docs, recent Slack threads, and attendee context. Changed how I opened.
+
+**Who it's for:** Managers, operators, founders, anyone with too many inputs.
 
 **What it does:**
 
@@ -324,7 +334,9 @@ I wake up to 40 Slack messages, 12 emails, and a calendar that's already changed
 
 I tried to build a plugin for my client QBR process, pull metrics from BigQuery, grab last quarter's Notion notes, draft a QBR deck in one command. It worked about 80%. The Notion connector was finicky and I spent an hour on a permission issue. Haven't shipped it yet. But I know exactly what I'm building next quarter.
 
-<br>That's when I hit the real limit. A full QBR workflow needs to update Salesforce, create a Google Slide, and send a Slack reminder. It stopped feeling like a plugin and started feeling like integration work. That's when I started using Composio. it gives Claude access to 1,000+ apps through a single integration so I can chain actions across tools without building every connector myself. I still start with the Cowork plugins. But when a workflow needs to cross apps or actions the official set doesn't cover, Composio is the next layer I add.
+<br>That's when I hit the real limit. A full QBR workflow needs to update Salesforce, create a Google Slide, and send a Slack reminder. It stopped feeling like a plugin and started feeling like integration work. That's when I started using Composio. It gives Claude access to 1,000+ apps through a single integration so I can chain actions across tools without building every connector myself. I still start with the Cowork plugins. But when a workflow needs to cross apps or actions the official set doesn't cover, Composio is the next layer I add.
+
+**Who it's for:** Power users, team leads, operations teams.
 
 **What it does:**
 
@@ -341,8 +353,6 @@ I tried to build a plugin for my client QBR process, pull metrics from BigQuery,
 4. Type `/plugin-create` to start building
 
 **Resource: **[github.com/anthropics/knowledge-work-plugins/tree/main/cowork-plugin-management](https://github.com/anthropics/knowledge-work-plugins/tree/main/cowork-plugin-management)
-
----
 
 ## Community Plugins and Tools Worth Knowing About
 
@@ -395,8 +405,6 @@ The largest open-source plugin marketplace for Claude. 26 plugins built on the 
 
 **How to install:**
 
-bash
-
 ```plain text
 # Add the marketplace
 /plugin marketplace add MSApps-Mobile/claude-plugins
@@ -408,9 +416,15 @@ bash
 ```
 **Resources:** [github.com/MSApps-Mobile/claude-plugins](https://github.com/MSApps-Mobile/claude-plugins) \| [msapps.mobi/plugins](https://msapps.mobi/plugins)
 
+### **What About Enterprise-Grade Security?**
+
+Most Cowork plugins ship with connectors that authenticate per-user but offer little visibility into what Claude actually does once connected, which records were read, which actions were taken, which data left the building. That works for an individual. For a 500-person company deploying Claude across legal, finance, and engineering, the absence of an audit trail is the difference between a sanctioned rollout and a security incident.
+
+Composio addresses this gap by operating as a separate governance layer (or MCP gateway) between AI tools and the SaaS apps they connect to. It gives you control, logs, and least-privilege access at scale. [dashboard.composio.dev](https://dashboard.composio.dev/)
+
 ### **What I Actually Run Right Now**
 
-Enterprise Search, Sales, Data, and Productivity. That's my daily stack. Legal is installed but I only use it when a contract shows up. Finance stays because of my side thing. HR stays because of the Spanish fluency thing. The others come and go.
+Enterprise Search, Sales, Data, and Productivity. That's my daily stack. The others come and go.
 
 The thing that surprised me most: the Data plugin is the one non-technical people on my team ask about. They don't want to learn SQL. They just want answers. That's the real use case Anthropic nailed.
 
@@ -431,69 +445,90 @@ I didn't believe that until I tried it myself. Now I do.
 <td>Plugin</td>
 <td>Best For</td>
 <td>Key Connectors</td>
-<td>Plugin Availability</td>
 </tr>
 <tr>
 <td>Enterprise Search</td>
 <td>Searching across all your tools at once</td>
 <td>Google Drive, Slack, Notion, Gmail, M365</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Sales</td>
 <td>Prospect research, CRM updates, deal management</td>
 <td>HubSpot, Salesforce, Pipedrive</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Legal</td>
 <td>Contract review, NDA triage, compliance checks</td>
 <td>Box, M365, Pramata, Egnyte</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Finance</td>
 <td>Reporting, reconciliation, variance analysis</td>
 <td>Snowflake, BigQuery, M365</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Data</td>
 <td>Natural language queries, dashboards, analysis</td>
 <td>Snowflake, BigQuery, Hex, Amplitude</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Marketing</td>
 <td>Campaigns, content briefs, performance reporting</td>
 <td>HubSpot, Google Analytics, WordPress</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>HR</td>
 <td>Job descriptions, onboarding, performance docs</td>
 <td>Slack, M365, Google Drive</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Engineering</td>
 <td>ADRs, specs, documentation to GitHub/Confluence</td>
 <td>GitHub, Jira, Confluence, Slack</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Productivity</td>
 <td>Daily task updates, meeting prep, briefings</td>
 <td>Slack, Gmail, Notion, Jira, Calendar</td>
-<td>All paid plans</td>
 </tr>
 <tr>
 <td>Plugin Create</td>
 <td>Building custom plugins for your specific workflow</td>
 <td>Anything you configure</td>
-<td>All paid plans</td>
 </tr>
 </table>
+## Best practices for working with Claude Cowork
+
+I’ve seen a countless people trying out plugin cause of hype only to end up dissapointed. It’s neither their fault nor Cowork. It works but you’ve to treat it not as a bot but as your secretary.
+
+### Build one workflow
+
+Instead of automating away your entire life start with a simple workflow, only one. Like scheduling meeting prep notes, product updates, competitor updates, etc. Just one. Get a sense of how it is working. Tune the tone as per your preference. 
+
+Here are some order 
+
+1. create 3 context files (about-me, brand-voice, current-projects) - 30 min
+2. add the meta-prompt that stops Cowork from going rogue
+3. build ONE workflow (meeting prep) and run it for a full week
+4. now install plugins (they actually work because Cowork knows who you are)
+5. set up one scheduled task so it runs without you
+
+### Prioritise the plugins
+
+You’re not supposed to install all the plugins. Start with what’s most essential to you. Is it productivity or your domain plugins (sales, marketing, product, etc).
+
+My order of preference
+
+- Productivity
+- Domain
+- Any custom plugins
+
+### Create custom plugins
+
+Once you get a taste of it and understand what works build custom plugins. Use Custom MCPs, Skills, and create your plugins.
+
+There’s a Plugin for creating plugins, which I’ve mentioned here at the last of the list or you can just have a detailed conversation with Claude, have it interview you for your use cases and build the plugin you want.
+
 ### Final Take
 
 The way I’d think about Claude Cowork plugins is simple: don’t install ten of them and hope your work magically gets easier.
@@ -510,20 +545,20 @@ For me, the value became obvious when Claude stopped feeling like a chatbot I ha
 
 ---
 
-## FAQs
+### **FAQs**
 
-### What's the difference between a Claude Cowork plugin and a skill?
+**Are Claude Cowork plugins free?**
 
-A **skill** is a single markdown file that teaches Claude how to do one specific thing — it fires automatically when relevant context appears. A **plugin** is a complete package: skills, slash commands, connectors, and sub-agents bundled together for a specific job function. The article's framing: a skill is a chapter, a plugin is the whole book — already indexed and ready to use. You install a plugin once and Claude immediately knows the best practices, tools, and commands relevant to that role, instead of you re-explaining your workflow every session.
+The plugins are open source and free to install, but you typically need a paid Claude plan and any required third-party tool access for connectors.
 
-### Which Cowork plugins should I install first?
+**Do I need to connect all my tools for plugins to work?**
 
-The author's daily stack is **Enterprise Search, Sales, Data, and Productivity** — those four come up over and over. Legal stays installed but only fires when a contract shows up. Finance and HR earn their slot through specific moments (a quarterly side-business reconciliation, a job description that surfaced a Spanish-fluency requirement nobody had thought to add). The article's actual recommendation: don't install ten plugins and hope work gets easier. Pick the one annoying weekly workflow you keep putting off — meeting prep, CRM updates, the same number-pull every month — and start there.
+No. Start with the one or two connectors that matter for the workflow you want to improve. Most plugins get more useful as you authorize more relevant tools.
 
-### Do I need Composio if Claude Cowork plugins already have connectors built in?
+**Are plugins safe for company data?**
 
-For individual use, the built-in connectors are fine. The article makes the case that they break down at enterprise scale: connectors authenticate per-user but offer little visibility into what Claude actually does once connected — which records were read, which actions were taken, which data left the building. For a 500-person company rolling Cowork across legal, finance, and engineering, that absence of an audit trail is the difference between a sanctioned rollout and a security incident waiting to happen. Composio acts as a separate governance layer / [MCP gateway](https://composio.dev/mcp-gateway) for that case — and the author also reaches for it when a workflow needs to cross apps in ways the official plugin set doesn't cover (e.g., a full QBR that spans BigQuery, Notion, Salesforce, Google Slides, and Slack).
+They can be. Treat connectors like any other integration. Use least-privilege access, prefer read-only where possible, and test on low-risk work before rolling out broadly. Use Composio for broader control and audit trails at scale.
 
-### Are Cowork plugins worth installing if I'm not on a paid plan or my admin has restricted them?
+**What should I install first?**
 
-Plugins are open source and free to install, but Cowork itself is on Anthropic's paid tiers, and Team or Enterprise plan admins can restrict which plugins users can install or auto-install specific ones for the whole org. Practical reading: if you're on a paid plan as an individual, you're free to install whatever's useful. If you're inside an Enterprise tenant, check what's already provisioned before going hunting — your IT team may have already curated a set, and the value of plugins like Enterprise Search and Data scales with how many tools are properly authorized, which is usually an admin call anyway.
+Start with the plugin that fixes your most repetitive weekly task. For most teams, that's Enterprise Search, Productivity, Sales, or Data, depending on your role.

@@ -2,7 +2,7 @@
 
 Anthropic dropped Opus 4.8 this week just before they file for the IPO. Well, for whatever reasons, we now have a new state-of-the-art model. And it’s hardly been a week and the internet is split, if it is any better than it’s predecessor.
 Some people say it is a big upgrade. Some say it is barely different. And some people on [X](https://x.com/zoink/status/2060769829133721974?s=20) and [Reddit](https://www.reddit.com/r/claudexplorers/comments/1ts0ds1/opus_46_vs_47_vs_48/) are saying it is the worst Opus release so far. 
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/dario_anthropic1.gif)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/dario_anthropic1.gif)
 After Opus 4.7 nerf and GPT 5.5 release, I moved to Codex. I have been using it for almost everything from coding to marketing tasks. And I usually test these models for my own vibe and sanity check.
 So I wanted to see it for myself. If it’s any good. Should I switch and renew Claude Max?
 First, I ran a small set of harder Terminal-Bench 2.1 tasks against **GPT-5.5 with high reasoning** ( the current best in agentic terminal coding).
@@ -24,17 +24,17 @@ For anything other than Terminal-Bench 2.1, token efficiency, and speed, GPT-5.5
 ## Intro to Claude Opus 4.8
 Claude Opus 4.8 got released on May 28, 2026, as Anthropic's flagship model, and this one is a bit different. It's not sold as a new model with bigger benchmarks.
 Antropic itself is not trying to sell it as a massive generational jump in the model's performance. It's termed a tiny bit improvement over Opus 4.7, which is fair, even if you look into the benchmark numbers compared to Opus 4.7, it's just a little better.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/opus_opus_check.webp)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_opus_check.webp)
 There's also a bunch of new features added to this model, which you can find them [all here](https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8#new-features).
 But the interesting part is that the improvements are exactly in the areas where coding agents usually panic: tool use, self-correction, long context handling, and being honest when something is wrong.
 The biggest claim Anthropic is making with Opus 4.8 is not just that it writes better code. It is that it is **much better at noticing** when the code it wrote has a bug. It's said to be **4x less likely** than Opus 4.7 to let buggy code pass.
 If true, that's probably the biggest win.
 But there's trolls going on everywhere on [Twitter (X)](https://x.com/AlfinCodes/status/2060712929092309478?s=20) saying how bad Opus 4.8 is compared to Opus 4.7 or any recently launched models.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/opus_4.8_meme.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_4.8_meme.png)
 Well, that's a story for the next day...
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-05-31_15-46-30.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-05-31_15-46-30.png)
 The real pain is when it confidently keeps building on [top of a bad assumption](https://www.reddit.com/r/claudexplorers/comments/1ts0ds1/comment/oornd3m/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button), and wastes the next 30 minutes debugging something it created itself.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-06-03_12-58-13.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-06-03_12-58-13.png)
 Specs wise, there's not much big jump as I said. It comes with a **1M token context window**, **128K max output**, multi-model and has the knowledge cutoff of January 2026.
 Pricing is the same as Opus 4.7:
 - **Input Cost:** \$5/M input tokens
@@ -42,7 +42,7 @@ Pricing is the same as Opus 4.7:
 > 💁 There is also prompt caching with up to **90% savings**, batch processing at **50% savings**, and a cheaper Fast Mode that runs at roughly **2.5x output speed** for \$10 input / \$50 output per million tokens.
 So on paper, you're basically getting better performance for the same price over Opus 4.7.
 Now coming to benchmarks.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/benchmark_opus.webp)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/benchmark_opus.webp)
 On **SWE-bench Verified**, it scores **88.6%**, which is only slightly above Opus 4.7, but that benchmark is already getting saturated. The more interesting number is **SWE-bench Pro**, where Opus 4.8 scores **69.2%**, compared to **64.3%** for Opus 4.7 and **58.6%** for GPT-5.5. That is a pretty big lead on a harder benchmark.
 But it does not win everything. The model's biggest weak spot is terminal coding. On **Terminal-Bench 2.1**, Opus 4.8 scores **74.6%**, which is a nice jump from Opus 4.7’s **66.1%**, but **GPT-5.5** still leads at **78.2%** (not to forget this model is launched a month back) and reportedly does even better on its native Codex CLI harness.
 > 💁 I will try to compare them on a few Terminal-Bench 2.1 tests.
@@ -87,11 +87,11 @@ harbor view --jobs jobs/opus-4.8
 You can also inspect a specific job from there to go through the tool calls, logs, and task output.
 ### GPT-5.5
 The first thing I noticed was the speed, compared to Opus 4.8.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/codex_5.5_tbench.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/codex_5.5_tbench.png)
 The entire run took around **1 hour 28 sec**, which is half the total time by Opus 4.8.
 It passed **9 out of 10 tasks** and failed on **password-recovery** with a `NonZeroAgentExitCodeError`.
 The interesting thing is that Opus did pass the same task. So, this is not a clean win either way.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-06-02_21-27-02.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-06-02_21-27-02.png)
 GPT 5.5 kinda looked great compared to Opus in speed and cost. It's surprising, GPT 5.5 did better in cost as well comparing it's around \$5/M token expensive than Opus 4.8.
 The longest GPT-5.5 task was:
 - **torch-pipeline-parallelism:** 12m 29s
@@ -223,9 +223,9 @@ Here’s the entire GPT-5.5 test run summary with cost, input, and output token 
 ### Claude Opus 4.8
 Claude Opus 4.8 was slower in this run.
 The biggest issue was **regex-chess**. It ran for **58m 5s**, and just froze, literally.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-06-02_13-35-38.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/Screenshot_From_2026-06-02_13-35-38.png)
 Because of that, I had to do the Opus 4.8 run in **two sessions**. The first session got stuck on `regex-chess` for almost an hour with no real progress, so I stopped it and ran the remaining in a second session.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/opus_4.8_tbench.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_4.8_tbench.png)
 Because of that, the total runtime including the cancelled task comes out to around:
 - **Opus 4.8 total:** \~2h 22m 54s
 The longest completed Opus 4.8 task was:
@@ -373,10 +373,10 @@ But the other thing is that this model is just so slow and so token-heavy that y
 This whole run of building the automation app cost me **\$28**. Let that sink in.
 And honestly, the app itself was not complex enough to justify that kind of cost.
 Again, it took more than an hour of continuous building, fixing, and going back and forth.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/opus_ops.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_ops.png)
 I ran into so many errors that I could not even document them properly.
 The other thing is that this model hallucinated a **LOT**. Probably the worst experience I have had with any Opus model so far, even compared to 4.6.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/opus_build_harboops_err.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_build_harboops_err.png)
 After hours of debugging, I finally got a working build. But there were so many loopholes and so many DIY-style fixes that I honestly would not trust this code in production.
 Here’s the demo:
 > 🎥 **Video — opus_4.8_tbench.mp4 (~120 MB).** This clip exceeds GitHub's 100 MB file limit and was not committed to the repo. Add it via Git LFS or host it externally and link here.
@@ -389,13 +389,13 @@ I had high hopes for this model in this run, but it completely smoked me.
 - **Usage by Model:** Claude Haiku 4.5: 70.9k input, 24.2k output, 2.6m cache read, 130.7k cache write
 - **Usage by Model:** Claude Opus 4.8: 18.9k input, 204.8k output, 40.5m cache read, 348.2k cache write
 - **Context Window Used:** 18%
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/opus_cost_2.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_cost_2.png)
 ### GPT-5.5
 GPT-5.5 was a bit of a disappointment.
 Though, to be fair, I kind of expected it. This model has not been the best for me in real-world use cases so far, so there’s that.
 The thing is, it got me a somewhat broken product with only parts of it working in no time. It took around **15 to 20 minutes**.
 There were also small TypeScript type errors that it kept trying to fix again and again.
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/gpt_type_error.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/gpt_type_error.png)
 Here’s the demo:
 > 🎥 **Video — gpt_5.5.mp4 (~102 MB).** This clip exceeds GitHub's 100 MB file limit and was not committed to the repo. Add it via Git LFS or host it externally and link here.
 Another thing I noticed is that Claude Opus 4.8 is definitely better in real-world use cases. Even in this simple app idea, if you look at the overall frontend, Opus 4.8 had a much better output than GPT-5.5.
@@ -403,14 +403,14 @@ This was a test I did on a subscription plan, so I don’t have the exact cost. 
 - **Duration:** \~20 min
 - **Code Changes:** 17 files changed, 2,685 insertions(+), 147 deletions(-)
 - **Context Used:** 57% (118K used / 258K)
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/gpt_5.5_cost.png)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/gpt_5.5_cost.png)
 > 💁 I didn’t have much hope with this general model. I just ran this test along with Opus 4.8 to give you an idea. That’s it. From my personal experience so far, this model does not compare to Opus 4.8 on anything other than Terminal-Bench 2.1.
 ---
 ## Final Verdict
 Yes, Opus 4.8 is good.
 But don’t expect some massive jump where you instantly feel everything is different from Opus 4.7.
 From what I’ve seen, it feels like a small improvement over Opus 4.7, which is pretty much what the benchmark numbers also suggest. Better, yes. Completely different, no. ❎
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8-so-you-dont-have-to/dario_giphy.gif)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/dario_giphy.gif)
 I’ve been using it continuously for around two days now, and honestly, it’s decent. I don’t think it is bad.
 The experience will probably depend a lot on how you use it. If your work involves long context, tool calls, debugging, and agentic coding, maybe you’ll notice the improvements more.
 If you mostly use it for regular coding, it may feel almost the same.

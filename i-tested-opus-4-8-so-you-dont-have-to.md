@@ -9,7 +9,7 @@ Anthropic dropped Opus 4.8 this week just before they file for the IPO. Well, fo
 
 Some people say it is a big upgrade. Some say it is barely different. And some people on [X](https://x.com/zoink/status/2060769829133721974?s=20) and [Reddit](https://www.reddit.com/r/claudexplorers/comments/1ts0ds1/opus_46_vs_47_vs_48/) are saying it is the worst Opus release so far. And honestly, it might actually be. 
 
-![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8/0e9f865bf3.gif).gif%22%2C%22permissionRecord%22%3A%7B%22table%22%3A%22block%22%2C%22id%22%3A%22374f261a-6dfe-8086-8405-cd073d474a58%22%2C%22spaceId%22%3A%2235adec70-dbef-4f42-9214-62ac8cdc4d75%22%7D%7D)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/i-tested-opus-4-8/0e9f865bf3.gif)
 
 After Opus 4.7 nerf and GPT 5.5 release, I moved to Codex. I have been using it for almost everything from coding to marketing tasks. And I usually test these models for my own vibe and sanity check.
 

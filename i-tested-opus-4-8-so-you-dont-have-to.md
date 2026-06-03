@@ -24,7 +24,7 @@ For anything other than Terminal-Bench 2.1, token efficiency, and speed, GPT-5.5
 ## Intro to Claude Opus 4.8
 Claude Opus 4.8 got released on May 28, 2026, as Anthropic's flagship model, and this one is a bit different. It's not sold as a new model with bigger benchmarks.
 Antropic itself is not trying to sell it as a massive generational jump in the model's performance. It's termed a tiny bit improvement over Opus 4.7, which is fair, even if you look into the benchmark numbers compared to Opus 4.7, it's just a little better.
-![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_opus_check.webp)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/opus_opus_check.png)
 There's also a bunch of new features added to this model, which you can find them [all here](https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8#new-features).
 But the interesting part is that the improvements are exactly in the areas where coding agents usually panic: tool use, self-correction, long context handling, and being honest when something is wrong.
 The biggest claim Anthropic is making with Opus 4.8 is not just that it writes better code. It is that it is **much better at noticing** when the code it wrote has a bug. It's said to be **4x less likely** than Opus 4.7 to let buggy code pass.
@@ -42,7 +42,7 @@ Pricing is the same as Opus 4.7:
 > 💁 There is also prompt caching with up to **90% savings**, batch processing at **50% savings**, and a cheaper Fast Mode that runs at roughly **2.5x output speed** for \$10 input / \$50 output per million tokens.
 So on paper, you're basically getting better performance for the same price over Opus 4.7.
 Now coming to benchmarks.
-![](assets/i-tested-opus-4-8-so-you-dont-have-to/benchmark_opus.webp)
+![](assets/i-tested-opus-4-8-so-you-dont-have-to/benchmark_opus.png)
 On **SWE-bench Verified**, it scores **88.6%**, which is only slightly above Opus 4.7, but that benchmark is already getting saturated. The more interesting number is **SWE-bench Pro**, where Opus 4.8 scores **69.2%**, compared to **64.3%** for Opus 4.7 and **58.6%** for GPT-5.5. That is a pretty big lead on a harder benchmark.
 But it does not win everything. The model's biggest weak spot is terminal coding. On **Terminal-Bench 2.1**, Opus 4.8 scores **74.6%**, which is a nice jump from Opus 4.7’s **66.1%**, but **GPT-5.5** still leads at **78.2%** (not to forget this model is launched a month back) and reportedly does even better on its native Codex CLI harness.
 > 💁 I will try to compare them on a few Terminal-Bench 2.1 tests.

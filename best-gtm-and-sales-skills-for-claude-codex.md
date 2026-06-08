@@ -79,7 +79,7 @@ composio execute GMAIL_SEND_EMAIL --dry-run -d '{"recipient_email":"you@example.
 
 ### 2. [sales-skills/sales](https://github.com/sales-skills/sales): A router-first Claude sales pack with hundreds of GTM playbooks
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-sales-skills-sales.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-sales-skills-sales.png)
 
 A Claude-oriented repo built around one router, `/sales-do`, plus a long catalog of sales and marketing skills. I would start here if the team wants one install and one entry point, because remembering 40 skill names is exactly the sort of overhead that kills adoption.
 
@@ -111,7 +111,7 @@ npx skills add sales-skills/sales --skill sales-do
 
 ### 3. ColdIQ GTM Skills: outbound playbooks from real campaigns
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/image_1.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/image_1.png)
 
 Built by ColdIQ, an agency that runs outbound for clients. The skills come from real campaigns, not theory: 
 
@@ -146,7 +146,7 @@ Skill page: [github.com/sachacoldiq/ColdIQ-s-GTM-Skills](https://github.com/sach
 
 ### 4. Vibe Prospecting plugin: live data for lead enrichment
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/image_2.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/image_2.png)
 
 Skills need data. This plugin gives Claude Code and Codex live access to 150M+ companies and 800M+ contacts from Explorium, so the agent looks up titles and emails instead of guessing them.
 
@@ -179,7 +179,7 @@ Skill page: [vibeprospecting.ai/product/plugin](https://www.vibeprospecting.ai/p
 
 ### 5. [Goose Skills](https://github.com/gooseworks-ai/goose-skills): A cross-agent GTM catalog with 108 skills and one install path
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-gooseworks-ai-goose-skills.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-gooseworks-ai-goose-skills.png)
 
 Gooseworks built one of the cleaner mixed-agent catalogs I found. If a team has Claude Code on one laptop and Codex on another, this is easier to live with than maintaining separate repos and separate instructions. It sounds boring. It is. That is why it works.
 
@@ -219,7 +219,7 @@ npx gooseworks update
 
 ### 6. [AI Marketing Skills](https://github.com/ericosiu/ai-marketing-skills): Workflow-heavy Claude skills for pipeline, outbound, and growth ops
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-ericosiu-ai-marketing-skills.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-ericosiu-ai-marketing-skills.png)
 
 Eric Siu’s repo is closer to an operating kit than a prompt pack. The useful part is that the folders are opinionated about outputs: pipeline recovery, outbound optimization, scorecards, quote mining. A marketplace-sized bundle usually loses here because reviews get sloppy and trigger quality drops.
 
@@ -263,7 +263,7 @@ cp .env.example .env
 
 ### 7. [meeting-notes-and-actions](https://github.com/ComposioHQ/awesome-codex-skills): A Codex skill for turning rough call notes into clean follow-up
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-composiohq-awesome-codex-skills.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-composiohq-awesome-codex-skills.png)
 
 ComposioHQ’s Codex registry includes this narrow meeting skill, and I would take that narrowness over a giant bundle every time for post-call work. It misses broader account planning. Fine. The win is that reps get one recap shape to review before anything goes to a customer.
 
@@ -295,7 +295,7 @@ cp -R awesome-codex-skills/meeting-notes-and-actions ~/.codex/skills/
 
 ### 8. [meeting-insights-analyzer](https://github.com/ComposioHQ/awesome-codex-skills): Transcript analysis for recurring objections, risks, and ownership gaps
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-composiohq-awesome-codex-skills.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-composiohq-awesome-codex-skills.png)
 
 This Codex skill is for teams drowning in transcripts. Generic summarizers flatten everything into the same bland recap. 
 
@@ -329,7 +329,7 @@ head ~/.codex/skills/meeting-insights-analyzer/SKILL.md
 
 ### 9. [sales-communitytracker](https://github.com/sales-skills/sales): Public-community listening for buyer intent and competitor mentions
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-sales-skills-sales.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-sales-skills-sales.png)
 
 This one is a specialized skill pack. 
 
@@ -363,7 +363,7 @@ npx skills add sales-skills/sales --skill sales-do
 
 ### 10. [issue-triage / linear](https://github.com/ComposioHQ/awesome-codex-skills): Post-sale handoff skills for turning friction into tracked product work
 
-![](assets/best-gtm-and-sales-skills-for-claude-codex/og-composiohq-awesome-codex-skills.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/assets/best-gtm-and-sales-skills-for-claude-codex/og-composiohq-awesome-codex-skills.png)
 
 I am keeping these paired because the job is one path: transcript or pilot feedback, then triage, then a tracked issue. 
 

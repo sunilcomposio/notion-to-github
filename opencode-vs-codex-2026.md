@@ -1,3 +1,8 @@
+---
+title: "OpenCode vs Codex 2026: Which CLI Tool Wins?"
+description: "A hands-on 2026 comparison of OpenCode vs Codex — terminal workflow, model support, pricing, and agentic coding tests — so you can pick the right CLI coding tool."
+---
+
 # OpenCode vs Codex 2026
 
 If your daily workflow looks anything like mine, your terminal is where the actual work happens.

@@ -7,43 +7,51 @@ description: "A hands-on 2026 comparison of OpenCode vs Codex — terminal workf
 
 If your daily workflow looks anything like mine, your terminal is where the actual work happens.
 
-I've spent the last few months stress-testing both OpenCode and Codex to see which one deserves a permanent spot in my stack.
+After the [Claude Code fiasco](https://www.anthropic.com/engineering/april-23-postmortem) back in April, I wanted a way out of Claude ecosystem. Codex and OpenCode were the default no-brainer choices.
 
-After spending serious time under the hood with both, I realized this isn't just a feature comparison-it's a clash of two completely different ideologies on how you should work with AI.
+So I spent the last few months stress-testing Codex and OpenCode to see which one could actually replace Claude Code as my daily driver.
 
-This is my unfiltered breakdown between the two.
+So, here’s what I found out.
 
 ---
 
 ## TL;DR: Quick Reference
 
-A quick glance for those who are in a hurry.
+If you are in a hurry, this is the simplest way to think about the comparison.
 
-| Dimension | OpenCode | Codex |
+**Codex is the better default. OpenCode is the better power-user tool.** Codex wins when I want speed, polish, and fewer setup decisions. OpenCode wins when I want model freedom, lower cost, local execution, and more control over the agent loop.
+
+| Section | Winner | Why |
 | --- | --- | --- |
-| **Setup Difficulty** | Medium (choices everywhere) | Easy (one path) |
-| **Token Efficiency** | 40-60% fewer (MiMo) | 40% fewer (GPT-5.5 vs 5.4) |
-| **Model Freedom** | 75+ providers | OpenAI only |
-| **Monthly Cost** | \$10-50 (with smart routing) | \$100-200 |
-| **Offline Capability** | Yes, via Ollama/LM Studio | No |
-| **GitHub Integration** | Via MCP config file | OAuth one-click |
-| **Composio Integration (MCP + Tools + Plugins)** | Manual config + skill install | CLI commands + marketplace |
-| **Thoroughness** | 21 more tests on average | Standard |
-| **Raw Speed** | 78% slower | Baseline |
-| **Undo / Rollback** | /undo & /redo (git-based) | Isolated cloud execution |
+| **Onboarding, Setup, and Daily UX** | Codex | Faster to start, cleaner defaults, easier daily workflow |
+| **Models** | Tie | Codex has the stronger default model stack; OpenCode has far more model freedom and with GLM 5.2 it’s on-par with GPT 5.5 |
+| **Pricing / Cost** | OpenCode | Cheaper for heavy usage if you use routing, caching, or lower-cost models |
+| **Features and Workflows** | Tie | Codex is better for delegation; OpenCode is better for iterative local work |
+| **Ecosystem: MCP, Skills, Plugins** | Codex | Simpler MCP and plugin setup; OpenCode is more transparent but more manual |
+| **Harness Engineering** | Tie | Codex has the better default harness; OpenCode has the more customizable harness |
+| **Best overall for most users** | Codex | Least friction, strongest defaults, smoother path from prompt to diff |
+| **Best overall for power users** | OpenCode | Model choice, local execution, deeper control, and better cost optimization |
+
+**My take:** I would recommend Codex to most users first. But for my own high-control workflow, OpenCode becomes more compelling over time because the extra setup turns into flexibility.
 
 ---
 
-## Onboarding & Setup
+## 1. Onboarding, Setup, and Daily UX
+
+Onboarding and daily UX are too closely related to treat as separate sections.
+
+The first ten minutes decide how quickly I can start. The next ten days decide whether I actually want to keep using the tool. Codex wins the first part because it removes choices. OpenCode becomes more interesting later because the choices start turning into control.
 
 | Aspect | Codex | OpenCode |
 | --- | --- | --- |
-| Installation Speed | \~90 seconds, one-click setup | \~3-5 minutes with config choices |
-| Provider Selection | OpenAI only (locked) | Choose from 75+ providers |
-| Configuration | Minimal setup required | Multiple setup steps required |
-| Learning Curve | Shallow (minutes) | Moderate (1-2 months to master) |
-| API Key Management | OAuth sign-in | Manual configuration per provider |
-| Target User | Users who prefer simplicity | Power users who want flexibility |
+| Install speed | \~90 seconds, one path | \~3-5 minutes, more decisions |
+| First impression | Polished, guided, low-friction | Developer-native, terminal-first, configurable |
+| Provider choice | OpenAI only | 75+ providers and 1000+ models |
+| Configuration | Minimal setup after sign-in | API keys, model choice, working directory, config files |
+| Learning curve | Shallow; usable in minutes | Moderate; rewards 1-2 months of use |
+| Daily workflow | Open, assign task, review diff | Plan, inspect, steer, execute, repeat |
+| Customization | Opinionated defaults | Deep control over models, instructions, and local setup |
+| Best for | Users who want the agent to stay out of the way | Power users who want to tune the agent like a dev tool |
 
 ### **Codex**
 
@@ -54,17 +62,25 @@ npm i -g @openai/codex
 codex
 ```
 
-Next
+Then it was basically:
 
-- Sign in with ChatGPT
-- Pick your project
-- Start coding
+- sign in with ChatGPT,
+- pick the project,
+- start coding.
 
-That’s it: your model is already selected (GPT 5.5 ), GitHub integration is working, and Comosio delegation is just an install away.
+That is the whole appeal. The model is already selected, GitHub integration feels native, and the default workflow does not ask me to make too many decisions. I can open Codex, describe the task, review the diff, and move on.
 
-Recommend Codex to those who hate making choices and want to focus on building and directing agents.
+This matters because a daily coding agent should not make me think about the agent more than the code.
 
-Honestly, after a full day of engineering decisions, I sometimes make games with Codex for peace of mind. Yes, I got addicted to game-making too 😁
+Codex feels strongest when I need:
+
+- a quick prototype before standup,
+- a PR review,
+- a clean diff for a narrow task,
+- a background refactor,
+- a low-friction path from prompt to patch.
+
+The tradeoff is that Codex is opinionated. I do not get much control over the model strategy, local runtime, or workflow shape. That is fine for most tasks, but limiting when I want to tune the agent like part of my dev environment.
 
 ### **OpenCode**
 
@@ -75,41 +91,45 @@ curl -fsSL https://opencode.ai/install | bash
 opencode
 ```
 
-Next:
+Then the decisions started:
 
-- Pick a provider (75+)
-- Do you want the Go tier (\$10/mo)?
-- Which model first?
-- Configure API keys
-- Configure Working directory
-- and so on.
+- Which provider do I want?
+- Do I want the Go tier?
+- Which model should be the default?
+- Which API keys do I need?
+- Which working directory should it use?
+- How much should I configure up front?
 
-Not for people who don’t like to make choices, and there is a bit of a learning curve as well.
+That makes OpenCode feel slower on day one. It is not the tool I would recommend to someone who hates setup decisions.
 
-However, I felt that one-time friction becomes an advantage as you go through the learning curve (\> 1-2 months).
+But the same friction becomes useful once I understand the system. OpenCode gives me control over the parts Codex hides:
 
-This is because you are now open to options in whichever layer you choose, so you can experiment without committing.
+- I can switch providers and models based on task type,
+- use local models through Ollama or LM Studio,
+- inspect the plan before execution,
+- steer the agent step by step,
+- encode project preferences in instruction files,
+- keep the loop close to my repo and tools.
 
-For e.g.:
+This makes OpenCode feel less like a polished single-purpose coding agent and more like a configurable development environment.
 
-- I try Qwen to see if it works for my use case, 
-- Then switch to DeepSeek if tokens get expensive, 
-- And go back to GPT-5.5 for the tricky stuff.
+The downside is cognitive overhead. OpenCode asks me to participate more, and that is not always what I want for routine work. But for serious refactors, debugging sessions, or production changes where I want to watch the agent think before it acts, the extra control is worth the friction.
 
 ### Verdict
 
-If you ask me
+Codex wins onboarding. OpenCode wins long-term control.
 
-- Codex sure wins my first 10 minutes, but it keeps getting heavier in my pocket by the end of the month.
-- Opencode has onboarding friction, but it becomes easier on the pocket and more flexible as you understand model routing and harness. 
+If I am recommending a tool to a teammate who wants the least friction, I would recommend Codex. It is faster to start, easier to understand, and better for users who just want the agent to stay out of the way.
 
-So Open Code is a clear winner for me here.
+If I am picking a tool for my own high-control workflow, OpenCode becomes more compelling over time. The setup is heavier, but the payoff is model flexibility, local execution, and tighter steering.
 
-> Opencode - 1 , Codex - 0
+For this section, Codex wins because the first-use and default daily experience are cleaner.
+
+> OpenCode - 0, Codex - 1
 
 ---
 
-## Models
+## 2. Models: Codex vs OpenCode
 
 | Aspect | Codex | OpenCode |
 | --- | --- | --- |
@@ -122,9 +142,9 @@ So Open Code is a clear winner for me here.
 
 ### **Codex**
 
-When I first used Codex with GPT-5.5, it felt like the model and the harness were built for each other. So I dug deeper and found:
+The first time I ran Codex with GPT-5.5, it felt like the whole system was purpose-built around it.
 
-When OpenAI released Codex, they framed the tool as** providing better results with fewer tokens**. But what they really did was optimize the entire reasoning chain around this one model.
+OpenAI’s headline is “better results with fewer tokens.” The more interesting story is *how* they got there: Codex is a tightly tuned pipeline where the prompts, context management, tool-calling, and evaluation loop are all optimized for GPT models. This is similar to Claude
 
 > OpenAI designed GPT-5.5 specifically for agentic coding, then adjusted Codex to leverage its full capabilities. [GPT-5.5 uses 40% fewer output tokens than GPT-5.4](https://openai.com/index/codex/) on the same Codex tasks.
 
@@ -132,12 +152,12 @@ Every task I run through Codex uses this same tuned pipeline. It's like having a
 
 ### **OpenCode**
 
-Opencode provides integration with \~75 different providers across 1000+ models, and one might be intimidated by the cost they would incur. I had the same.
+OpenCode provides integration with \~75 different providers across 1000+ models, and one might be intimidated by the cost they would incur. I had the same.
 
 But as I  looked at benchmark data, I found something:
 
 - [Qwen 3.7 maxes out at 60.6% on SWE-Bench Pro](https://overchat.ai/ai-hub/qwen-3-7-max), beating GPT-5.5's 58.6%.
--  [MiMo-V2.5-Pro uses 40-60% fewer tokens than GPT-5.4](https://mimo.xiaomi.com/mimo-v2-5-pro) for comparable output. 
+- [MiMo-V2.5-Pro uses 40-60% fewer tokens than GPT-5.4](https://mimo.xiaomi.com/mimo-v2-5-pro) for comparable output. 
 - DeepSeek V4-Flash costs [\$0.14 per million tokens for input / \$0.28 for output, compared to \$30 per million tokens](https://www.cloudzero.com/blog/deepseek-pricing/) for input / \$180 per million tokens for output for GPT-5.5. 
 
 The hidden insight: **I don't need the same model for every task.**
@@ -146,7 +166,7 @@ The hidden insight: **I don't need the same model for every task.**
 - Boilerplate: DeepSeek.
 - Bug fixing: MiMo.
 
-If you want automation, you can connect Opencode with [smart model routers](https://github.com/marco-jardim/opencode-model-router) as well; they will do the heavy lifting.
+If you want automation, you can connect OpenCode with [smart model routers](https://github.com/marco-jardim/opencode-model-router) as well; they will do the heavy lifting.
 
 This was the learning curve I was talking about earlier: model routing.
 
@@ -154,16 +174,16 @@ This was the learning curve I was talking about earlier: model routing.
 
 If you ask me:
 
-- GPT 5.5 is undeniably the better model than anything open-source can offer right now, including Kimi 2.7 and GLM 5.2. So, for me, OpenAI Codex takes the cake here.
-- OpenCode, OTOH, definitely gives you the freedom to select any model you want, plus at a lower cost. For cost-conscious people, this is definitely a USP.
+- GPT 5.5 is undeniably the better model than anything open-source can offer right now. Though Kimi 2.7 and GLM 5.2 are great models with near SOTA coding performance.
+- OpenCode definitely gives the freedom to select any model one wants, plus at a lower cost. For cost-conscious people, this is definitely a USP.
 
-Codex with GPT 5.5
+Codex with GPT 5.5 and OpenCode with GLM 5.2 are match made in labs. So, at this point, it’s tie.
 
-> OpenCode - 0,  Codex - 1
+> <span discussion-urls="discussion://388f261a-6dfe-80c1-b2e6-e6c9ec289929/388f261a-6dfe-80b5-b923-cb1c19cf3f0d/38ff261a-6dfe-804e-880a-001ccf6af6a4">OpenCode - 1,  Codex - </span>2
 
 ---
 
-## Pricing / Cost
+## 3. Pricing / Cost: Codex vs OpenCode
 
 | Aspect | Codex | OpenCode |
 | --- | --- | --- |
@@ -209,59 +229,83 @@ That’s a \~70% deduction and makes switching non-negotiable.
 
 Clearly, Open Code wins on this one.
 
-> OpenCode -1 , Codex - 0
+> OpenCode - 2 , Codex - 2
 
 ---
 
-## Features & Workflows
+## 3. Features and Workflows
+
+This is where Codex and OpenCode start to feel like fundamentally different products.
+
+Codex is built around **delegation**. OpenCode is built around **iteration**.
 
 | Aspect | Codex | OpenCode |
 | --- | --- | --- |
-| Interaction Model | Multi-agent cloud delegation | Plan → Review → Execute loop |
-| Iteration Speed | Slower (overnight jobs) | Fast (seconds between cycles) |
-| Local Capability | Cloud-only | Yes, via Ollama/LM Studio |
-| Real-time Feedback | Approval-based workflow | Immediate adjustments possible |
-| Task Type | Bulk refactoring/delegated work | Iterative development |
-| Best For | Hands-off automation | Interactive building and learning |
+| Core workflow | Define goal → delegate → review result | Plan → review → execute → adjust |
+| Best interaction style | High-level task assignment | Tight local feedback loop |
+| Goal setting | `/goal` command for scoped outcomes | Plan mode + repo instructions |
+| Iteration speed | Better for longer background tasks | Better for fast back-and-forth changes |
+| Local capability | Cloud-first | Local-first with Ollama/LM Studio support |
+| Real-time control | Review changes after the agent runs | Review and steer before execution |
+| Best for | Overnight refactors, PR prep, delegated work | Interactive development, debugging, learning |
 
 ### **Codex**
 
-The Codex app lets me set up a multi-agent workflow for overnight execution:
+Codex feels strongest when I treat it like an engineering teammate I can delegate to.
 
-- One agent reviews PRs, 
-- Another fixes bugs, 
-- A third updates the documentation. 
+The app lets me set up multi-agent workflows for longer-running execution:
 
-I close my laptop and come back to the results. Incredible for large refactors, teams delegating via Slack, and GitHub-native workflows.
+- One agent reviews PRs,
+- another fixes bugs,
+- a third updates documentation.
+
+I close my laptop and come back to the result. That makes Codex especially good for large refactors, GitHub-native workflows, team delegation, and background engineering work.
+
+The underrated feature here is Codex’s `/goal` command. Instead of giving the agent a vague task like “improve this repo,” I can define the actual outcome I want:
+
+- reduce flaky tests,
+- migrate a module,
+- clean up auth logic,
+- prepare a PR-ready refactor.
+
+Codex then uses that goal as the anchor for planning, execution, and review. That makes long-running delegated work feel less like prompting and more like assigning a scoped engineering objective.
 
 ### **OpenCode**
 
-With OpenCode, I often tab-switch between:
+OpenCode does not have a direct `/goal` equivalent, but its workflow solves the same problem differently.
 
--  Plan mode (what would happen) 
--  Build mode (actually do it). 
+Instead of asking me to assign a goal and wait for the result, OpenCode keeps me inside a tight loop:
 
-which means:
+- define what I want,
+- inspect the proposed plan,
+- adjust the approach,
+- execute,
+- review the result,
+- repeat.
 
-- I can see the plan,
--  ask the agent to adjust, 
-- execute, and get results in seconds 
+This is where Plan mode becomes important. It gives me a goal-like workflow without hiding the intermediate reasoning. I can see what OpenCode intends to do before it touches the codebase, which is useful when I am debugging, exploring unfamiliar code, or doing refactors where I want control over every step.
 
-In short, the interaction loop is tight. I can focus on building
+OpenCode also pairs well with repo-level instruction files like `AGENTS.md`. That makes its goal-setting less polished than Codex’s `/goal`, but more customizable. I can encode project conventions, testing expectations, architecture rules, and workflow preferences once, then reuse them across sessions.
 
-As for local, I pair OpenCode with Ollama or LM Studio so that the entire agentic loop runs on my machine with zero API calls, leaving my laptop (NVIDIA RTX 4090) idle. For security-sensitive or regulated work, this is invaluable.
+The other major advantage is local execution. I can pair OpenCode with Ollama or LM Studio and run the agentic loop on my own machine with zero API calls. For security-sensitive work, regulated codebases, or local-first development, this is a real advantage.
 
 ### Verdict
 
-- Routine work: Codex Agent wins
-- Iterative development: OpenCode's plan wins
-- Learning: OpenCode's tight harness wins
+This one depends on how I want to work.
 
-> 1 to Codex, 2 to OpenCode.
+- **Codex wins for delegation:** give it a scoped objective, let it run, and review the result later.
+- **OpenCode wins for iteration:** inspect the plan, steer the agent, and keep the feedback loop tight.
+- **Codex feels more polished. OpenCode feels more controllable.**
+
+For routine background work, I prefer Codex. For interactive development and learning inside a codebase, I prefer OpenCode.
+
+Tie.
+
+> OpenCode - 3, Codex - 3
 
 ---
 
-## Ecosystem (MCP + Skills +  Plugins)
+## 4. Ecosystem (MCP + Skills +  Plugins)
 
 | Aspect | Codex | OpenCode |
 | --- | --- | --- |
@@ -280,7 +324,7 @@ Codex and OpenCode both offer: MCP, Plugin & Skills, but both function different
 
 <span discussion-urls="discussion://388f261a-6dfe-80c1-b2e6-e6c9ec289929/388f261a-6dfe-80fc-a8cc-fe200902ad8e/389f261a-6dfe-8041-872f-001c9aa3f73a">Codex supports MCP integratio</span>n. This is how easy it is to install:
 
-> I am going with one called [composio](https://composio.dev/), as I usually use multiple MCP servers, and it's a pain to connect to and configure each one securely and to make agents handle multiple tool calls intelligently.
+> I am going with [Composio,](https://composio.dev/) as I usually use multiple MCP servers, and it's a pain to connect to and configure each one securely and to make agents handle multiple tool calls intelligently.
 
 ```shell
 # Add Composio MCP server to Codex
@@ -317,7 +361,7 @@ And restart the app:
 codex
 ```
 
-But to do the same in open code is a little tricky.
+But to do the same in OpenCode is a little tricky.
 
 #### Open Code
 
@@ -370,222 +414,111 @@ Save and restart OpenCode:
 opencode
 ```
 
-#### Done!
+Done!
 
 ### Verdict
 
 So Codex wins here due to process simplicity.
 
-> Codex - 1 , Open Code 0
+> Open Code - 3 , Codex - 4
 
 ---
 
-## Harness Engineering
+## 5. Harness Engineering
+
+The model matters, but the harness decides how that model sees the repo, plans changes, calls tools, handles errors, and recovers when something breaks. In practice, the harness is the difference between “the model is smart” and “the agent is reliable.”
 
 | Aspect | Codex | OpenCode |
 | --- | --- | --- |
-| Language | Rust-based | TypeScript, Tauri desktop app |
-| Architecture | Optimized for GPT-5.5 | Provider-agnostic, modular |
-| Feedback Loop | Prompt engineering optimized | LSP diagnostics (unique feature) |
-| Test Generation | Baseline (73 tests) | 21 more tests on average |
-| Bug Catching | Good (12 bugs) | Superior (18 bugs vs 12) |
-| Speed | Baseline (9 minutes) | 78% slower than Codex |
-| Best For | Raw speed and efficiency | Production quality and thoroughness |
-
-### Codex
-
-When I looked at how Codex actually works, I was impressed by the engineering.
-
-It's all Rust. Permission profiles let me control what the agent does before it touches files. Hooks system for pre- and post-execution scripts. 100+ integrations in the plugin marketplace.
-
-Everything is optimized for GPT-5.5:
-
-- The prompt engineering, 
-- The context management, 
-- The way it handles tool calls all 
-
-All tuned for this one model.
-
-I ran one property tax portal automation task. GPT-5.4 version: 73% success on first attempt. GPT-5.5 through Codex: 95% success on first attempt and 3× faster while using 70% fewer tokens.
-
-That's not just a model improvement. That's the harness + model working together.
-
-### **OpenCode**
-
-OpenCode's architecture is intentionally provider-agnostic. TypeScript, client-server design, desktop app via Tauri on all platforms.
-
-Interestingly, OpenCode feeds Language Server Protocol diagnostics back to the agent mid-task. If the agent introduces a TypeScript type error, the next round includes the error, and the model can self-correct. No other major AI coding agent does this.
-
-In [DataCamp's testing](https://www.datacamp.com/), OpenCode generated 21 more tests than Codex on the same underlying model. That's not the model being better. That's the LSP feedback loop making the agent more thorough.
-
-### Verdict
-
-Codex's optimization wins on speed. When I need a feature in 30 minutes, Codex gets me there.
-
-OpenCode's thoroughness wins on bug prevention. When I'm doing a major refactor and the stakes are high, those extra tests catch things I'd miss.
-
-For me, it's a tie.
-
-> OpenCode - 1 , Codex - 1
-
----
-
-## Real-World Performance
-
-| Aspect | OpenCode | Codex |
-| --- | --- | --- |
-| Token Efficiency | 2,800-4,500 tokens per task | 6,000 tokens per task |
-| Tests Generated | 78-94 tests | 73 tests |
-| Bugs Caught | 14-18 bugs | 12 bugs |
-| Time to Completion | 14-16 minutes | 9 minutes |
-| Speed Advantage | Slower (1.6x) | Faster (baseline) |
-| Quality Advantage | Better (more tests, more bugs) | Lower (fewer tests) |
-| Best For | Production refactors where quality matters | Quick prototypes and speed |
-
-**What Benchmarks Don't Tell You**
-
-[SWE-Bench Pro](https://swebench.com/) says top models cluster around 57-60%. Nobody mentions that these benchmarks test different things on different models.
-
-This makes more sense as:
-
-> The OpenCode Benchmark Dashboard doesn't just show **tokens per second, l**ike Codex; it shows **useful tokens **that actually solved the problem, rather than tokens wasted on reasoning.
-
-Some models burn through 10,000 tokens of reasoning without finding the solution any faster than a model that uses 3,000 tokens.
-
-When I started thinking about tokens per successful task rather than raw throughput, the entire comparison shifted.
-
-### **Verdict**
-
-I ran a real refactor task across both tools. Here's what happened:
-
-| Tool + Model | Tokens Used | Tests Generated | Bugs Caught | Time |
-| --- | --- | --- | --- | --- |
-| Codex (GPT-5.5) | 6,000 | 73 | 12 | 9 min |
-| OpenCode (Qwen3.7 Max) | 4,500 | 94 | 18 | 16 min |
-| OpenCode (MiMo-V2.5-Pro) | 2,800 | 78 | 14 | 14 min |
-
-Codex is faster. But OpenCode caught more bugs. That matters more to me than speed in production refactors.
-
-Clearly, open code wins even though it's slower for me.
-
----
-
-## Stability & Recovery
-
-| Aspect | Codex | OpenCode |
-| --- | --- | --- |
-| Execution Isolation | Isolated cloud environment | Permission-gated, local |
-| Undo/Rollback | No rollback command (gap) | Git-based `/undo` and `/redo` |
-| Change Review | Before approval, sandbox safe | Before execution required |
-| Risk Management | Agent runs isolated | You control every change |
-| Local Data Safety | Cloud isolation (no local risk) | Full protection with git snapshots |
-| Best For | High-trust environments | Security-sensitive work, high control |
+| Implementation | Rust-based, performance-focused CLI/app stack | TypeScript core with Tauri desktop app |
+| Design philosophy | Tightly optimized around OpenAI models | Provider-agnostic and modular by design |
+| Context handling | Strong default repo understanding with fewer choices | More explicit control over model, context, and instructions |
+| Tool execution | Permission profiles, hooks, sandboxed/cloud execution | Local execution with permission gates and config-level control |
+| Feedback loop | Optimized prompting, planning, and tool-calling pipeline | LSP diagnostics fed back into the agent loop |
+| Strength | Speed, polish, and low-friction execution | Control, transparency, and production thoroughness |
+| Tradeoff | Less model/harness customization | More setup and slower execution |
+| Best for | Fast implementation and delegated engineering tasks | Complex refactors where correctness matters more than speed |
 
 ### **Codex**
 
-When I run a Codex task, it executes in an isolated cloud environment. My local files stay untouched until I review and approve the changes. If something goes sideways, the worst that happens is I lose that session.
+Codex feels like a vertically integrated agent stack.
 
-However, in March 2026, [SecurityWeek found a vulnerability](https://www.securityweek.com/) where malicious GitHub branch names could inject commands during Codex setup. It's patched now, but the isolation saved them from worse damage.
+The model, prompt format, context strategy, tool-calling behavior, permission model, and review flow all feel designed to work together. That is the advantage of a closed, OpenAI-first harness: fewer knobs, fewer setup decisions, and fewer ways to misconfigure the system.
 
-This incident led me to review every diff before it hits my disk.
+The strongest part is how little I have to think about the plumbing:
 
-That's a feature, not a bug, for me. I actually like agents that ask for permission first, so I can act as the director.
+- permission profiles decide what the agent can touch,
+- hooks let me run pre- and post-execution checks,
+- GitHub and PR workflows feel native,
+- tool calls are routed through a polished approval flow,
+- cloud execution keeps risky changes away from my local machine until review.
+
+Everything is tuned around GPT-5.5. That matters because Codex is not just calling a model; it is shaping how the model receives the repo, plans the task, executes commands, and presents diffs back to me.
+
+This is why Codex often feels faster than a generic agent using the same model. The harness reduces wasted motion. It does not ask me to design the workflow first; it gives me a working default and lets me move.
+
+The downside is that this optimization comes with a ceiling. If I want to change the model strategy, deeply customize the execution loop, or route different tasks through different providers, Codex gives me much less room to experiment.
 
 ### **OpenCode**
 
-OpenCode snapshots the repo before every meaningful change. `/undo` rolls back the entire thing. `/redo`  re-applies it. Surprisingly, this is missing in Codex, not a single revert command.
+OpenCode takes the opposite bet.
 
-This means I can let the agent go wild and hit /undo if it's something breaks. As permissions are gated, I can review the write-only permission and allow changes.
+Instead of optimizing one model inside one polished workflow, it gives you a modular harness that can work across providers, models, local runtimes, MCP servers, and repo-level instructions. It is less “batteries included,” but much more inspectable.
 
-One small caveat: You need to be connected to an actual git repo to make /undo or /redo work
+The most important engineering choice is the feedback loop. OpenCode can feed Language Server Protocol diagnostics back into the agent while it works. If the agent introduces a TypeScript error, the next step can include that error as context, so the model has a chance to self-correct before I even review the final diff.
+
+That changes the feel of the tool. OpenCode may be slower, but it often behaves more like an engineer working with compiler feedback, not just a chatbot editing files.
+
+It also gives me more control over the harness itself:
+
+- I can switch providers and models based on task type,
+- keep project-specific behavior in `AGENTS.md`,
+- run locally with Ollama or LM Studio,
+- wire in MCP tools manually,
+- inspect config instead of trusting a black box.
+
+This is why OpenCode tends to feel better for production refactors. The loop is tighter, the configuration is more visible, and the agent can use local development signals instead of only relying on the initial prompt and repo context.
+
+The tradeoff is obvious: more control means more responsibility. If the model choice is bad, the config is messy, or the repo instructions are vague, OpenCode will not hide that complexity from me.
 
 ### Verdict
 
-Frankly, I don't know why the Codex people aren't fixing their equivalent, even though an issue is publicly open.
+Codex has the better **default harness**. OpenCode has the better **customizable harness**.
 
-So OpenCode is a clear winner here.
+- **Codex wins on speed and polish:** it is optimized end-to-end for OpenAI models and gets me to a usable diff quickly.
+- **OpenCode wins on control and feedback:** LSP diagnostics, local execution, and provider flexibility make it stronger for careful refactors.
+- **Codex abstracts the harness away. OpenCode exposes the harness and lets you tune it.**
 
-> OpenCode - 1 , Codex - 0
+For a quick implementation, I would pick Codex. For a high-stakes refactor where I want visibility into every step, I would pick OpenCode.
+
+This one is a tie, but for very different reasons.
+
+> OpenCode - 4 , Codex - 5
 
 ---
 
-## User Experience: The Daily Driver Test
+## <span discussion-urls="discussion://388f261a-6dfe-80c1-b2e6-e6c9ec289929/b152a266-8300-4fb6-928d-97063545c1c5/38ff261a-6dfe-8076-9068-001c7e00f7db">The Final Verdict: When To Choose What</span>
 
-| Codex | Aspect | OpenCode |
+Clearly, OpenCode is the winner with 6 points, but real engineers leverage both for their specific needs :
+
+- Codex for speed, overnight refactors, and production-critical work.
+- OpenCode for smart model routing, optimized costs, and offline critical workflows.
+
+A simple table summarizes them.
+
+|  | **Codex** | **OpenCode** |
 | --- | --- | --- |
-| Professional, polished interface | UI Quality | Beautiful terminal (Bubble Tea) |
-| Zero friction | Setup Friction | Moderate but valuable |
-| Fast (baseline) | Performance Feel | 78% slower (perceptible) |
-| Limited customization | Customization | Highly customizable |
-| None required | Learning Investment | Significant upfront |
-| Users who want no friction | Best For | Users willing to learn |
+| **Best for** | OpenAI ecosystem | Cost control, model flexibility |
+| **Setup** | Zero friction, bundled into ChatGPT subscripton | Configure providers; slight model usage learning curve |
+| **Autonomous work** | Cloud agent, good for overnight refactors | Terminal agent; depends on your model |
+| **Integrations** | GitHub, PR review, Slack | MCP; varies by setup |
+| **Model choice** | GPT-5 only | 75+ providers; Claude via API key only |
+| **Offline** | No | Yes, with Ollama/LM Studio |
+| **Transparency** | Token-based credits | Full model + token visibility |
+| **Real cost** | \$20–\$200/mo | Free BYOK, or \~\$10–\$50/mo routing |
 
-### **Codex**
+With a few months of usage, one thing is clear to me,
 
-My first impression of Codex was that it feels professional. It has intuitive permission profiles, and GitHub integration is a one-click job.
-
-If you need tools, there is a plugin marketplace that connects you to tools like CompoSio, Slack, Linear, and more.
-
-For speed, I take Codex with GPT-5.5 as my baseline, cause it does a great job with writing production-level code, diffs, and refactors.
-
-For me, Codex is a tool you should opt for if you don't want to think about your AI coding tool. It just lets you focus on the code.
-
-### **OpenCode**
-
-OpenCode's terminal UI is gorgeous. Built with Bubble Tea. Smooth animations. Excellent code previews.
-
-But to be honest, [OpenCode is 78% slower than Codex on the same underlying model](https://www.builder.io/).
-
-So if you run Codex and OpenCode with GPT-5.5, Codex finishes in 9 minutes while OpenCode takes 16 minutes.
-
-But that's not a deal-breaker here, cause for that extra 7 minutes, you get 21 more tests on average with the same Codex model with Open code
-
-In software engineering, the more edge cases covered, the better production confidence.
-
-### Verdict
-
-For me, this is actually a decision matrix, so I use both together like:
-
-- Codex: For a quick prototype before the standup
-- OpenCode: For Major refactor going to production.  
-
-As for the winner, I will go with OpenCode because, for me, risk tolerance is much more crucial than speed.
-
-> OpenCode - 1 , Codex - 0
+Choosing Codex or Opencode models is not about which benchmarks perform better; it's about picking the one that matches your workflow. Both are good in their own right, and best leveraged based on the needs.
 
 ---
-
-## The Final Verdict: When To Choose What
-
-**I pick Codex when:**
-
-- I need results fast. (prototype, quick bug fix, proof of concept)
-- I'm already living in ChatGPT.
-- I want zero setup friction.
-- I'm doing overnight refactors. (multi-agent cloud delegation)
-- GitHub workflows matter to my team.
-
-**Real cost:** \$20- \$200/month.
-
-**I pick OpenCode when:**
-
-- I'm doing a major refactor, and production quality matters.
-- I need to minimize costs. (team of developers)
-- I need offline capability. (regulated industry, security requirements)
-- I want transparency in model selection and token usage.
-- I can invest a week learning which models solve which problems.
-
-**Real cost:** \$10-\$50/month with careful model routing.
-
----
-
-## Summary
-
-I'm using both.
-
-- Codex for speed and overnight refactors. 
-- OpenCode with smart model routing for production-critical work and cost optimization.
-
-After weeks in both tools, that's what actually works for my workflow.
-
-Remember, it's not about which benchmarks perform better; it's about picking the one that matches how you actually work.

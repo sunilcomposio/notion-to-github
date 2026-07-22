@@ -1,36 +1,34 @@
 # Claude Fable 5 vs Kimi K3 vs GPT-5.6: Real Tool Use on Tasks Built to Break Frontier Models
 
-Claude Fable 5 is Anthropic's flagship model for the expensive end of agent work. It is a Mythos-level model aimed at long coding projects and professional async workflows, priced at \$10 per million input tokens and \$50 per million output tokens on the API. ([anthropic.com](https://www.anthropic.com/claude/fable))
+## The Big AI Triumvirate
 
-Kimi K3 is Moonshot's latest, and the pitch is unusually concrete: 2.8T parameters, native vision, a 1M-token context window, full weights promised by July 27, 2026, and official API pricing of \$3 per million cache-miss input tokens, \$0.30 on cache hits, and \$15 per million output tokens. ([kimi.com](https://www.kimi.com/blog/kimi-k3)) GPT 5.6 is OpenAI's newest model family, with Sol as the flagship model and Terra and Luna below it. Sol is available in ChatGPT and Codex, plus the OpenAI API, at \$5 per million input tokens and \$30 per million output tokens. ([openai.com](https://openai.com/index/gpt-5-6/))
+A year ago, I personally coined a term called AI triumvirate to address the then big-3 of AI race. Claude, GPT, and Gemini. This was the first triumvirate ruling the AI space. I personally consider, Anthropic as Caesar, OpenAI as Pompey, and Gemini as Crassus. Now, Crassus is dead and we’re left with raging Pompey and Caesar, each at other’s throat. The lore kind of fits here tangentially.
 
-That is the brochure version. I wanted the annoying version: three frontier models pointed at real accounts, with workflow tasks built to make polished demos fall apart. Do they all die on the same stuff, or do they fail in different ways?
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_1.png)
 
-I ran all three as the agent behind the same Composio real-account suite: Claude Code for Fable 5, Claude Code for Kimi K3, and the codex CLI for GPT 5.6. The task templates and account-backed setup stayed fixed across the three runs. The judgment was simple: did the workflow actually finish in the account?
+But in 2026, especially after the launch of Kimi K3, we may be looking at a second AI triumvirate: Claude, GPT, and Kimi. If we follow the Roman casting, Claude Fable is Octavian, GPT 5.6 Sol is Mark Antony, and Kimi K3 is Lepidus.
 
-I expected each model to look strong in stretches. I cared more about where that stopped carrying the run.
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_2.png)
 
-## The LLM Triarchy
+If history is any guide, Claude’s future might be looking brilliant.
 
-Gemini used to complete my LLM triarchy. After Kimi’s run over the past year, it has taken that third seat. The holy LLM triarchy is now complete.
-
-### Claude Fable 5, Anthropic
+## The Triarchy at a glance
 
 Claude Fable 5 is Anthropic’s top generally available Claude model, pitched for ambitious, long-running work such as agent runs, large coding projects, enterprise workflows, and vision-heavy document work. It includes the full 1M-token context window at standard pricing.
 
-### Kimi K3, Moonshot AI
+Kimi K3 is Moonshot AI’s 2.8T-parameter flagship, built with native vision, a 1M-token context window, and Moonshot’s positioning as an open model in the 3T-class (they haven’t yet made it open though). Moonshot is explicit about the target: long-horizon coding plus knowledge-work and reasoning tasks.
 
-Kimi K3 is Moonshot AI’s 2.8T-parameter flagship, built with native vision, a 1M-token context window, and Moonshot’s positioning as an open model in the 3T-class. Moonshot is explicit about the target: long-horizon coding plus knowledge-work and reasoning tasks.
-
-### GPT 5.6, OpenAI
-
-OpenAI’s `gpt-5.6` alias points to GPT-5.6 Sol, the flagship member of the GPT-5.6 family for complex reasoning and coding. It has a 1.05M-token context window and supports up to 128K output tokens.
+OpenAI’s gpt-5.6 alias points to GPT-5.6 Sol, the flagship member of the GPT-5.6 family for complex reasoning and coding. It has a 1.05M-token context window and supports up to 128K output tokens.
 
 ### Pricing Comparison
 
 The only thing that matters now in LLMs is their pricing. Nobody wants to live under Dario’s API cost terrorism. So, here’s how the pricing of the trio compares.
 
-![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_1.png)
+| Model | Input / 1M tokens | Cached input / 1M tokens | Output / 1M tokens |
+| --- | --- | --- | --- |
+| Claude Fable 5 | \$10.00 | \$1.00 | \$50.00 |
+| Kimi K3 | \$3.00 | \$0.30 | \$15.00 |
+| GPT 5.6 Sol | \$5.00 | \$0.50 | \$30.00 |
 
 **Pricing sources:** [Fable](https://www.anthropic.com/claude/fable), [Kimi](https://platform.kimi.ai/docs/pricing/chat-k3), [GPT 5.6](https://developers.openai.com/api/docs/pricing)
 
@@ -38,9 +36,7 @@ The only thing that matters now in LLMs is their pricing. Nobody wants to live u
 
 ### Effort controls
 
-Effort is the second half of the cost story. It does not change the per-token price, but it changes how much reasoning and output the model may use and therefore the latency, total bill, and chance that it plans, verifies, and recovers from mistakes.
-
-And probably the most confusing thing right now, which effort preset to even choose. There’s a bunch of them.
+Effort levels are probably the most confusing thing right now, which effort preset to even choose. There’s a half a dozen to choose from for each model.
 
 | Model | Available effort levels | Default | Where the extra effort adds value |
 | --- | --- | --- | --- |
@@ -50,6 +46,36 @@ And probably the most confusing thing right now, which effort preset to even cho
 
 It’s always better to start with the default setup. Then go up and down based on your usage requirements.
 
+## How they fare on popular benchmarks
+
+If any benchmarks still deserve attention, they are these five.
+
+| Benchmark | Claude Fable 5 | Kimi K3 | GPT 5.6 Sol | Leader |
+| --- | --- | --- | --- | --- |
+| [DeepSWE](https://deepswe.datacurve.ai/) | 70% ±4% | 69% ±5% | 73% ±3% | GPT 5.6 Sol |
+| [CritPt](https://artificialanalysis.ai/evaluations/critpt) | 28.6% | 23.4% | 32.3% | GPT 5.6 Sol |
+| [Artificial Analysis Intelligence Index](https://artificialanalysis.ai/) | 60 | 57 | 59 | Claude Fable 5 |
+| [WeirdML](https://htihle.github.io/weirdml.html) | 91.9% (max) | Not published | 88.8% (high) | Claude Fable 5 |
+| [KernelBench Hard](https://kernelbench.com/) | 6/6 correct; 23.9% roofline | 6/6 correct; 20.9% roofline | 6/6 correct | Claude Fable 5 |
+
+On [DeepSWE](https://deepswe.datacurve.ai/), GPT 5.6 Sol leads at **73% pass@1**, followed by Fable 5 at **70%** and Kimi K3 at **69%**. The cost gap is less subtle: DeepSWE reports an average of **\$8.39** per task for GPT 5.6 Sol, **\$21.63** for Fable 5, and **\$4.65** for Kimi K3.
+
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_3.png)
+
+[CritPt](https://artificialanalysis.ai/evaluations/critpt) tests models on unpublished, research-level physics problems. GPT 5.6 Sol leads at **32.3%**, ahead of Fable 5 at **28.6%** and Kimi K3 at **23.4%**. This is consistent with people have been reporting, Kimi has still some way to go in math and physics to match Fable and GPT 5.6 Sol.
+
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_4.png)_(1).png%22%2C%22permissionRecord%22%3A%7B%22table%22%3A%22block%22%2C%22id%22%3A%223a5f261a-6dfe-80bd-9fd4-e69e89485f9d%22%2C%22spaceId%22%3A%2235adec70-dbef-4f42-9214-62ac8cdc4d75%22%7D%7D)
+
+On the [broader Artificial Analysis Intelligence](https://artificialanalysis.ai/), Fable 5 remains first at **60**, GPT 5.6 Sol is one point behind at **59**, and Kimi K3 scores **57**. Artificial Analysis estimates about **\$1.04 per task** for GPT 5.6 Sol, \$3.25 for Fable 5 and **\$0.94** for Kimi K3, while describing Sol as delivering near-Fable intelligence at roughly one-third of Fable’s cost.
+
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_5.png)_(1).png%22%2C%22permissionRecord%22%3A%7B%22table%22%3A%22block%22%2C%22id%22%3A%223a5f261a-6dfe-8034-bbea-d6dc550c029c%22%2C%22spaceId%22%3A%2235adec70-dbef-4f42-9214-62ac8cdc4d75%22%7D%7D)
+
+On [WeirdML](https://htihle.github.io/weirdml.html), Fable 5 reaches **91.9% at max effort**, while GPT 5.6 Sol scores **88.8% at high effort**. Kimi K3 does not yet have a published WeirdML result, so this row is not a complete three-way comparison. The effort settings also differ, which matters when interpreting the narrow gap.
+
+[KernelBench Hard](https://kernelbench.com/) tests whether an agent can write correct and fast CUDA or Triton kernels for six demanding GPU workloads. Fable 5, Kimi K3 at 256k context, and GPT 5.6 Sol all produced correct solutions on **6/6** H100 tasks. The July 17 snapshot places Fable first at **23.9% mean peak fraction of roofline**, with Kimi at **20.9%**. The published summary confirms GPT’s six correct kernels but does not expose a directly comparable aggregate roofline score, so I have not invented one.
+
+The trend is almost same across benchmark. Fable leads in raw intelligence, Kimi K3 offers similar performance with 1/4th of the Fable cost, and GPT 5.6 Sol is the middle child. The safest option, if you have decision paralysis.
+
 ## Composio Golden Eval benchmark
 
 It’s the benchmark time. One of the highest usage of LLMs currently comes from automation workflows, where agents have to interact with external tools to carry out complex automation.
@@ -58,7 +84,7 @@ Composio Golden Eval is created to assess exactly that. How can you benchmark wh
 
 This is how it works.
 
-![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_2.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_6.png)
 
 - An agent has to complete hard, multi-step SaaS tasks against live accounts, then the grader reads the account state back through the API to see what actually happened.
 - The runtime is straightforward: Claude Code drives Fable 5 and Kimi K3, while the OpenAI codex CLI drives GPT 5.6. All three talk to tools through the hosted Composio MCP router.
@@ -95,7 +121,7 @@ All three ran the same 12 case templates through the same [Composio MCP](https:/
 
 Because GPT 5.6 ran separately, I read this as a task-for-task comparison on the same templates; account state varied between runs.
 
-![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_3.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_7.png)
 
 > Check scores (e.g. 20/24) are partial-credit verifier checks on the failed Kimi K3 and GPT 5.6 cases: how many of the graded assertions the model got right before missing the requirement that every checked record match.
 
@@ -117,7 +143,7 @@ A straight pass/fail score doesn’t tell you how close a model got. GPT 5.6 got
 
 None of the models reached the exact final state on any of the 5 frontier-kill tasks. The failed-case label hides useful distance, though. GPT 5.6 was one or a few checks away on several of them, so its failures look like near-miss reconciliation errors rather than a total derailment.
 
-![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_4.png)
+![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/claude-fable-5-vs-kimi-k3-vs-gpt-5-6/image_8.png)
 
 The one clean split was CRM identity dedup. That was the Salesforce + HubSpot + Gmail task where the agent had to match contacts across two CRMs and follow canonical-source notes hidden in email. Fable 5 passed it. Kimi K3 passed it. GPT 5.6 failed it at 5 of 7 checks. That single miss is why GPT 5.6 ends at 6/12 while Fable 5 and Kimi K3 land at 7/12.
 

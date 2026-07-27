@@ -144,7 +144,7 @@ One thing I’ll give it credit for: it was fast. Sol shipped its first build in
 
 Here’s the final demo after all the fixes:
 
-[![Watch on YouTube](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/coding-comparison-fable-5-vs-gpt-5-6-vs-kimi-k3/yt_Mb9o1sUQDNo.jpg)](https://youtu.be/Mb9o1sUQDNo)
+🎥 [Watch the demo on YouTube](https://youtu.be/Mb9o1sUQDNo)
 
 As you can clearly see, this isn’t close.
 
@@ -160,7 +160,7 @@ The shadows, cars, traffic, and overall look and feel are much better than GPT-5
 
 Here’s a quick video demo (see the shadow effect):
 
-[![Watch on YouTube](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/coding-comparison-fable-5-vs-gpt-5-6-vs-kimi-k3/yt_NC-HwTqgKSY.jpg)](https://youtu.be/NC-HwTqgKSY)
+🎥 [Watch the demo on YouTube](https://youtu.be/NC-HwTqgKSY)
 
 Considering the price, this might be even more impressive than Fable 5. It was a lot slower, taking around **1.5 hours**, but the final result absolutely justified it.
 
@@ -193,7 +193,7 @@ I’ve been testing coding models since 2024, and this is easily the finest resu
 
 Just look at the output:
 
-[![Watch on YouTube](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/coding-comparison-fable-5-vs-gpt-5-6-vs-kimi-k3/yt_wBhHGKGE1Gw.jpg)](https://youtu.be/wBhHGKGE1Gw)
+🎥 [Watch the demo on YouTube](https://youtu.be/wBhHGKGE1Gw)
 
 The rain alone looks drop-dead realistic.
 
@@ -217,7 +217,7 @@ All the pieces of functionality work. It just does.
 
 Here’s the final demo:
 
-[![Watch on YouTube](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/coding-comparison-fable-5-vs-gpt-5-6-vs-kimi-k3/yt_8LTcw92PI7A.jpg)](https://youtu.be/8LTcw92PI7A)
+🎥 [Watch the demo on YouTube](https://youtu.be/8LTcw92PI7A)
 
 You can find the generated code here: [Fable 5: Disasters and Composio](https://github.com/shricodev/simcity-fable-gpt-kimi/tree/fable-5-simcity)
 
@@ -258,7 +258,7 @@ So while the individual pieces were there, Sol was not able to put everything to
 
 Here’s the demo:
 
-[![Watch on YouTube](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/coding-comparison-fable-5-vs-gpt-5-6-vs-kimi-k3/yt_JvO1iJ3Z6dU.jpg)](https://youtu.be/JvO1iJ3Z6dU)
+🎥 [Watch the demo on YouTube](https://youtu.be/JvO1iJ3Z6dU)
 
 You can find the generated code here: [GPT-5.6 Sol: Disaster and Composio](https://github.com/shricodev/simcity-fable-gpt-kimi/tree/gpt5.6-sol-simcity)
 
@@ -280,7 +280,7 @@ At this price, it somehow feels even more impressive than Fable 5. Kimi K3 has n
 
 Here’s a quick demo:
 
-[![Watch on YouTube](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/coding-comparison-fable-5-vs-gpt-5-6-vs-kimi-k3/yt_o0rYRxu9kZg.jpg)](https://youtu.be/o0rYRxu9kZg)
+🎥 [Watch the demo on YouTube](https://youtu.be/o0rYRxu9kZg)
 
 You can find the generated code here: [Kimi K3: Disasters and Composio](https://app.notion.com/p/composio/CODE_LINK_PLACEHOLDER)
 

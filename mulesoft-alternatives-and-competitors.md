@@ -84,7 +84,7 @@ Read more: [Boomi Alternatives and Competitors: 8 Tools Compared for 2026](https
 
 **Watch**
 
-<video src="https://www.youtube.com/watch?v=Bkh4YyY6Dpo">Boomi Agentstudio demo</video>
+🎥 [Boomi Agentstudio demo — Watch on YouTube](https://www.youtube.com/watch?v=Bkh4YyY6Dpo)
 
 #### 2. MuleSoft vs Workato: Automation Business Teams Can Build
 
@@ -112,7 +112,7 @@ Read more: [8 Best Workato Alternatives to Evaluate in 2026](https://composio.de
 
 **Watch**
 
-<video src="https://www.youtube.com/watch?v=q04Hx4G9sSU">Automate your work with Workato recipes (product demo)</video>
+🎥 [Automate your work with Workato recipes (product demo) — Watch on YouTube](https://www.youtube.com/watch?v=q04Hx4G9sSU)
 
 #### 3. MuleSoft vs Azure Integration Services: The Licensing You Already Own
 
@@ -144,7 +144,7 @@ Azure Integrated Services is a toolkit, not a finished platform. You assemble Lo
 
 **Watch**
 
-<video src="https://www.youtube.com/watch?v=SAifvErWhWM">Azure Integration Services masterclass with Logic Apps and Service Bus</video>
+🎥 [Azure Integration Services masterclass with Logic Apps and Service Bus — Watch on YouTube](https://www.youtube.com/watch?v=SAifvErWhWM)
 
 #### 4. MuleSoft vs Jitterbit: Rollouts That Finish, and Real EDI
 
@@ -202,7 +202,7 @@ Apigee Edge reached end of life in March 2025. And Google Cloud API Gateway is a
 
 **Watch**
 
-<video src="https://www.youtube.com/watch?v=1gFJc2fyh9s&vl=en">Apigee X: the next generation of API management</video>
+🎥 [Apigee X: the next generation of API management — Watch on YouTube](https://www.youtube.com/watch?v=1gFJc2fyh9s&vl=en)
 
 #### 6. MuleSoft vs Kong: The Gateway You Run Yourself
 
@@ -230,7 +230,7 @@ Konnect Plus bills per gateway service, and third-party analysis puts that at ro
 
 **Watch**
 
-<video src="https://www.youtube.com/watch?v=20rOdqag4Dw">Kong Gateway for beginners: API gateway tutorial</video>
+🎥 [Kong Gateway for beginners: API gateway tutorial — Watch on YouTube](https://www.youtube.com/watch?v=20rOdqag4Dw)
 
 #### 7. MuleSoft vs WSO2: Apache 2.0 API Management, Without a Migration
 
@@ -258,7 +258,7 @@ The Java and JVM stack is heavyweight to operate compared with lightweight Go or
 
 **Watch**
 
-<video src="https://www.youtube.com/watch?v=DQpU2xdcJNM">WSO2 API management: an overview</video>
+🎥 [WSO2 API management: an overview — Watch on YouTube](https://www.youtube.com/watch?v=DQpU2xdcJNM)
 
 #### 8. MuleSoft vs Composio: Tools For Agents You Build Yourself
 

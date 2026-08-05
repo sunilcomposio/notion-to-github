@@ -16,20 +16,22 @@ Let’s begin
 
 ---
 
-## What to look for in a ChatGPT Work alternative
+## <span discussion-urls="discussion://3b1f261a-6dfe-8046-8afa-f8feef8116b5/f0fc2abb-1f9f-4bed-bbae-643db994de51/3b3f261a-6dfe-807e-8c3b-001c4f6c3d20">What to look for in a ChatGPT Work alternative</span>
 
-This is subjective and depends on one's needs; for me, these were the questions that decided which tools stayed on my machine:
+This is subjective and depends on one's needs; for me, these were the questions that decided which tools stayed on my machine, and they map pretty closely to the columns in the comparison table below:
 
-- How much of my data and files stay under my control versus being stored on a provider’s servers?
-- What the real monthly number looks like once I add tokens, credits, or hosting; most do not just go with the advertised plan price; never do it.
-- Whether I am locked into one model family or can switch providers (or go fully local).
-- How cleanly it integrates with the apps and files I already use.
-- Whether it can run my multi-step work and still stop for approval before it sends a message, edits a file, or takes any irreversible action.
-- Whether the final output is something I can actually use with light editing, or whether I still have to rebuild half of it. (business-related reports specifically)
-- How much setup and ongoing maintenance am I willing to accept?
-- Whether the agent remembers my past work and can handle recurring or background tasks without me babysitting it every time.
+- **Local-first or not**: Does my data and file context stay on my machine, or does it get sent to and processed on a provider's servers?
+- **Pricing model**: What's the real monthly number once tokens, credits, or hosting get added, not the advertised plan price; most tools don't just charge that.
+- **Model flexibility**: Am I locked into one model family, or can I switch providers, mix models, or run something fully local?
+- **Best for**: Does it fit how I already work, my existing apps, files, and workflows, or does it expect me to work around it?
+- **Approval checkpoints**: Does agent pause/stop to check in before sending a message, editing a file, or taking any irreversible action?
+- **Output quality**: Is the finished deliverable something I can ship with light edits, or will I need to rebuild half of it myself, especially for business-related reports?
+- **Setup and maintenance**: Is this a five-minute install, or am I responsible for keeping it running?
+- **Memory and recurring work**: Does agent carry my past work forward and handle scheduled or background tasks on its own, or does every task start from zero?
 
-The best option is the one that matches the constraints I care about most, not the one with the longest feature list.
+None of these has a universally correct answer; the right alternative is whichever one scores best on the columns you actually care about.
+
+That's exactly what the table below is built around, and it's what the Decision Factor Test at the end asks you to check for yourself.
 
 ---
 
@@ -430,7 +432,7 @@ You can install it with any knowledge worker and get started.
 
 ## How to choose your ChatGPT Work alternative
 
-Match the tool to the constraint that actually bothers you:
+Match the tool to the constraint that actually matters to you:
 
 - Want the lowest cost and strongest local control, and you are fine managing keys → start with **OpenWorker**.
 - Want the most polished non-technical experience and are already comfortable with Anthropic pricing → **Claude Cowork**.

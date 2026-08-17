@@ -105,10 +105,10 @@ The real work lives in your other tools. Slack threads, GitHub issues, Linear ti
 Pi runs shell commands as first-class tools, so the [Composio CLI](https://composio.dev/cli) is the most natural fit — no MCP server to configure and reliable multi-step tool chaining. Install and authenticate:
 
 ```bash
-# Install the Composio CLI
+## Install the Composio CLI
 curl -fsSL https://composio.dev/install | bash
 
-# Log in to Composio
+## Log in to Composio
 composio login
 ```
 

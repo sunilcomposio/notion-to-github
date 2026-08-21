@@ -61,13 +61,13 @@ DeepSeek Harness installs external plugin bundles into a **profile**. Most plugi
 The basic pattern is:
 
 ```bash
-### Install a plugin
+# Install a plugin
 dsh plugin --profile web add <package-or-source>
 
-### Optional: verify that the plugin was added
+# Optional: verify that the plugin was added
 dsh --profile web --dump-config
 
-### Restart the Web UI when the plugin requires it
+# Restart the Web UI when the plugin requires it
 dsh web
 ```
 

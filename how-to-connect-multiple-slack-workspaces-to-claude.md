@@ -1,33 +1,33 @@
 # How to Connect Multiple Slack Workspaces to Claude
 
-You connect Slack to Claude. It works. Then you go to add your client's workspace and discover there's nowhere to put it.
+You connect Slack to Claude, and it works until you try to add a client's workspace and find that Claude has no option for it.
 
-Claude's built-in Slack connector holds **one workspace per Claude account**, and there is no path - UI, config, or otherwise, to a second one.
+Claude's built-in Slack connector supports **one workspace per Claude account**, so you cannot add a second workspace through the user interface or configuration.
 
-Anyone consulting, contracting, advising, or running an agency is already aware of this issue. The productivity unlock from having multiple Slack workspaces in Claude is very much understated.
+If you work as a consultant, contractor, advisor, or agency, you probably know this limitation and understand how much time you could save if Claude could work with several Slack workspaces.
 
-This blog post explains how to add multiple Slack Workspaces to Claude via Composio.
+This guide shows you how to use Composio to connect multiple Slack workspaces to Claude.
 
 ## The limit, precisely
 
-There's an [open feature request on](https://github.com/anthropics/claude-code/issues/44243)<span discussion-urls="discussion://3cef261a-6dfe-80f3-8d8b-f91f0f9b26f7/3cef261a-6dfe-8086-a207-ea2470d9afa6/3cff261a-6dfe-80ee-8e94-001c08774763">[ Anthropic's tracker](https://github.com/anthropics/claude-code/issues/44243)</span> that states it directly: the built-in Slack MCP connector supports only one workspace per Claude account, with no way to add a second through the UI or configuration. The example the issue itself gives is a consultant with their own company workspace plus a client workspace, and a founder who advises other companies.
+An [open feature request on](https://github.com/anthropics/claude-code/issues/44243)<span discussion-urls="discussion://3cef261a-6dfe-80f3-8d8b-f91f0f9b26f7/3cef261a-6dfe-8086-a207-ea2470d9afa6/3cff261a-6dfe-80ee-8e94-001c08774763">[ Anthropic's tracker](https://github.com/anthropics/claude-code/issues/44243)</span> explains the limit clearly: the built-in Slack MCP connector supports only one workspace per Claude account, so you cannot add a second workspace through the user interface or configuration. The request describes a consultant who uses a company workspace and a client workspace, and it also describes a founder who advises other companies.
 
-The same issue spells out what reaching workspace #2 costs today. Connecting the first is one click. Connecting the second means standing up a self-hosted MCP server from scratch, downloading a third-party binary, manually creating a Slack app at api.slack.com, configuring seven OAuth scopes, writing MCP JSON config with the correct CLI flags, and restarting your client. For one extra workspace.
+The issue also explains how much work is required to connect a second workspace. You can connect the first workspace with one click, but to connect the second one, you must set up a self-hosted MCP server, download a third-party binary, create a Slack app at api.slack.com, configure seven OAuth scopes, add the correct CLI flags to the MCP JSON configuration, and restart your client. You must complete all these steps for one additional workspace.
 
-The obvious workaround, adding the same connector twice under two names, one per workspace is blocked. Claude refuses a server URL that's already registered.
+You also cannot add the same connector twice with a different name for each workspace because Claude rejects a server URL that is already registered.
 
-It's an open issue, not a fixed one. No ship date announced.
+The request remains open, and Anthropic has not announced when it will provide this feature.
 
 ---
 
 ## What you'll build
 
-One custom connector in Claude. Behind it, every Slack workspace you work in, each labelled with the client's name. Then prompts like:
+With this setup, you add one custom connector to Claude, and it gives you access to every Slack workspace that you use. You label each connection with the client's name, so you can use prompts such as:
 
-> In **comp-slack(CLIENT)**, find the last three messages in #design-review mentioning the nav redesign. Don't post anything. Give me the channel and timestamp for each.
-> I have a call with Northwind in 20 minutes. From **northwind-slack** only, tell me what's changed since Thursday and what they're waiting on from us.
+> In **comp-slack (CLIENT)**, find the last three messages in #design-review that mention the navigation redesign. Do not post anything, and include the channel and timestamp for each message.
+> I have a call with Northwind in 20 minutes, so use only **northwind-slack** and tell me what has changed since Thursday and what they need from us.
 
-The tool that makes this work is Composio, it holds many Slack connections at once, labels each, and exposes all of them to Claude through a single connector.
+Composio makes this setup possible because it stores several Slack connections, gives each one a label, and makes them available to Claude through one connector.
 
 ---
 
@@ -35,41 +35,41 @@ The tool that makes this work is Composio, it holds many Slack connections at on
 
 **Claude:**
 
-- Custom connectors work on Free, Pro, Max, Team and Enterprise. **Free is limited to one custom connector**, so this would have to be it.
-- On **Team/Enterprise**, only an Owner can add the connector at organisation level. Members then connect their own account to it individually.
+- You can use custom connectors on the Free, Pro, Max, Team, and Enterprise plans, but the Free plan allows only one custom connector, so Composio must use that slot.
+- If you use a Team or Enterprise plan, an Owner must add the connector for the organisation, and each member must then connect their own account.
 
 **Composio:**
 
-- A free [Composio account](https://dashboard.composio.dev). 100K tool calls a month, unlimited connections, no card.
-- **Use an agency-owned account, not a personal one.** If the person who set this up leaves, the client connections shouldn't leave with them.
+- You need a free [Composio account](https://dashboard.composio.dev), which includes 100K tool calls each month and unlimited connections without a payment card.
+- Use an account that your agency owns, so the client connections remain available if the person who sets them up leaves.
 
-**Client side — the slow part:**
+**Client access:**
 
-- You need permission to install apps in each client workspace, or an admin who'll approve the request. Plenty of client workspaces restrict this. Ask before you're mid-flow, not after.
+- You need permission to install apps in each client workspace, or you need an administrator who can approve the request. Many client workspaces restrict app installation, so ask for approval before you start.
 
-**Time:** about 6 minutes for the connector, then 1–2 minutes per workspace, plus however long approvals take.
+**Time:** Allow approximately 6 minutes to add the connector and 1–2 minutes for each workspace, plus the time that each approval takes.
 
 ---
 
 ## Step 1 — Add Composio as a custom connector
 
-Composio publishes one shared MCP endpoint. Same URL for everyone, no API key, OAuth on click.
+Composio provides one shared MCP endpoint, and everyone uses the same URL while Composio manages authentication through OAuth.
 
-1. In Claude, open **Customize → Connectors** (`https://claude.ai/customize/connectors`).
-2. Click the **+** button, then **Add custom connector**.
+1. In Claude, open **Customize → Connectors** at `https://claude.ai/customize/connectors`.
+2. Click the **+** button, and then select **Add custom connector**.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_1.png)
 
-1. Fill in:
+1. Enter these values:
 	- **Name:** `Composio`
 	- **URL:** `https://connect.composio.dev/mcp`
-	- **Advanced settings:** leave blank. No client ID, no secret, no headers; Composio handles auth automatically.
-2. Click **Add**, then **Connect**. A browser window opens; sign in to Composio (or create the free account) and approve.
-3. Back in Claude, confirm Composio appears with a **CUSTOM** badge and is toggled on.
+	- **Advanced settings:** Leave these fields empty because Composio manages the client ID, secret, headers, and authentication.
+2. Click **Add** and then **Connect**. When a browser window opens, sign in to Composio or create a free account, and then approve the request.
+3. Return to Claude and make sure that Composio has a **CUSTOM** badge and is switched on.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_2.png)
 
-**Sanity check.** In a new chat: *"What Composio tools do you have available?"* You should get a short list of meta-tools. Composio doesn't dump every app's tools into your context, it exposes a handful that discover and run the right tool on demand, which is how one connector fronts 1,000+ apps without wrecking your context window.
+**Check the connection.** Start a new chat and ask, *"What Composio tools do you have available?"* Claude should show a short list of meta-tools that find and run the correct tool when you need it. This design lets one connector provide access to more than 1,000 apps while it keeps the context small.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_3.png)
 
@@ -77,34 +77,34 @@ Composio publishes one shared MCP endpoint. Same URL for everyone, no API key, O
 
 ## Step 2 — Pick your Slack toolkit (do this before connecting)
 
-Composio ships **two** Slack toolkits, and choosing wrong is the most common setup mistake here.
+Composio provides **two** Slack toolkits, so choose the one that gives you the access you need.
 
 | Toolkit | What it gives you | Use it for |
 | --- | --- | --- |
-| **`slack`** | The standard integration. `scopes` refers to **bot-user scopes**; acting as the actual Slack user requires user-token permissions configured separately via `user_scopes`. | Posting, replying, channel operations, most write actions |
-| **`slackbot`** | Workspace-wide **read** access on behalf of the installing user — search messages and files, browse channel and thread history, look up users and resolve them by email. **Includes direct messages.** Still posts and reacts as the bot. | Broad search and context-gathering across a whole workspace |
+| [**slack**](https://composio.dev/toolkits/slack) | This is the standard integration, and `scopes` refers to **bot-user scopes**. If you want it to act as the Slack user, you must configure user-token permissions separately with `user_scopes`. | Posting, replying, managing channels, and most write actions |
+| [**slackbot**](https://composio.dev/toolkits/slackbot) | It reads messages and files across the workspace for the person who installs it, and it can browse channels and threads, find users, resolve users by email, and read direct messages. It still posts and reacts as the bot. | Searching and collecting context across a workspace |
 
-For agency reporting: *"what did the client actually say about X"* , `slackbot` is usually what you want, because standard bot scopes only see channels the app was explicitly invited to.
+For agency reports that ask what a client said about a topic, `slackbot` is usually more useful because standard bot scopes can read only the channels where someone invited the app.
 
-**But read that DM line again.** `slackbot` reaching direct messages in a *client's* workspace is a materially different thing from reaching them in your own. Either use the narrower `slack` toolkit for client workspaces, or get explicit sign-off from the client. Don't let this one slide because it was convenient, it's exactly the detail that turns up in a security review later.
+**Review access to direct messages carefully.** Access to direct messages in a client's workspace can create additional privacy and security requirements, so use the narrower `slack` toolkit or get the client's written approval before you use `slackbot`.
 
 ---
 
 ## Step 3 — Connect your first workspace
 
-Everything from here happens in chat. New conversation:
+You can connect each workspace from a Claude chat, so start a new conversation and enter this prompt:
 
-> Connect my agency's Slack workspace to Composio. Label it **internal-slack**.
+> Connect my agency's Slack workspace to Composio, and label it **internal-slack**.
 
-Claude returns an authorisation link as a clickable markdown link. Click it. Slack's OAuth screen appears, pick the workspace, review the requested permissions, approve.
+Claude gives you an authorisation link. Open it, select the correct workspace on the Slack OAuth screen, review the permissions, and approve the request.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_4.png)
 
-Come back to Claude. It polls until the connection reports Active, then confirms.
+Return to Claude, and it will check the connection until the status changes to Active.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_5.png)
 
-That label is the whole mechanism. Composio calls it an **alias**, and it's how every future request gets routed to the right workspace. Aliases must be unique per toolkit.
+Composio calls the label an **alias**, and Claude uses it to send each future request to the correct workspace. Each alias must be unique within its toolkit.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_6.png)
 
@@ -112,27 +112,25 @@ That label is the whole mechanism. Composio calls it an **alias**, and it's how 
 
 ## Step 4 — Connect the second, third, fourth workspace
 
-Same conversation:
+Continue in the same conversation and enter this prompt:
 
-> Now connect another Slack workspace. Label it **comp-slack**.
+> Connect another Slack workspace, and label it **comp-slack**.
 
-Composio issues a **fresh** authorisation link and creates a separate connection. It does not overwrite the first, that's the entire point of the setup.
-
-To verify it, enter the same query in the chat, it shows the connections are established.
+Composio creates a new connection and gives you a new authorisation link, while your first connection remains available. After you approve the new connection, ask Claude to list your Slack connections and confirm that both appear.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_7.png)
 
-### The gotcha that will get you
+### Select the correct workspace
 
-Slack's authorisation screen has a **workspace dropdown in the top right**. If you're signed into several Slack workspaces in that browser, it defaults to one of them and it is genuinely easy to approve the wrong workspace and not notice for a week.
+Slack shows a **workspace dropdown in the top-right corner** of the authorisation screen, and it can select one of your signed-in workspaces automatically. Check this dropdown every time because you can easily approve the wrong workspace.
 
-Check the dropdown every single time. Three ways to make this reliable:
+Use one of these methods to make the process reliable:
 
-- Click the dropdown and explicitly select the intended workspace before approving.
-- Use separate browser profiles per client and open each auth link in the matching profile.
-- Open the link in an **incognito window** and sign in deliberately.
+- Open the dropdown and select the intended workspace before you approve the request.
+- Use a separate browser profile for each client, and open the authorisation link in the matching profile.
+- Open the link in an **incognito window**, and then sign in to the intended workspace.
 
-Repeat per client. Composio enforces a cap on accounts per toolkit, the SDK default is 5, configurable between 2 and 10, so an agency running more than five active Slack clients should raise it or split across Composio projects.
+Repeat this process for each client. Composio limits the number of accounts for each toolkit, and the SDK default is 5 accounts, although you can configure a value from 2 to 10. If your agency has more than five active Slack clients, increase the limit or use separate Composio projects.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_8.png)
 
@@ -140,17 +138,15 @@ Repeat per client. Composio enforces a cap on accounts per toolkit, the SDK defa
 
 ## Step 5 — Verify before you trust it
 
-Don't assume. Ask:
+Verify the connections before you use them for client work, and start with this prompt:
 
-> List all my connected Slack accounts in Composio with their aliases and status.
+> List all my connected Slack accounts in Composio, and include the alias and status for each account.
 
-Only connections marked **ACTIVE** can execute tools.
+A connection can run tools only when its status is **ACTIVE**. Then use this prompt to check where every alias points:
 
-Then confirm each alias actually points where you think:
+> For each connected Slack account, show its alias and the name of the workspace that authorised it.
 
-> For each connected Slack account, tell me the workspace name it's authorised against, next to its alias.
-
-Do this properly. Two aliases silently pointing at the same workspace is the failure mode that produces a confident, detailed, completely wrong answer about the wrong client.
+Check the results carefully because two aliases can point to the same workspace, and this error can make Claude return information from the wrong client.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_9.png)
 
@@ -158,121 +154,109 @@ Do this properly. Two aliases silently pointing at the same workspace is the fai
 
 ## Step 6 — The Composio dashboard flow
 
-Chat is faster for connecting. The dashboard is where you audit, rename, revoke and debug, and for agency work, the audit trail is the point.
-
-Go to **`dashboard.composio.dev`** and sign in with the account you authorised in Step 1.
+Chat is the quickest way to connect a workspace, while the dashboard helps you audit, rename, revoke, and troubleshoot connections. Open **`dashboard.composio.dev`**, and sign in with the account that you authorised in Step 1.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_10.png)
 
-### First: know which surface you're on
+### Choose the correct dashboard area
 
-Composio's dashboard splits in two, and this confuses everyone exactly once:
+The Composio dashboard has two areas, and each area contains different resources:
 
-| Surface | What lives there |
+| Area | What it contains |
 | --- | --- |
-| **For You** | Personal app connections for agents and MCP clients — the setup you just built |
-| **Platform** | Developer projects: Playground, API Keys, Toolkits, Skills, Users, Sessions, Auth Configs, Triggers, Logs |
+| **For You** | Personal app connections for agents and MCP clients, including the connections in this guide |
+| **Platform** | Developer resources such as Playground, API Keys, Toolkits, Skills, Users, Sessions, Auth Configs, Triggers, and Logs |
 
-**Resources in one surface do not appear in the other.** If your Slack connections aren't where you expect, you're on the wrong surface. Use the **product switcher**.
+Resources from one area do not appear in the other area, so use the **product switcher** if you cannot find your Slack connections.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_11.png)
 
-### For You — the click-through path
+### Connect workspaces in For You
 
-The point-and-click equivalent of Steps 3 and 4, and the better route when you're onboarding several clients in one sitting:
+Use this method when you want to connect several clients in one session:
 
-1. Open **For You** from the switcher.
+1. Open **For You** from the product switcher.
 2. Find **Slack** in the app list.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_12.png)
 
-1. Click **Connect** and complete Slack's OAuth flow.
+1. Click **Connect**, and complete the Slack OAuth process.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_13.png)
 
-1. Click **Connect on Slack again(Connect New)** for the next workspace, it adds a separate connection rather than replacing the first.
-2. Label each connection with the client name.
+1. Click **Connect on Slack again (Connect New)** to add the next workspace, and then give the connection a clear client label.
+2. Check the workspace dropdown before you approve each connection, as described in Step 4.
 
-The same workspace-dropdown caveat from Step 4 applies here.
-
-From this screen you can also **rename** a connection when `slack-2` stops being a useful name, **disconnect or delete** one (immediate), and **re-authorise** an expired one. Tokens refresh automatically, but a revoked or expired refresh token moves a connection to EXPIRED and needs a manual reconnect.
+You can also rename, disconnect, or delete a connection from this screen, and you can re-authorise an expired connection. Composio refreshes tokens automatically, but you must reconnect a workspace if its refresh token is revoked or expires and its status changes to EXPIRED.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_14.png)
 
-### Platform — for the audit trail
+### Review activity in Platform
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_15.png)
 
-On the developer surface, **Logs** gives you the request, response, error, version and Log ID for every tool call, retained 7 days on Free, 30 on Pro. **Auth Configs** holds the OAuth blueprint per toolkit, including custom scopes if you bring your own Slack app.
+In **Platform**, the **Logs** area shows the request, response, error, version, and Log ID for each tool call. Composio keeps these logs for 7 days on Free and 30 days on Pro. The **Auth Configs** area stores the OAuth configuration for each toolkit, including custom scopes when you use your own Slack app.
 
-For an agency, that log view is your answer to *"did your AI touch our Slack last Tuesday?"* Know where it is before someone asks.
-
----
+Learn where these logs are before a client asks whether your AI accessed their Slack on a specific date.
 
 ## Step 7 — Naming, and how not to leak client data
 
-This matters more than the setup, and it's the part most guides skip entirely.
+The access rules are as important as the setup because Claude can reach several client workspaces, and an unclear request can send it to the wrong one.
 
-Once Claude can reach five client workspaces at once, the failure mode changes. It stops being *"Claude can't see the thing"* and becomes *"Claude saw the wrong client's thing, and posted about it."*
+### Use one alias format
 
-### Use a rigid alias convention
-
-Pick one and never deviate:
+Choose a clear format and use it for every connection:
 
 ```plain text
 <client>-slack
 ```
 
-`comp-slack`, `northwind-slack`, `internal-slack`.
+Examples include `comp-slack`, `northwind-slack`, and `internal-slack`. Clear aliases help Claude select the correct workspace, while names such as `slack2` or `client-slack` can cause confusion.
 
-Rigid matters because ambiguous aliases (`slack2`, `client-slack`) are how Claude ends up guessing. Guessing is precisely what you're eliminating.
+### Give Claude the workspace map and rules
 
-### Give Claude the map and the rules
+Add this block to your Claude personal preferences, or add a separate version to each client project:
 
-Put this in your Claude personal preferences, or better, in a **project** per client:
-
-> **Connected Slack workspaces:**`internal-slack` = our agency<br>`comp-slack` = Comp Corp (client)<br>`northwind-slack` = Northwind (client)
+> **Connected Slack workspaces:**<br>`internal-slack` = our agency<br>`comp-slack` = Comp Corp (client)<br>`northwind-slack` = Northwind (client)
 
 **Rules:**
 
-	1. Never post, reply, react, or send in any workspace whose alias starts with a client name. Read only, draft for me instead.
-	2. Always state the source workspace and channel for every fact you report.
-	3. Never move information between two different client workspaces. Client → internal is fine. Client → other client is never fine.
-	4. If I don't name a workspace and the request could touch more than one, ask before acting.
+	1. Use client workspaces for reading, and show me a draft if I ask for a post, reply, reaction, or message.
+	2. State the source workspace and channel for every fact that you report.
+	3. You can move client information to our internal workspace, but you must never move it to another client's workspace.
+	4. Ask me which workspace to use if I do not name one and the request could apply to several workspaces.
 
-Rule 3 is the one that protects you commercially. Rule 4 protects you from the default behaviour: when several accounts are connected and none is named, the most recently connected one gets used, rarely the one you meant.
+Rule 3 prevents information from moving between clients, and Rule 4 prevents Claude from using the most recently connected account when your request does not specify a workspace.
 
-### One Claude project per client
+### Use one Claude project for each client
 
-Aliases are the mechanism; projects are the habit. A project per client, with that client's rules in the instructions, means every chat already points at the right workspace by default and whoever joins the account team inherits the guardrails instead of learning them the hard way.
+Aliases control routing, and projects make the correct routing easier to repeat. When you create one project for each client and add that client's rules to its instructions, every new chat starts with the correct context, and each account-team member receives the same guardrails.
 
-### Turn off Claude's built-in Slack connector
+### Disable Claude's built-in Slack connector
 
-If Anthropic's Slack connector and Composio's Slack are both live, Claude has two routes to Slack and will sometimes take the one that only sees a single workspace, quietly answering about the wrong client. Go to **Customize → Connectors** and disconnect the built-in Slack connector. Let Composio own it.
-
----
+If Claude can use both Anthropic's Slack connector and Composio, it has two routes to Slack and can select the route that sees only one workspace. Open **Customize → Connectors**, disconnect the built-in Slack connector, and use Composio as the single route.
 
 ## Prompts that earn the setup
 
-**Monday sweep across clients:**
+**Review unresolved client questions:**
 
-> For each of `comp-slack` and `northwind-slack`, list unresolved questions directed at our team in the last 7 days. Group by client, include channel and timestamp. Read only.
+> In `comp-slack` and `northwind-slack`, find unresolved questions that clients sent to our team during the last 7 days. Group the results by client, include the channel and timestamp, and use read-only actions.
 
-**Finding the decision nobody wrote down:**
+**Find an earlier decision:**
 
-> Search `comp-slack` for the thread where we agreed the launch date. Give me the message, who said it, and the timestamp. Don't reply.
+> Search `comp-slack` for the thread where we agreed on the launch date, and show me the message, author, and timestamp without sending a reply.
 
-**Escalation check:**
+**Check for urgent messages:**
 
-> Across all connected client workspaces, find anything from the last 48 hours that reads like it needs a same-day response. Name the workspace on every item.
+> Search all connected client workspaces for messages from the last 48 hours that might need a response today, and include the workspace name with every item.
 
-**Drafting without posting:**
+**Prepare a draft:**
 
-> Draft a reply to the last message in `#design-review` in `comp-slack`. Show it here. Do not post it.
+> Find the latest message in `#design-review` in `comp-slack`, and draft a reply here without posting it.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_16.png)
 
-Claude first checks whether the channel exists, then posts the message with the mention. You can confirm it landed by opening the channel in Slack.
+When you ask Claude to post an approved message, it first checks that the channel exists and then sends the message with the mention. Open the Slack channel to confirm that the message arrived.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_17.png)
 
@@ -280,55 +264,55 @@ Claude first checks whether the channel exists, then posts the message with the 
 
 ## Troubleshooting
 
-**Composio's tools don't show up in Claude.**
+**Composio tools do not appear in Claude.**
 
-1. Check **Customize → Connectors,** Composio should show a **CUSTOM** badge and be toggled on.
-2. Click the **⋮** next to Composio and choose **Clear cache**.
-3. Still nothing: **⋮ → Disconnect**, then **Remove**, then re-add.
+1. Open **Customize → Connectors**, and make sure that Composio has a **CUSTOM** badge and is switched on.
+2. Click **⋮** next to Composio, and select **Clear cache**.
+3. If the tools still do not appear, select **⋮ → Disconnect**, remove the connector, and then add it again.
 
-**The auth link expired or didn't open.**<br>Composio's OAuth links are deliberately short-lived. Ask Claude to retry the connection and it generates a fresh one. Don't reuse an old link from earlier in the thread.
+**The authorisation link expired or did not open.**<br>Composio OAuth links expire quickly, so ask Claude to retry the connection and generate a new link instead of using an earlier link from the conversation.
 
-**Two aliases point at the same workspace.**<br>You missed the workspace dropdown on Slack's OAuth screen. Delete the duplicate in the dashboard and redo it in an incognito window.
+**Two aliases point to the same workspace.**<br>Delete the duplicate connection in the dashboard, and then connect it again in an incognito window while you carefully select the correct workspace.
 
-**Search returns nothing from channels you can clearly read.**<br>Standard bot scopes only cover channels the app was added to. Either invite the app to the channel, or use the `slackbot` toolkit for workspace-wide read.
+**Search cannot find messages in a channel that you can read.**<br>Standard bot scopes can read only the channels where someone added the app, so invite it to the channel or use `slackbot` for workspace-wide read access.
 
-**Slack's AI-powered search fails.**<br>Slack's `assistant.search.context` requires the OAuth app to have the **Agents & AI Apps** feature enabled *and* the workspace to be on **Business+ or higher**. A client on a lower Slack plan can't use it, and nothing you configure changes that.
+**Slack AI search fails.**<br>The `assistant.search.context` scope works only when the OAuth app has the **Agents & AI Apps** feature enabled and the workspace uses the **Business+** plan or a higher plan. Configuration changes cannot enable this feature on a lower Slack plan.
 
-**Channel admin actions fail.**`admin.conversations:write` is an enterprise-level Slack scope. Tools like deleting conversations need the workspace on an **Enterprise** plan. Check the client's Slack plan first.
+**Channel administration actions fail.**<br>The `admin.conversations:write` scope requires an Enterprise Slack plan, so check the client's plan before you use actions such as deleting conversations.
 
-**A Slack action fails with an auth error.**<br>Ask Claude to inspect that Slack connection. If it's unhealthy or expired, disconnect and reconnect that specific workspace, then retry. Check **Logs** in Platform for the actual error body.
+**A Slack action returns an authentication error.**<br>Ask Claude to inspect the connection, and reconnect that workspace if its status is unhealthy or expired. Then retry the action, and review **Logs** in Platform if you need the complete error response.
 
-**Claude used the wrong client's workspace.**<br>Name the alias explicitly, and get the rules block into your project instructions. This should be a one-time failure, not a recurring one.
+**Claude used the wrong client workspace.**<br>Use the workspace alias in every request, and add the workspace map and rules to the project instructions so the error does not happen again.
 
-**"Add custom connector" isn't available.**<br>Free plan with one custom connector already used, or you're a member on Team/Enterprise where only an Owner can add connectors.
+**Add custom connector is unavailable.**<br>The Free plan allows one custom connector, so the option can be unavailable if you already use that slot. On Team and Enterprise plans, an Owner must add the connector.
 
 ---
 
 ## Offboarding a client
 
-1. **Delete the connection in Composio.** Dashboard → For You → find `comp-slack` → disconnect. Deletion is immediate.
+1. **Delete the Composio connection.** Open Dashboard → For You, find `comp-slack`, and disconnect it. Composio deletes the connection immediately.
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-slack-workspaces-to-claude/image_18.png)
 
-1. **Revoke on the client's side too.** Their workspace admin removes the app under Slack's app management. Do both, deleting your side doesn't guarantee the grant is gone from theirs.
-2. **Remove the client's block** from your Claude project instructions so a stale alias can't be referenced later.
-3. **Confirm in writing.** *"Our AI assistant's access to your Slack was revoked on \[date\]"* is a five-line email that makes your next security review much shorter.
+1. **Revoke access in the client's workspace.** Ask the workspace administrator to remove the app in Slack app management because deleting your Composio connection might leave the Slack grant active.
+2. **Remove the client's workspace map.** Delete the client's block from your Claude project instructions so Claude cannot refer to an old alias.
+3. **Confirm the change in writing.** Send a short message such as, *"We revoked our AI assistant's access to your Slack on \[date\]."*
 
-Being able to do this cleanly, per client, in two minutes is a real argument for this architecture over the disconnect-and-reconnect approach, where "revoked" just means "not currently selected."
+This process lets you remove one client's access in approximately two minutes, and it gives you a clear record for the client's next security review.
 
 ---
 
 ## Costs and honest limits
 
-**Composio Free:** 100K tool calls a month, unlimited connections, 50K trigger events, 3 team members. Hard-capped, no card, no surprise bill. A five-client agency doing daily sweeps won't come close. Pro is \$29/month with included usage credit if you outgrow it.
+**Composio Free:** The Free plan includes 100K tool calls each month, unlimited connections, 50K trigger events, and 3 team members. It has a fixed limit and does not require a payment card, so an agency with five clients and daily reviews is unlikely to reach the limit. If you need more usage, Pro costs \$29 each month and includes usage credit.
 
-**What this doesn't fix:**
+**Limits of this setup:**
 
-- **Nothing runs unattended.** Claude connectors work inside a conversation you start. There's no "alert us when the client posts in #urgent." That's a different class of tool.
-- **Account caps.** Default 5 per toolkit, configurable 2–10. Past that, split across Composio projects.
-- **Client plan limits are still client plan limits.** Business+ and Enterprise Slack features stay unavailable on a client's lower-tier workspace.
-- **No privilege escalation.** Claude reaches what the connected identity reaches, no more.
-- **You're adding a vendor.** One more party in the chain to your clients' systems. Composio is SOC 2 Type 2 and ISO 27001 compliant, tokens are OAuth and encrypted at rest and in transit, and nobody holds a client password. Still worth stating plainly to clients upfront rather than during their security review.
+- **Claude starts work when you open a conversation.** Connectors do not monitor Slack continuously or send an automatic alert when a client posts in `#urgent`, so you need another type of automation for that workflow.
+- **Each toolkit has an account limit.** The default is 5 accounts, and you can configure a value from 2 to 10. Use separate Composio projects if you need more accounts.
+- **Slack plan limits still apply.** Business+ and Enterprise features remain unavailable when a client uses a lower Slack plan.
+- **Claude keeps the permissions of the connected identity.** It cannot access data or perform actions that the connected identity cannot access.
+- **Composio becomes an additional vendor.** It is SOC 2 Type 2 and ISO 27001 compliant, and it uses OAuth tokens that are encrypted during transfer and storage, so it does not store client passwords. Tell clients about this vendor before their security review.
 
 ---
 

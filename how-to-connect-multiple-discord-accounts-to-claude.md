@@ -157,8 +157,6 @@ The chat method above is the easiest way to add accounts. Use the dashboard when
 
 ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-discord-accounts-to-claude/image_12.png)
 
-<synced_block url="https://app.notion.com/p/3def261a6dfe8050bdceff52b9eb3927#3def261a6dfe80f895ebfcdaa9ae7811">
-
 1. Click **Connect** and complete the Discord OAuth flow.
 
    ![](https://raw.githubusercontent.com/sunilcomposio/notion-assets/main/assets/how-to-connect-multiple-discord-accounts-to-claude/image_13.png)

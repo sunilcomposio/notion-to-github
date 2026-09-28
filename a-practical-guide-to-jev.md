@@ -204,7 +204,7 @@ Once Jev is connected, the next question is more important: **where all Jev can 
 
 ---
 
-## Where To Use Jev
+## Best Typesafe Jev use cases
 
 ### 1. Route support tickets before an agent touches them
 
@@ -481,7 +481,7 @@ It can classify entire tables, which leads to our use case.
 
 ### 3. Classify warehouse data directly in SQL
 
-On September 21, MotherDuck shipped `prompt_jev()`, which puts Jev directly inside SQL.
+On September 21, [MotherDuck shipped ](https://motherduck.com/blog/motherduck-supports-jev)[`prompt_jev()`](https://motherduck.com/blog/motherduck-supports-jev), which puts Jev directly inside SQL.
 
 This is one of the more useful integrations released during Jev's first week because it moves the same decision pattern to warehouse-scale data.
 
@@ -590,7 +590,7 @@ Most agents spend a surprising amount of time making small decisions.
 
 Those are bounded decisions, which makes the agent harness a natural place for Jev.
 
-LangChain now offers a Jev integration, and the official `langchain-typesafe` package exposes `TypeSafeClassifier` as a normal LangChain `Runnable`.
+[LangChain now offers a Jev integration](https://www.langchain.com/blog/building-a-harness-with-jev), and the official `langchain-typesafe` package exposes `TypeSafeClassifier` as a normal LangChain `Runnable`.
 
 **Step 1: Install it**
 
@@ -700,7 +700,7 @@ Browser agents spend a lot of time repeatedly asking some version of the same qu
 
 That is a bounded decision if the browser runtime already knows which controls are available.
 
-Browser Use's `jev-ultrafast` project is one of the clearest examples published during launch week.
+[BrowserUse's ](https://github.com/browser-use/jev-ultrafast)[`jev-ultrafast`](https://github.com/browser-use/jev-ultrafast) project is one of the clearest examples published during launch week.
 
 It builds an indexed set of visible browser actions, lets Jev choose the operation and target, and uses a small text model only when text must actually be generated.
 
@@ -758,11 +758,141 @@ So a browser runtime still needs to do the perception work first. That same limi
 
 ---
 
-## Where Jev fits, and where it does not
+### 6. Moderate Discord, Twitch, and YouTube live chat
+
+Live-chat moderation is another bounded decision problem.
+
+For every message, the application usually needs to decide whether to keep it, send it to a moderator, or remove it. Jev can make that judgment without asking an LLM to generate an explanation for every message.
+
+The same moderation function can work across Discord, Twitch, and YouTube. Only the code that receives and deletes messages changes.
+
+```plain text
+new chat message
+   ↓
+Jev: harmful probability + category
+   ↓
+probability ≥ 0.8  → remove
+probability ≥ 0.5  → human review
+otherwise          → keep
+```
+
+These thresholds are application policy, not Jev defaults. A community with stricter rules can lower them, while a high-impact enforcement workflow can require greater confidence.
+
+**Step 1: Define the moderation decisions**
+
+We can ask a Noul question for the enforcement probability and a Choice question for a useful moderation label.
+
+```javascript
+const QUESTIONS = {
+  harmful: {
+    type: "noul",
+    instructions:
+      "The message contains a targeted insult, harassment, threat, " +
+      "hate speech, or another clear personal attack. Casual swearing, " +
+      "criticism of a game or product, and harmless jokes do not count.",
+  },
+  category: {
+    type: "choice",
+    criteria: {
+      harassment: "Targets or repeatedly intimidates a person",
+      hate: "Attacks a protected group or identity",
+      spam: "Repetitive, promotional, or meaningless flooding",
+      safe: "Normal conversation, criticism, jokes, or mild frustration",
+    },
+  },
+};
+```
+
+Both questions evaluate the same message in one request. The Noul probability drives the policy, while the category makes moderation logs easier to inspect.
+
+If Jev is connected through Composio, the shared function can look like this:
+
+```javascript
+async function judgeMessage(text) {
+  const result = await composio.tools.execute("JEV_EVALUATE_STATE", {
+    userId: process.env.COMPOSIO_USER_ID,
+    arguments: {
+      state: text,
+      questions: QUESTIONS,
+    },
+    dangerouslySkipVersionCheck: true,
+  });
+
+  if (!result.successful) {
+    throw new Error(result.error || "Jev moderation failed");
+  }
+
+  const answers = result.data.answers;
+
+  return {
+    probability: answers.harmful.noul,
+    category: answers.category.choice,
+  };
+}
+```
+
+Normal code then owns the enforcement rule.
+
+```javascript
+function decideModeration({ probability, category }) {
+  if (probability >= 0.8) {
+    return { action: "remove", category };
+  }
+
+  if (probability >= 0.5) {
+    return { action: "review", category };
+  }
+
+  return { action: "keep", category };
+}
+```
+
+**Step 2: Connect the same decision to each platform**
+
+| Platform | Receive messages | Remove messages |
+| --- | --- | --- |
+| Discord | Gateway events through `discord.js` | `message.delete()` or the [Delete Message API](https://docs.discord.com/developers/resources/message) |
+| Twitch | [EventSub](https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types) `channel.chat.message` | Twitch moderation API using the message ID |
+| YouTube | [`liveChatMessages.streamList`](https://developers.google.com/youtube/v3/live/docs) or `liveChatMessages.list` | [`liveChatMessages.delete`](https://developers.google.com/youtube/v3/live/docs/liveChatMessages/delete) |
+
+For Discord, the bot listens for a new message and applies the shared function:
+
+```javascript
+client.on("messageCreate", async (message) => {
+  if (!message.content || message.author.bot) return;
+
+  const verdict = await judgeMessage(message.content);
+  const decision = decideModeration(verdict);
+
+  if (decision.action === "remove") {
+    await message.delete();
+  } else if (decision.action === "review") {
+    await sendToModeratorQueue(message, verdict);
+  }
+});
+```
+
+Twitch and YouTube follow the same pattern. Their event handlers pass the message text to `judgeMessage()`, then use the platform's message ID if the policy returns `remove`.
+
+This separation is important:
+
+```plain text
+platform event → shared Jev judgment → policy in code → platform action
+```
+
+Jev does not hold moderator permissions or delete anything itself. It supplies a probability and category. The application controls thresholds, rate limits, audit logs, appeals, and the final platform action.
+
+For production moderation, I would also add per-channel queues, duplicate-message detection, rate limiting, and a human-review path. High-confidence automation can handle obvious abuse, while uncertain or context-dependent messages stay with human moderators.
+
+The complete Discord, Twitch, and YouTube starter implementation is available in the [Jev live-chat moderator repository](https://github.com/shricodev/jev-youtube-discord-moderator).
+
+---
+
+## Where Jev fits better than LLMs, and where it does not
 
 After going through these examples, I would use one rule to decide whether a task belongs in Jev:
 
-| Task | Jev | Not Jev |
+| Task | Jev | LLMs |
 | --- | --- | --- |
 | Route a ticket | ✔️ | ❌ |
 | Select a known field | ✔️ | ❌ |

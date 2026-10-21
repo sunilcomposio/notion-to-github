@@ -8,11 +8,11 @@ Giving an agent direct access to your application, filesystem, credentials, or l
 
 > This really is the case with almost everyone nowadays, we just don’t like to admit it. 🥱
 
-![News headline about Replit deleting a production database](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/01-replit-database-deletion-news.webp)
+![News headline about Replit deleting a production database](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/01-replit-database-deletion-news.webp)
 
 He’s the same founder. You don’t want to end up like this. 😪
 
-![Jason Lemkin tweet: I will never trust Replit again](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/02-jason-lemkin-tweet.webp)
+![Jason Lemkin tweet: I will never trust Replit again](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/02-jason-lemkin-tweet.webp)
 
 That is basically why AI sandboxes have become such an important part of agent infrastructure.
 
@@ -51,7 +51,7 @@ It might need to clone a repository, edit files, install dependencies, run `npm 
 
 Running all of that directly inside your production infrastructure would be crazy.
 
-![Amjad Masad responding to the Replit production database incident](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/03-amjad-masad-response.webp)
+![Amjad Masad responding to the Replit production database incident](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/03-amjad-masad-response.webp)
 
 A sandbox gives that work its own boundary.
 
@@ -67,7 +67,7 @@ Here are the ones I would look at.
 
 > ℹ️ Best when your agent needs both a computer and authenticated tools.
 
-![Composio homepage](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/04-composio-homepage.webp)
+![Composio homepage](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/04-composio-homepage.webp)
 
 Most sandboxes solve one problem really well. They give the agent somewhere safe to execute code.
 
@@ -81,7 +81,7 @@ Your agent can fetch something from GitHub, transform it with Python, call anoth
 
 There is also a Local Sandbox option.
 
-![Composio remote sandbox vs local sandbox boundaries](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/05-composio-remote-vs-local-sandbox.webp)
+![Composio remote sandbox vs local sandbox boundaries](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/05-composio-remote-vs-local-sandbox.webp)
 
 Instead of executing code inside Composio’s hosted sandbox, you can run it inside your own VM, container, CI worker, Kubernetes job, while still using Composio for tools and authentication.
 
@@ -116,7 +116,7 @@ If all you need is raw disposable compute, there’s some other options for you.
 
 > ℹ️ Probably the first name you’ll come across when looking for AI sandboxes.
 
-![E2B GitHub repository card](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/06-e2b-github.webp)
+![E2B GitHub repository card](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/06-e2b-github.webp)
 
 E2B is pretty much built around one idea. Give every agent its own isolated computer.
 
@@ -130,7 +130,7 @@ Nothing too complicated.
 
 E2B also works across a bunch of agent frameworks and coding setups, which is one reason it has become such a common default for agent code execution.
 
-![E2B usage stats](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/07-e2b-usage-stats.webp)
+![E2B usage stats](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/07-e2b-usage-stats.webp)
 
 ### What it does
 
@@ -156,7 +156,7 @@ It does the core sandbox stuff really well without making the setup unnecessaril
 
 > ℹ️ Best when your agent needs a persistent computer more than a disposable sandbox.
 
-![Tensorlake GitHub repository card](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/08-tensorlake-github.webp)
+![Tensorlake GitHub repository card](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/08-tensorlake-github.webp)
 
 Tensorlake gets interesting when disposable environments aren’t enough.
 
@@ -166,7 +166,7 @@ Sandboxes can sleep when they’re inactive and wake again later.
 
 Tensorlake also combines this with hosted Git and a versioned filesystem, which makes it especially useful for coding agents or long running tasks where the generated files actually matter.
 
-![Tensorlake benchmark results](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/09-tensorlake-benchmark.webp)
+![Tensorlake benchmark results](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/09-tensorlake-benchmark.webp)
 
 Instead of treating the sandbox like temporary scratch space, you can treat it more like the agent’s workspace.
 
@@ -195,7 +195,7 @@ Coding agents, long running development tasks, evals, and agent CI are probably 
 
 > ℹ️ Best when you want Firecracker isolation without managing the virtualization layer yourself.
 
-![AWS Lambda MicroVMs homepage](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/10-aws-lambda-microvms.webp)
+![AWS Lambda MicroVMs homepage](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/10-aws-lambda-microvms.webp)
 
 Firecracker is the open source microVM technology AWS uses underneath services like Lambda and Fargate.
 
@@ -207,7 +207,7 @@ A MicroVM can start, suspend, keep its memory and disk state, resume later, and 
 
 That makes it much closer to an agent sandbox than a normal Lambda function.
 
-![AWS console Run MicroVM configuration](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/11-aws-run-microvm-console.webp)
+![AWS console Run MicroVM configuration](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/11-aws-run-microvm-console.webp)
 
 You also get the parts you would expect from AWS around it, including IAM execution roles, VPC networking, HTTPS endpoints, and CloudWatch logging.
 
@@ -239,7 +239,7 @@ It makes a lot of sense for agent execution, user generated code, notebooks, or 
 
 > ℹ️ Complete development environments for agents, created really fast.
 
-![Daytona GitHub repository card](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/12-daytona-github.webp)
+![Daytona GitHub repository card](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/12-daytona-github.webp)
 
 Each sandbox gets its own filesystem, network stack, compute, and isolated environment.
 
@@ -247,7 +247,7 @@ Your agent can install packages, compile projects, start servers, and run normal
 
 Daytona also puts a lot of focus on startup speed and currently claims container sandbox creation in under 90 milliseconds. 😬
 
-![Daytona sandbox runtimes](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/13-daytona-sandbox-runtimes.webp)
+![Daytona sandbox runtimes](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/13-daytona-sandbox-runtimes.webp)
 
 Another nice part is the range of environments available.
 
@@ -277,7 +277,7 @@ It also makes a lot of sense when GPUs or different operating systems are part o
 
 > ℹ️ The one I’d look at when sandbox execution starts becoming a compute problem.
 
-![Modal Sandboxes homepage](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/14-modal-sandboxes.webp)
+![Modal Sandboxes homepage](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/14-modal-sandboxes.webp)
 
 Modal is a little different from the options above.
 
@@ -289,7 +289,7 @@ And if your workload needs GPUs, Modal already has that side covered too.
 
 This makes it particularly interesting for workloads where you’re not running one or two sandboxes, but potentially a lot of them in parallel.
 
-![Modal and Lovable case study excerpt](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/15-modal-lovable-case-study.webp)
+![Modal and Lovable case study excerpt](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/15-modal-lovable-case-study.webp)
 
 ### What it does
 
@@ -315,7 +315,7 @@ For tiny Python scripts, though, this is probably more than you need.
 
 > ℹ️ Probably the most obvious pick here for agents generating web apps.
 
-![Vercel Sandbox GitHub repository card](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/16-vercel-sandbox-github.webp)
+![Vercel Sandbox GitHub repository card](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/16-vercel-sandbox-github.webp)
 
 Vercel Sandbox is built for running untrusted and AI generated code inside isolated environments.
 
@@ -325,7 +325,7 @@ Where this gets really useful is application generation.
 
 An agent can generate a React or Next.js app, install the dependencies, start the server, and give the user a working preview without running that generated code inside your actual application.
 
-![Vercel Sandboxes general availability announcement](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/17-vercel-sandboxes-ga.webp)
+![Vercel Sandboxes general availability announcement](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/17-vercel-sandboxes-ga.webp)
 
 That makes the use case pretty easy to understand.
 
@@ -354,7 +354,7 @@ If the rest of your stack already sits on Vercel, it becomes an even easier choi
 
 > ℹ️ Makes the most sense if your agent already lives inside Workers.
 
-![Cloudflare Sandbox SDK GitHub repository card](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/18-cloudflare-sandbox-sdk-github.webp)
+![Cloudflare Sandbox SDK GitHub repository card](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/18-cloudflare-sandbox-sdk-github.webp)
 
 Cloudflare takes a slightly different approach.
 
@@ -364,7 +364,7 @@ Your agent can run commands, modify files, start background processes, and expos
 
 The nice part is how naturally this connects with things like Workers, Durable Objects, R2, D1, and Workers AI.
 
-![Cloudflare Sandboxes GA announcement](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/19-cloudflare-sandboxes-ga.webp)
+![Cloudflare Sandboxes GA announcement](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/19-cloudflare-sandboxes-ga.webp)
 
 So if your agent already runs on Cloudflare, you don’t necessarily need to introduce another platform just for code execution.
 
@@ -394,7 +394,7 @@ If you’re not using the Cloudflare stack, some of the other options on this li
 
 > ℹ️ Best when your agent needs a full persistent Linux machine instead of a narrow execution runtime.
 
-![boat homepage](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/20-boat-homepage.webp)
+![boat homepage](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/20-boat-homepage.webp)
 
 boat takes the full machine approach.
 
@@ -408,7 +408,7 @@ You can stop a sandbox, keep its disk, resume it later, or fork it into another 
 
 There is also a virtual desktop and browser built into the environment, which makes boat interesting for agents that need to interact with graphical applications instead of only running shell commands.
 
-![boat features: full VMs, desktop and browser, agents](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/21-boat-features.webp)
+![boat features: full VMs, desktop and browser, agents](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/21-boat-features.webp)
 
 Claude Code, Codex, OpenCode, and other coding agents can run inside the machine, while the sandbox itself can be controlled through the CLI, API, or SDKs.
 
@@ -439,7 +439,7 @@ If all you need is a tiny disposable execution environment, a full VM is probabl
 
 > ℹ️ Best when you want isolated agent sandboxes and the infrastructure around them on the same platform.
 
-![Northflank homepage](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/22-northflank-homepage.webp)
+![Northflank homepage](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/22-northflank-homepage.webp)
 
 Northflank is broader than a standalone sandbox provider.
 
@@ -449,7 +449,7 @@ On Northflank Cloud, CPU sandboxes run inside microVMs and GPU sandboxes use gVi
 
 They boot in under a second, and you can create them, run commands, work with files, expose ports, and destroy them through the JavaScript or Python SDK.
 
-![Northflank BYOC sandbox architecture](images/top-10-ai-sandbox-providers-id-actually-use-in-2026/23-northflank-byoc-sandbox-architecture.webp)
+![Northflank BYOC sandbox architecture](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/top-10-ai-sandbox-providers-id-actually-use-in-2026/23-northflank-byoc-sandbox-architecture.webp)
 
 You can keep a sandbox disposable, or attach storage when the agent needs files to survive pauses and restarts.
 

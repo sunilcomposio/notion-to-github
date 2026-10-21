@@ -1,0 +1,38 @@
+name: fetch-notion-images
+on:
+  push:
+    paths: ['.github/image-jobs/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - name: Download and convert to WebP
+        run: |
+          python3 - <<'EOF'
+          import json, glob, os, io, urllib.request
+          from PIL import Image
+          for job in glob.glob('.github/image-jobs/*.json'):
+              m = json.load(open(job))
+              os.makedirs(m['dir'], exist_ok=True)
+              for it in m['images']:
+                  req = urllib.request.Request(it['url'], headers={'User-Agent': 'Mozilla/5.0'})
+                  data = urllib.request.urlopen(req, timeout=60).read()
+                  im = Image.open(io.BytesIO(data))
+                  if im.mode not in ('RGB', 'RGBA'):
+                      im = im.convert('RGBA')
+                  out = os.path.join(m['dir'], it['name'] + '.webp')
+                  im.save(out, 'WEBP', quality=85, method=6)
+                  print(out, im.size, os.path.getsize(out))
+          EOF
+      - name: Commit images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add images
+          git commit -m "Add WebP images for Microsoft 365 personal account guide" || exit 0
+          git push

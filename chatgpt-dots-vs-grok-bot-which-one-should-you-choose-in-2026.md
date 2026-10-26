@@ -482,7 +482,7 @@ If I already paid for ChatGPT Pro and wanted one agent to help across most of my
 
 It already has ChatGPT memory, GPT-6 Astra, more than 4,000 plugins, proactive research, scheduled work, Codex, ChatGPT Work, and strong approval controls inside one ecosystem.
 
-But if I were starting from zero and my main goal was **operational automation**, I would choose** Grok Bot today**.
+But if I were starting from zero and my main goal was **operational automation**, I would choose **Grok Bot today**.
 
 It costs much less to start, lets me create multiple specialist Bots, lets them collaborate, lets me teach workflows as skills, and gives me routines for repeating that work later. Those features create more room to build an actual team of agents instead of putting every responsibility into one assistant.
 

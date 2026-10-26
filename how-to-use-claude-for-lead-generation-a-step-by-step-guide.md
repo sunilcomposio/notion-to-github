@@ -94,7 +94,21 @@ Instant tools typically handle data search, retrieval, and enrichment. For Apoll
 
 Other Apollo tools work with your private Apollo data, for example contacts, sequences, deals, and emails. Instant does not cover these tools, so you must connect your own Apollo account to use them.
 
-Same for ContactOut, Hunter, Clay, People Data Labs etc.
+These ContactOut tools work with Instant:
+
+| ContactOut tool | What it does | Cost on Instant |
+| --- | --- | --- |
+| Count People | Estimates how many people match your filters | Free |
+| Check LinkedIn Contact Availability | Tells you if a profile has a work email, without revealing it | Free |
+| Search Companies | Finds companies by size, location, industry, and tech | \~\$0.02 per company |
+| Search People | Finds people by title, company, seniority, and more | \~\$0.02 per person |
+| List Decision Makers | Lists key decision makers at one company | \~\$0.02 per person |
+| Enrich LinkedIn Profile | Adds profile details for a LinkedIn URL | \~\$0.02 per profile |
+| Get LinkedIn Contact Info | Reveals the work email for a LinkedIn profile | \~\$0.15 per email found |
+
+![ContactOut Instant tools and their per-call prices in Composio](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/03-contactout-instant-tools.webp)
+
+On Instant, ContactOut returns work emails only. Phone numbers, personal emails, ContactOut’s Verify Email tool, and campaigns need your own ContactOut account. If you want to verify work emails without connecting a ContactOut account, use Hunter Email Verifier through Composio Instant. It costs \$0.012 per billed verification from your Composio team wallet.
 
 > ⚠️ Your Composio balance does not work as a strict spending limit, because Composio checks it after the calls. So add a small amount first, and check the execution logs in the Composio dashboard to see what each call costs. You can also turn Instant off at any time, and your connected accounts keep working.
 
@@ -123,9 +137,23 @@ Change this to match your own business. The more specific you are, the fewer bad
 
 ---
 
-### Step 4: Find Companies With Apollo
+### Step 4: Find Companies With ContactOut
 
 Now ask Claude to find companies that match your ideal customer.
+
+```text
+Use ContactOut through Composio Instant Tools to find 25 companies that match my
+ideal customer. Filter by industry (software), company size 51-200,
+and location (United States or Canada). For each company, show the
+name, domain, employee count, location, and industry. Put the
+results in a table.
+```
+
+Claude uses ContactOut’s company search, and it returns a table. This step costs about \$0.50 for 25 companies. Review the list, and remove any company that you already know is a bad fit.
+
+![Claude returning a ContactOut company search as a table](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/04-contactout-company-search.webp)
+
+You can try asking Claude to find companies that match your ideal customer using Apollo as well.
 
 ```text
 Use Apollo through Composio to find 25 companies that match my ideal
@@ -135,39 +163,36 @@ location, industry, and latest funding round. Put the results in a table.
 
 Claude uses Apollo’s organization search, and it returns a table. Review the list, and remove any company that you already know is a bad fit.
 
-![Claude returning an Apollo company search as a table](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/03-apollo-company-search.webp)
-
 ---
 
 ### Step 5: Qualify the Companies
 
 A company can match your filters and still be a bad fit. So before you look for contacts, ask Claude to check for buying signals.
 
-Apollo gives you two useful signals: open jobs and recent news. A company that hires five SDRs this month has a clear need to grow its sales team, and a company that just raised money has the budget to buy.
+ContactOut’s **Count People** tool is free on Instant, and it supports a filter for people who started their job in the last three months. That gives you two strong signals. A company that just hired several sales reps is growing its sales team. A company with a new sales leader often reviews its tools and vendors in the first few months.
 
 ```text
-For each company in the table, use Apollo to check:
-1. Their open job postings. Count how many sales roles they have open.
-2. Recent news from the last 90 days, such as funding, launches,
-   or leadership changes.
+For each company in the table, use ContactOut's Count People tool
+to check:
+1. How many people currently work in sales roles (SDR, BDR,
+   Account Executive).
+2. How many of those started in the last 3 months.
+3. Whether a Head of Sales, VP of Sales, or CRO started in the
+   last 3 months.
+4. Whether work emails are available for their sales leaders.
+Do not search for or reveal any people yet.
 
-Then give each company a score from 1 to 10 with this rubric:
-- +4 if they have 2 or more open sales roles
-- +3 if they raised funding in the last 12 months
-- +2 if they had a relevant leadership change, such as a new VP of Sales
-- +1 if they launched a new product
+Then give each company a score from 0 to 10 with this rubric:
+- +4 if 2 or more sales reps joined in the last 3 months
+- +3 if a new sales leader joined in the last 3 months
+- +2 if they have 5 or more people in sales
+- +1 if work emails are available for their sales leaders
 Show the score and one line that explains it. Sort the table by score.
 ```
 
 Keep the top 10 companies, and drop the rest.
 
-You can also use ContactOut to check the size of your target group before you spend credits. ContactOut’s **Count People** tool estimates how many people match your filters, and it does not use any credits.
-
-```text
-Use ContactOut to count how many people with the title Head of Sales,
-VP of Sales, or CRO work at these 10 companies. Do not reveal any
-contact details yet.
-```
+![Claude scoring companies with ContactOut Count People](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/05-company-qualification-scores.webp)
 
 ---
 
@@ -191,6 +216,8 @@ Use ContactOut to list the key decision makers at each of my top
 
 I usually run both, and then I ask Claude to merge the results and remove duplicates. Each tool finds some people that the other one misses.
 
+![Claude listing decision makers at the top companies](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/06-decision-makers.webp)
+
 ---
 
 ### Step 7: Get and Verify Contact Details
@@ -213,7 +240,9 @@ their work email. Then use ContactOut's Verify Email tool to check
 each one. Mark each email as valid, invalid, accept-all, or unknown.
 ```
 
-If ContactOut does not find an email for someone, try Apollo’s people enrichment for that person. Then verify that email with ContactOut too.
+If ContactOut does not find an email for someone, Composio instant will fall back to Apollo, Hunter or Plaud. The goal is to get things done.
+
+![Claude checking which decision makers have a work email](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/07-work-email-availability.webp)
 
 > ⚠️ Remove emails that are invalid, and be careful with accept-all emails. If you send to too many bad addresses, your email domain can get flagged as spam.
 
@@ -221,37 +250,50 @@ If ContactOut does not find an email for someone, try Apollo’s people enrichme
 
 ### Step 8: Save Your Leads
 
-Now save the final list. Composio connects to most CRMs and spreadsheets, so you can choose where the leads go.
+Now save the final list. Composio connects to most CRMs and spreadsheets, so you can choose where the leads go. Google Sheets is not on Instant, so you connect your own Google account through Composio first. You only do this once.
 
-For CRMs and spreadsheets you will have to connect your accounts. Here are some guides for Google sheet and Hubspot
+**Connect Google Sheets with Composio:**
 
-- [How to connect Google sheet to Claude](https://composio.dev/toolkits/googlesheet/framework/claude)
-- [How to connect HubSpot to Claude](https://composio.dev/toolkits/hubspot/framework/claude)
+1. In the same chat, ask Claude:
 
-**To a Google Sheet:**
+```text
+Connect my Google Sheets account through Composio.
+```
+
+1. Claude checks your Composio connections. If Google Sheets is not connected yet, it replies with a sign-in link.
+2. Click the link, and choose the Google account that you want to use.
+
+![Google sign-in screen for connecting Composio](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/08-google-sign-in.webp)
+
+1. Review the permissions, and click **Allow**.
+
+   ![Successfully connected Composio to Google Sheets](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/09-google-sheets-connected.webp)
+
+2. When you see the success page, go back to Claude and type **done**. Claude checks that the connection is active before it continues.
+
+![Claude revealing work emails and creating the leads sheet](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/10-claude-creates-lead-sheet.webp)
+
+> 💡 You can also connect apps from the Composio dashboard, under **Connected Accounts**. Claude uses any account that you connect there.
+
+**Save the leads to a Google Sheet:**
 
 ```text
 Create a Google Sheet called "Leads - October 2026" and add all
-verified leads. Use these columns: Name, Title, Company, Website,
+verified leads. Use these columns: Name, Title, Company, Domain,
 Email, Email Status, LinkedIn URL, Score, Score Reason.
 ```
 
-**To Apollo** (needs your own Apollo API key):
+Claude creates the sheet, adds the rows, and gives you a link to open it.
 
-```text
-Create an Apollo contact for each verified lead, and add the score
-reason as a note.
-```
+![Leads - October 2026 Google Sheet with scored leads](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/11-leads-google-sheet.webp)
 
-You can also save the leads to HubSpot, Salesforce, Attio, or another CRM in the same way. Ask Claude to connect the app, and it gives you a sign-in link.
+You can save the leads to HubSpot, Salesforce, Attio, or another CRM in the same way. Ask Claude to connect the app through Composio, and it gives you a sign-in link.
 
 ---
 
 ### Step 9: Draft the First Email
 
 Claude already knows why each lead fits, because it saw the job posts and the news. So it can write a short email that refers to a real reason.
-
-Connect Claude to [Gmail](https://composio.dev/toolkits/gmail/framework/claude) or [Outlook](https://composio.dev/toolkits/outlook/framework/claude).
 
 ```text
 Write a short first email for each of the top 5 leads. Use the
@@ -275,7 +317,7 @@ Use Composio with Apollo and ContactOut to do this:
 
 1. Find 25 companies that match my ideal customer.
 2. Check their open sales roles and news from the last 90 days,
-   and score each company from 1 to 10 with my rubric.
+   and score each company from 0 to 10 with my rubric.
 3. Keep the top 10.
 4. Find the Head of Sales, VP of Sales, or CRO at each company.
 5. Check which people have a work email available, then get and
@@ -285,6 +327,35 @@ Use Composio with Apollo and ContactOut to do this:
 
 Ask me before you do any step that costs more than 50 credits.
 ```
+
+---
+
+#### What This Workflow Cost Me
+
+Composio charges each Instant call to your Composio balance. After a full run, I asked Claude to add up the cost of every ContactOut call in the session:
+
+![Claude adding up the ContactOut Instant cost for the session](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-claude-for-lead-generation-a-step-by-step-guide/12-instant-cost-breakdown.webp)
+
+| Step | ContactOut tool | Calls | Cost |
+| --- | --- | --- | --- |
+| Find companies (25 companies, 3 pages) | Search Companies | 3 | \$1.50 |
+| Count sales teams and new hires | Count People | 100 | Free |
+| Find decision makers at the top 10 companies (119 profiles) | List Decision Makers | 10 | \~\$2.38 |
+| Reveal work emails for 5 sales leaders | Get LinkedIn Contact Info (Batch) | 1 | \$0.75 |
+| **Total** |  |  | **\~\$4.63** |
+
+That’s about **\$0.93 per lead** with a work email, and the 100 qualification calls cost nothing.
+
+A few things I noticed in the breakdown:
+
+- **Most of the cost came from finding people, not emails.** List Decision Makers returned about 12 profiles per company, and each profile costs \$0.02. If you only need one or two people per company, use people search with a limit, as shown in Step 6.
+- **The email availability check was free.** That information came back with the decision maker results.
+- **Failed calls cost nothing.** A few calls failed when my balance ran low, and Composio didn’t charge for them.
+- **Google Sheets is not included.** It runs on your own connected account, so it doesn’t use your Composio balance.
+
+> ⚠️ Some Count People calls failed during my run because my balance was too low, even though the tool itself is free. Add a few dollars before you start, so the workflow does not stop halfway.
+
+> 💡 Claude’s total is an estimate when a tool response is too large to show in full. Check the execution logs in the Composio dashboard for the exact amount.
 
 ---
 

@@ -1,0 +1,39 @@
+name: fetch-notion-images
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: image job (read from the event payload, never echoed)
+        required: true
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install pillow
+      - name: Download and convert to WebP
+        run: |
+          python3 - <<'EOF'
+          import json, os, io, urllib.request
+          from PIL import Image
+          ev = json.load(open(os.environ['GITHUB_EVENT_PATH']))
+          m = json.loads(ev['inputs']['manifest'])
+          os.makedirs(m['dir'], exist_ok=True)
+          for it in m['images']:
+              req = urllib.request.Request(it['url'], headers={'User-Agent': 'Mozilla/5.0'})
+              im = Image.open(io.BytesIO(urllib.request.urlopen(req, timeout=60).read()))
+              if im.mode not in ('RGB', 'RGBA'):
+                  im = im.convert('RGBA')
+              out = os.path.join(m['dir'], it['name'] + '.webp')
+              im.save(out, 'WEBP', quality=85, method=6)
+              print(it['name'], im.size, os.path.getsize(out))
+          EOF
+      - name: Commit images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add images
+          git commit -m "Add WebP images for AI employee guide" || exit 0
+          git push

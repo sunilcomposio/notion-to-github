@@ -73,7 +73,7 @@ With those differences in mind, let's look at what each API does and where it ma
 
 ### 1. Composio Instant
 
-[![Composio Instant video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/01-composio-instant-video.webp)](https://www.youtube.com/watch?v=01GjavmeMhk)
+https://www.youtube.com/watch?v=01GjavmeMhk
 
 Say you're building an agent that needs to generate a product video, save it to Google Drive, and prepare it for publishing.
 
@@ -158,7 +158,7 @@ But if you want to work directly with a particular video model and control its g
 
 ### 2. Google Gemini API
 
-[![Gemini Omni video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/02-google-gemini-video.webp)](https://www.youtube.com/watch?v=KUyRq7szZsM)
+https://www.youtube.com/watch?v=KUyRq7szZsM
 
 Google provides video generation through the Gemini API, including Gemini Omni Flash 1.1 and the Veo 3.1 preview models.
 
@@ -246,7 +246,7 @@ But if you're adding video generation to a larger production application, Runway
 
 ### 3. Runway API
 
-[![Runway Gen-4.5 image to video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/03-runway-api-video.webp)](https://www.youtube.com/watch?v=AwKSrJFvdps)
+https://www.youtube.com/watch?v=AwKSrJFvdps
 
 [Runway](https://runwayml.com/) provides a developer API for video generation with models such as Gen-4.5 and Gen-4 Turbo. It also supports selected video models from other providers through the same platform.
 
@@ -333,7 +333,7 @@ If you want to compare models such as Kling, Seedance, and MiniMax without manag
 
 ### 4. fal.ai
 
-[![fal creative generation video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/04-fal-ai-video.webp)](https://youtu.be/fcBfGnpUKjI?si=zVJ9uVUyx27WhdoZ)
+https://youtu.be/fcBfGnpUKjI?si=zVJ9uVUyx27WhdoZ
 
 [fal.ai](https://fal.ai/) provides hosted APIs for video models from several providers. Its catalogue includes Kling, ByteDance Seedance, MiniMax Hailuo, Alibaba Wan, Google models, and others.
 
@@ -433,7 +433,7 @@ But if you prefer first-party access to Alibaba's Wan models, Model Studio provi
 
 ### 5. Alibaba Cloud Model Studio
 
-[![Alibaba Wan video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/05-alibaba-wan-video.webp)](https://www.youtube.com/watch?v=dC5pu8zL2p8)
+https://www.youtube.com/watch?v=dC5pu8zL2p8
 
 Alibaba's Wan 3.0 supports: text-to-video, image-to-video, and reference-based video generation. It supports clips up to 30 seconds long, with a standard model and a faster Prime variant.
 
@@ -521,7 +521,7 @@ But if you're starting with an image and want to animate or edit it, Luma provid
 
 ### 6. Luma API
 
-[![Luma AI Ray video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/06-luma-api-video.webp)](https://youtu.be/w7ZCcWsx5bU?si=72rxn6YgFDq5cQYo)
+https://youtu.be/w7ZCcWsx5bU?si=72rxn6YgFDq5cQYo
 
 [Luma](https://lumalabs.ai/api) generates video with its Ray 3.2 model. Developers can use the Luma Agents API for text-to-video, image-to-video, editing, and reframing.
 
@@ -613,7 +613,7 @@ But if you already use OpenRouter for other AI models, its video API provides an
 
 ### 7. OpenRouter
 
-[![Video models on OpenRouter (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/07-openrouter-video.webp)](https://youtu.be/bUQjWkW4-LU?si=Xo_DKrZ6QQA6_YfP)
+https://youtu.be/bUQjWkW4-LU?si=Xo_DKrZ6QQA6_YfP
 
 [OpenRouter](https://openrouter.ai/) provides access to models from several providers through one account.
 
@@ -704,7 +704,7 @@ OpenRouter provides a common API for several video models. Higgsfield also offer
 
 ### 8. Higgsfield API
 
-[![Higgsfield Genjutsu AI character swap (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/08-higgsfield-api-video.webp)](https://www.youtube.com/watch?v=wM9S_iyuRUo)
+https://www.youtube.com/watch?v=wM9S_iyuRUo
 
 [Higgsfield](https://open.higgsfield.ai/) provides APIs for image and video generation. Its platform includes access to different video models alongside creative operations such as motion transfer.
 
@@ -772,7 +772,7 @@ Higgsfield offers several creative operations through a single platform. The fin
 
 ## 9. Black Forest Labs FLUX 3 Video
 
-[![FLUX 3 video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/09-flux-3-video.webp)](https://www.youtube.com/watch?v=PCPhl8qMF_Y)
+https://www.youtube.com/watch?v=PCPhl8qMF_Y
 
 Black Forest FLUX 3 Video is a multimodal video-generation model from Black Forest Labs.
 
@@ -882,7 +882,7 @@ The final API is another option for short videos with dialogue and specific refe
 
 ### 9. xAI Grok Imagine API
 
-[![Grok Imagine video (watch on YouTube)](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-ai-video-apis-for-developers-in-2026/10-xai-grok-imagine-video.webp)](https://youtu.be/zpmVtZekVbg?si=047CwOzOX2tboywt)
+https://youtu.be/zpmVtZekVbg?si=047CwOzOX2tboywt
 
 xAI provides video generation through the Grok Imagine API. Its `grok-imagine-video-1.5` model supports text-to-video, image-to-video, and reference-based generation.
 

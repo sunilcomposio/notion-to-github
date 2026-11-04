@@ -6,7 +6,7 @@ But reasoning only gets them so far. At some point, they need a way to reach the
 
 That is where browser agent APIs come in.
 
-The problem is that this category is so populated. Some tools focus on search. Some turn websites into clean markdown. Others give you a remote browser to control. And some just take a goal and handle the whole task for you. So, it’s a whole spectrum and it get tougher to decide which one to pick.
+The problem is that this category is so populated. Some tools focus on search. Some turn websites into clean markdown. Others give you a remote browser to control. And some just take a goal and handle the whole task for you. So, it’s a whole spectrum and it gets tougher to decide which one to pick.
 
 So I went through the major options and picked the ones I would actually use today. ✅
 
@@ -14,18 +14,20 @@ So I went through the major options and picked the ones I would actually use tod
 
 ## TL;DR - Best browser agent APIs
 
-| # | API | I would use it for |
-| --- | --- | --- |
-| 1 | **TinyFish** | Search, fetch, browsers and web agents under one key |
-| 2 | **Firecrawl** | Turning pages and whole sites into LLM-ready markdown |
-| 3 | **Exa** | Semantic web search on its own index |
-| 4 | **Parallel** | Cheap search and structured deep research |
-| 5 | **Tavily** | The fastest way to give an agent web search |
-| 6 | **Browser Use** | Open-source autonomous browser agents |
-| 8 | **Bright Data** | Sites that block everyone else |
-| 7 | **Browserbase** | Hosted browsers when you write the agent logic yourself |
-| 9 | **Kernel** | Fast, cheap browser fleets at scale |
-| 10 | **Apify** | Prebuilt scrapers for specific sites |
+| # | API | I would use it for | Starts at |
+| --- | --- | --- | --- |
+| 1 | **TinyFish** | Search, fetch, browsers and web agents under one key | Search & Fetch free; Agent \$0.016/step |
+| 2 | **Firecrawl** | Turning pages and whole sites into LLM-ready markdown | 1,000 free credits/mo; \$19/mo |
+| 3 | **Exa** | Semantic web search on its own index | \$10 free credit/mo; \$4 per 1K searches |
+| 4 | **Parallel** | Cheap search and structured deep research | \$1 per 1K searches |
+| 5 | **Tavily** | The fastest way to give an agent web search | 1,000 free credits/mo; \$0.008/credit |
+| 6 | **Browser Use** | Open-source autonomous browser agents | Free tier; \$0.02/browser-hour |
+| 7 | **Browserbase** | Hosted browsers when you write the agent logic yourself | 1 free browser-hour; \$20/mo |
+| 8 | **Bright Data** | Sites that block everyone else | 5,000 free credits/mo; \$1.50 per 1K requests |
+| 9 | **Kernel** | Fast, cheap browser fleets at scale | \$5/mo free usage; \~\$0.06/hr headless |
+| 10 | **Apify** | Prebuilt scrapers for specific sites | \$5/mo free usage; \$19/mo |
+
+> ⚠️ **NOTE:** These prices are as of November 2026. Tools like these often change their pricing, so make sure to double-check the official pricing page before making a decision.
 
 For most agents, one good search API and one reliable way to act on websites will cover most of what you need.
 
@@ -50,7 +52,7 @@ If you are looking specifically for search, check out our guide to the [best AI 
 
 ![Composio Instant agent wallet connected to many tools](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/10-browser-agent-apis-that-let-your-ai-actually-use-the-web/01-composio-instant-agent-wallet.webp)
 
-There is one sad parts of building web agents. Your agent might need a search API, a scraper, and a browser agent. Now you have three accounts, three API keys, three dashboards, and three separate bills to take care of.
+There is one annoying part of building web agents. Your agent might need a search API, a scraper, and a browser agent. Now you have three accounts, three API keys, three dashboards, and three separate bills to take care of.
 
 And chances are your agent will barely use some of them every month.
 
@@ -84,6 +86,7 @@ tools = session.tools()
 - Your own connected accounts still work without an Instant charge
 - Works with Claude, ChatGPT, Cursor and any MCP client
 - \$2 of free credit to get started
+- Instant calls cost exactly the provider’s price, so every number in this post applies whether you go direct or through Composio
 
 **Resources**
 
@@ -116,6 +119,12 @@ It also supports logins through stored credentials and browser profiles. Every r
 - Goal-based agent runs with logins, forms and structured output
 - Hosted MCP server plus Python and TypeScript SDKs
 
+### Pricing
+
+- Search and Fetch are free (30 searches and 150 fetches per minute)
+- Agent costs \$0.016 per step and Browser \$0.002 per minute, paid from a prepaid wallet
+- New accounts get \$8 free, with no subscription or monthly minimum
+
 ### 💡 **When I would pick it**
 
 When I want the agent to find information and then act on it without wiring together three different providers.
@@ -139,7 +148,7 @@ Pricing works through credits per page, so it is relatively easy to estimate wha
 
 Firecrawl has also been expanding beyond scraping. It recently launched Alexandria, which combines the live web with licensed data and Firecrawl's own indexes, so it is slowly becoming a broader web data layer rather than only a scraper.
 
-Firecrawl plans to pay the publishers and experts whose knowledge ends up powering agents.
+Firecrawl plans to pay the publishers and experts whose knowledge ends up powering agents. 🫡
 
 ![Firecrawl post introducing Alexandria and its Series B](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/10-browser-agent-apis-that-let-your-ai-actually-use-the-web/05-firecrawl-alexandria-announcement.webp)
 
@@ -150,6 +159,12 @@ Firecrawl plans to pay the publishers and experts whose knowledge ends up poweri
 - Built-in web search
 - Interactive browser mode and an Agent endpoint in preview
 - Open-source core and an MCP server
+
+### Pricing
+
+- Free plan with 1,000 credits a month
+- Hobby is \$19/month for 5,000 credits, Standard is \$99/month for 100,000
+- One credit per basic page, more for JSON extraction. Unused credits don't roll over
 
 ### 💡 **When I would pick it**
 
@@ -184,6 +199,12 @@ It is already used as the search layer behind products such as Cursor. The main 
 - Monitors and Websets for tracking and list building
 - Free hosted MCP server
 
+### Pricing
+
+- \$10 of free credit every month
+- Search costs \$4 per 1,000 requests on Lite and \$7 on Auto, with deep search from \$12 per 1,000
+- Page contents add \$1 per 1,000 pages
+
 ### 💡 **When I would pick it**
 
 Research agents, coding agents that need to search documentation, and anything where I care more about finding the right result than getting the absolute cheapest search.
@@ -217,6 +238,12 @@ https://youtu.be/fORbmCMX5GA?si=RbGZDgl7XsMz6pO7
 - FindAll for discovering lists of entities
 - Monitor for tracking changes across the web
 
+### Pricing
+
+- Search costs \$1 to \$5 per 1,000 requests, depending on the mode
+- Extract costs \$1 per 1,000 URLs
+- Task runs go from \$5 to \$2,400 per 1,000, depending on how deep the research goes
+
 ### 💡 **When I would pick it**
 
 Lead enrichment, research at scale, or any workflow where I want structured answers and predictable pricing.
@@ -240,7 +267,7 @@ A single credit pool covers search, extract, map and crawl, so you are not deali
 
 Nebius acquired Tavily in 2026, but Tavily continues to operate under its own brand. Its search can cost a little more than Parallel's cheapest option, but getting it running is about as straightforward as it gets.
 
-Tavily also got a new bid this year.
+Here’s the headline from when Nebius bought Tavily.
 
 ![News article about Nebius exploring another acquisition after buying Tavily](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/10-browser-agent-apis-that-let-your-ai-actually-use-the-web/10-nebius-tavily-acquisition-news.webp)
 
@@ -251,6 +278,12 @@ Tavily also got a new bid this year.
 - Research endpoint for multi-step answers
 - Broad support across LangChain and other frameworks
 - 1,000 free credits each month
+
+### Pricing
+
+- 1,000 free credits a month, no card needed
+- Pay-as-you-go at \$0.008 per credit, or monthly plans from \$30
+- A basic search uses 1 credit and an advanced search uses 2
 
 ### 💡 **When I would pick it**
 
@@ -285,6 +318,12 @@ Stealth is also where browser agents get controversial. Last year, Cloudflare ac
 - Stealth and CAPTCHA handling
 - Browsers starting from \$0.02 per browser-hour
 
+### Pricing
+
+- Free tier, no card needed
+- Browsers cost \$0.02 per browser-hour, and proxies \$5 per GB
+- Agent tasks cost the model price plus 20%, plus browser time
+
 ### 💡 **When I would pick it**
 
 When I want the freedom of open source while developing locally, but also want a managed version when the agent goes into production.
@@ -315,6 +354,12 @@ That becomes very useful once browser agents start doing longer tasks.
 - Reusable browser contexts that keep accounts logged in
 - Stagehand SDK for AI-driven browser actions
 - Official MCP server
+
+### Pricing
+
+- Free plan with 1 browser-hour
+- Developer is \$20/month for 100 hours, then \$0.12 per extra hour
+- Startup is \$99/month for 500 hours
 
 ### 💡 **When I would pick it**
 
@@ -349,6 +394,12 @@ Bright Data has also fought for this in court. Meta, once a customer, sued it ov
 - MCP server with dozens of tools
 - 5,000 free credits each month
 
+### Pricing
+
+- 5,000 free credits a month, shared across products (includes 1 GB of Browser API traffic)
+- Pay-as-you-go from \$1.50 per 1,000 requests
+- The Browser API is billed by traffic, at \$8 per GB on pay-as-you-go
+
 ### 💡 **When I would pick it**
 
 Geo-restricted websites, heavily protected pages, or anything where the easier browser tools keep getting blocked.
@@ -380,6 +431,12 @@ Kernel is backed by Accel and Y Combinator. Like Browserbase, it is mainly infra
 - Live view and session replays
 - Hosted MCP server
 
+### Pricing
+
+- **Free:** \$0/month plus usage, \$5 of monthly credits, 5 browsers at once
+- **Hobbyist:** \$30/month, 10 browsers at once
+- **Start-up:** \$200/month, 150 browsers at once
+
 ### 💡 **When I would pick it**
 
 When I need to run a lot of browsers at once, or I am building an interactive agent where startup time and latency actually matter.
@@ -410,6 +467,12 @@ Pricing is mostly based on compute, although some Actors also charge per result.
 - Scheduling and storage for recurring scraping jobs
 - Hosted MCP server
 - \$5 of free usage each month
+
+### Pricing
+
+- \$5 of free usage every month
+- Paid plans start at \$19/month, then \$199 and \$999
+- Some Actors also charge per result on top of compute
 
 ### 💡 **When I would pick it**
 

@@ -14,6 +14,7 @@ So I went through the major options and picked the ones I would actually conside
 
 | # | Platform | I would use it for | Starts at |
 | --- | --- | --- | --- |
+| - | [**fal.ai**](http://fal.ai/) (for reference) | Fast generation across 1,000+ media models | FLUX schnell \$0.003/MP; Veo 3.1 from \$0.20/s |
 | 1 | **Composio Instant** | fal plus other media providers on one wallet | \$2 free credit; provider prices, 0% markup |
 | 2 | **Replicate** | The biggest catalog of open and community models | FLUX schnell \$3 per 1K images; H100 \$5.49/hr |
 | 3 | **Runware** | The cheapest image generation at volume | \$2 free credit; from \$0.0006/image |
@@ -28,6 +29,24 @@ So I went through the major options and picked the ones I would actually conside
 > ⚠ **NOTE:** These prices are as of November 2026. Tools like these often change their pricing, so make sure to double-check the official pricing page before making a decision.
 
 For most teams, one multi-model API plus one way to run your own models will cover most of what you need.
+
+## Why look for a fal.ai alternative?
+
+fal gives you one API for over 1,000 image, video, audio and 3D models. It also offers serverless GPUs, where you deploy your own code and pay per second.
+
+The problem is that demand has been growing faster than fal can keep up with. 😵 Its CEO admitted that fal had to rate limit customers over the summer.
+
+![News headline about fal doubling its valuation after having to limit customers](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/10-best-fal-ai-alternatives-for-image-and-video-generation/00-fal-rate-limits-news.webp)
+
+There are a few other reasons people start looking around:
+
+- **Rate limits.** New accounts start with a low limit on concurrent requests
+- **Model churn.** fal is retiring its Veo 3.1 endpoints on November 17, 2026
+- **Markup on some models.** A few models cost more on fal than going direct, Seedance in particular
+- **Credit expiry.** fal credits expire a year after purchase
+- **Custom models.** Teams with their own fine-tunes or pipelines eventually outgrow a per-output API
+
+If you are looking specifically for video, check out our guide to the [best AI video APIs for developers](https://composio.dev/content/best-ai-video-apis-i-m-using-as-a-developer-in-2026).
 
 Now to the actual list. 👇
 
@@ -80,6 +99,16 @@ tools = session.tools()
 - \$2 of free credit to get started
 - Calls through your own connected accounts have no Instant charge
 
+### ✅ Better than fal
+
+- One wallet for fal plus Black Forest Labs, Luma, ElevenLabs and MiniMax, with no separate API keys
+- Switching providers does not mean signing up for a new account
+
+### ⚠️ Where fal is better
+
+- Instant does not host models, so it adds no extra capacity or speed on top of fal
+- If you only ever use fal, going direct is simpler
+
 ### 💡 **When I would pick it**
 
 When I want to keep fal but add a few other providers, especially inside an agent, without managing a new account for each one.
@@ -121,6 +150,16 @@ Replicate is now part of Cloudflare, but it still runs under its own brand. It i
 - Other models are billed per second of hardware, with an H100 at \$5.49/hr
 - Wan 2.1 image-to-video costs \$0.25 per second at 720p
 
+### ✅ Better than fal
+
+- Over 50,000 models, including community fine-tunes fal does not host
+- More mature private deployments with Cog
+
+### ⚠️ Where fal is better
+
+- fal is usually faster, and often cheaper on the models both platforms share
+- Fewer cold-start delays on fal's hosted models
+
 ### 💡 **When I would pick it**
 
 When I need breadth, a niche community model, or a simple way to deploy my own model privately.
@@ -157,6 +196,16 @@ The developer experience is not as polished as fal's or Replicate's, and the spe
 - New accounts get \$2 in free credits with a business email
 - FLUX schnell from \$0.0006 per image, FLUX dev \$0.0038 and SDXL \$0.0026
 - Credits do not expire
+
+### ✅ Better than fal
+
+- Much cheaper per image, especially at volume
+- Credits never expire
+
+### ⚠️ Where fal is better
+
+- More polished developer experience and docs
+- fal's speed is better proven, while Runware's claims are mostly its own
 
 ### 💡 **When I would pick it**
 
@@ -195,6 +244,16 @@ The catch is that it is a small team with less funding behind it, so you are bet
 - Seedance 2.5 Turbo costs \$0.20 per second at 720p
 - Credits do not expire
 
+### ✅ Better than fal
+
+- Often cheaper on Seedance, Wan and Kling video
+- New Chinese video model versions tend to show up quickly
+
+### ⚠️ Where fal is better
+
+- fal is a much bigger, more proven company
+- Broader catalog beyond video
+
 ### 💡 **When I would pick it**
 
 Video-heavy apps built on Seedance, Wan or Kling, where getting the newest version fast matters.
@@ -231,6 +290,16 @@ FLUX schnell costs about \$0.0027 per image, which is slightly under fal's price
 - FLUX schnell costs about \$0.0027 per image
 - LLMs are billed per token
 - Dedicated endpoints and clusters are billed by GPU time
+
+### ✅ Better than fal
+
+- LLMs and media generation on one account and one bill
+- Strong fine-tuning and batch options for LLMs
+
+### ⚠️ Where fal is better
+
+- A far bigger media catalog
+- Media generation is fal's core product, not something it runs through a partner
 
 ### 💡 **When I would pick it**
 
@@ -269,6 +338,16 @@ The trade-off is that you build and maintain the serving yourself. There is also
 - H100 costs about \$3.95/hr and A100 80GB about \$2.50/hr
 - Billed per second while your code runs
 
+### ✅ Better than fal
+
+- Full control over weights, samplers and pipelines
+- Cheaper than per-output pricing once your GPUs stay busy
+
+### ⚠️ Where fal is better
+
+- A ready-made catalog, including closed models like Veo and Kling
+- No serving code to write or maintain
+
 ### 💡 **When I would pick it**
 
 Custom fine-tunes, multi-step media pipelines, or anything where I need more control than a model API gives me.
@@ -305,6 +384,16 @@ One thing to watch: Serverless billing starts when a worker begins loading your 
 - Pods start at \$0.27/hr for an RTX A5000, up to \$3.29/hr for an H100
 - Serverless runs from \$0.58/hr up to \$9.98/hr, depending on the GPU
 - Billing starts when a worker begins loading your model
+
+### ✅ Better than fal
+
+- Some of the cheapest GPU time around, with ready ComfyUI templates
+- No restrictions on which models you run
+
+### ⚠️ Where fal is better
+
+- Fully managed, with no cold-start or idle billing to tune
+- Hosts closed models you cannot self-host
 
 ### 💡 **When I would pick it**
 
@@ -345,6 +434,16 @@ So it is less a fal replacement and more a way to avoid being locked into any si
 - PRO is \$9/month and includes \$2 of inference credits
 - Free accounts get a very small monthly credit
 
+### ✅ Better than fal
+
+- One token for many providers, fal included, so switching is mostly a config change
+- The home of open-weights models, plus dedicated endpoints
+
+### ⚠️ Where fal is better
+
+- Going direct gives you fal's full catalog and features
+- Media coverage depends on what each partner exposes
+
 ### 💡 **When I would pick it**
 
 When I want access to open-weights models and the freedom to switch providers without rewriting my integration.
@@ -377,6 +476,16 @@ It is expensive per GPU-hour and has no ready-made media catalog. So it replaces
 - Autoscaling with strong latency engineering
 - Model APIs for popular open models
 - Hugging Face inference provider
+
+### ✅ Better than fal
+
+- Production-grade serving for your own models
+- Strong latency engineering for strict requirements
+
+### ⚠️ Where fal is better
+
+- A ready-made media gallery you can call right away
+- No need to package and deploy models yourself
 
 ### Pricing
 
@@ -423,6 +532,16 @@ Reviews also mention outages and stuck jobs, and some reviewers question whether
 - Credits cost \$0.005 each
 - Kling 3.0 Standard costs \$0.07 per second, and Seedance 2.0 \$0.205 per second at 720p
 
+### ✅ Better than fal
+
+- Often 30–50% cheaper per second of video
+- Credits do not expire
+
+### ⚠️ Where fal is better
+
+- Better reliability, with fewer outages and stuck jobs
+- Official provider relationships, plus custom models and serverless GPUs
+
 ### 💡 **When I would pick it**
 
 Prototypes and cost-driven experiments. I would not use it for anything production or compliance-sensitive.
@@ -432,9 +551,13 @@ Prototypes and cost-driven experiments. I would not use it for anything producti
 - [Kie.ai via Composio (bring your own key)](https://composio.dev/toolkits/kieai)
 - [Kie.ai documentation](https://docs.kie.ai/)
 
+## Others worth a look
+
+I haven't used these two much myself, but I've seen them recommended quite a lot by the community: [DeepInfra](https://deepinfra.com/) and [Google Vertex AI](https://cloud.google.com/vertex-ai). Worth considering these as well.
+
 ## So, which one should you switch to?
 
-Honestly, it depends on why you are leaving fal in the first place. 🤷♂
+Honestly, it depends on why you are leaving fal in the first place. 🤷‍♂️
 
 Hitting **rate limits** or losing Veo 3.1? **Replicate** is the safest place to move that traffic.
 
@@ -449,3 +572,25 @@ And if none of those really apply, you might not need to switch at all. Keep fal
 Whatever you pick, test it on your own prompts before moving everything over. Price tables and benchmarks only tell you so much. 🫡
 
 Which one are you using right now? Let me know. ✌
+
+## FAQs
+
+### What is the best fal.ai alternative?
+
+It depends on why you are leaving. Replicate is the safest all-round pick, Runware is the cheapest for images, and Modal or RunPod make sense if you run your own models.
+
+### What is the cheapest fal.ai alternative?
+
+For images, Runware, with FLUX schnell from \$0.0006 per image. For video, Kie.ai and WaveSpeedAI are often cheaper per second than fal.
+
+### Is there a free alternative to fal.ai?
+
+Not fully free, but most have free credit to start. Modal gives \$30 a month, Runware \$2, and Kie.ai 80 credits.
+
+### Is Replicate better than fal.ai?
+
+Replicate has a much bigger catalog. fal is usually faster and often cheaper on the models both host.
+
+### Can I use fal.ai without managing an API key?
+
+Yes. Composio Instant gives your agent access to fal and other media tools from one wallet, with no separate API keys.

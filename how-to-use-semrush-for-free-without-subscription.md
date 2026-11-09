@@ -1,22 +1,25 @@
 # How to use Semrush for free without subscription
 
-If SEO, GEO and AEO are your priorities, then you want to know who links to a competitor's site. Recently I was vetting a guest post target and checking a domain's authority score before spending a week on outreach. This kind of data can be tracked on [Semrush](https://www.semrush.com/). However, the API route to it starts with a paid plan. In Semrush, standard API access requires an Business plan subscription, and after upgrading, the API unit balance still reads zero. Units are a separate purchase.
+If SEO, GEO and AEO are your priorities, then you want to know who links to a competitor's site. Recently I was vetting a guest post target and checking a domain's authority score before spending a week on outreach. This kind of data can be tracked on [Semrush](https://www.semrush.com/).
+
+However, the API route to it starts with a paid plan. In Semrush, standard API access requires a Business plan subscription, and after upgrading, the API unit balance still reads zero. Units are a separate purchase. Semrush’s pricing page lists monthly plans from \$139 to \$299, with API access on a custom-priced Advanced plan, and its API docs don’t say what units cost.
 
 That's a lot of setup for a handful of lookups. [Composio Instant](https://composio.dev/instant) takes the subscription out of the picture. I connected my agent to Composio, and it called the Semrush tools it needed, with each call paid from a prepaid wallet. Every new account starts with \$2 in that wallet. I didn't create a Semrush account, and I didn't copy a Semrush API key.
 
 ## How Composio Instant works
 
-Instant is pay-per-call access to paid tools. When an agent calls a supported tool, Composio runs it on the provider's official API through its own provider account, then takes the cost from my wallet. There's 0% markup, so you pay the provider's price. The execution log shows which tool ran and what the call cost.
+[Composio Instant](https://composio.dev/instant) is a unified API that gives your agent pay-per-call access to tools from providers such as Semrush, DataForSEO, Ahrefs and Serper. Every new account gets \$2 in free starter credit, so you can try supported tools without a provider subscription.
+
+When your agent calls a supported tool, Composio uses its own provider account to run the request through the provider's official API, then deducts the cost from your wallet. There's 0% markup, so you pay the provider's price. The execution log shows which tool ran and how much the call cost.
 
 These three things are important to note:
 
 - If you've connected your own account for a tool, your agent uses it and Instant charges nothing.
-- Instant support is decided tool by tool, so a toolkit can have some Instant tools and others that need your own connection.
 - Composio checks the balance asynchronously, so the wallet isn't a strict cap on each call. Once the balance is confirmed empty, Instant calls stop with an HTTP 402 error.
 
 Watch the full Claude code setup walkthrough on YouTube: [How to Use Semrush Backlink Data Without a Subscription (Composio Instant)](https://youtu.be/pms0eJtX7b8)
 
-## What you can pull from Semrush
+## What you can pull from Semrush with Composio
 
 Composio's Semrush toolkit has more than 70 tools and normally runs on your own Semrush API key. Composio Instant covers 12 of them, all billed at \$0.325 per 1,000 API units used. Nine are backlink tools:
 
@@ -38,68 +41,77 @@ The Semrush page in the dashboard lists the 12 Instant tools, each priced at \$0
 
 With the split in the twelve tools, you can see who links to a rival, which anchors they use, who their backlink competitors are, and how a profile has moved over time, all without a plan.
 
-## What \$2 buys
+## Set up Composio Instant
 
-At \$0.325 per 1,000 units, one unit costs \$0.000325, and the starter credit covers roughly 6,150 units. How far the unit goes depends on how Semrush prices the report. Some reports charge per line returned and others charge a fixed amount per request, with the backlinks overview as its example of a flat charge. On a list-style call like referring domains, the line count drives the bill.
+Start with a free Composio account, then connect it to ChatGPT or Claude.
 
-## Set it up
+1. Create a [Composio account](https://composio.dev/) on the free Hobby plan. It includes \$2 in credit and doesn't require a credit card.
+2. Open the Connect Agents page in the Composio dashboard and turn on Composio Instant.
+3. Choose your client and follow its install link. Composio works with Claude, ChatGPT, Codex, Cursor and other MCP clients. If you connect through a custom MCP server, use `https://connect.composio.dev/mcp`.
 
-1. I created a [Composio account](https://composio.dev/) on the free Hobby plan. It requires no credit card and includes \$2 in credit.
-2. In the Composio dashboard, I opened the connect page and turned on Composio Instant.
-3. I added Composio to my agent. It works with Claude, ChatGPT, Codex, Cursor and other MCP clients. For consumer connections, Composio's docs list `https://connect.composio.dev/mcp` as the server address.
-4. I asked the agent to "Pull the backlinks overview for a competitor's domain, then list their top referring domains." The agent made two Semrush calls.
+The sections below explain how to connect ChatGPT and Claude.
 
 ![Composio wallet with $2.00 of credit and Instant usage turned on](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-semrush-for-free-without-subscription/02-composio-wallet.webp)
 
-The wallet shows the \$2.00 credit and Instant usage turned on.
+The wallet shows the \$2.00 starter credit with Instant turned on.
 
 ![Composio Connect Agents page with the MCP address and install links](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-semrush-for-free-without-subscription/03-composio-connect-agents.webp)
 
 The Connect Agents page lists the MCP address and an install link for each client.
 
-If you're building your own agent, turn on Instant toolkits in your project settings because they're off by default. Check your wallet balance under Billing. To include the cost in each response, set `return_instant_charge` (`returnInstantCharge` in TypeScript).
+If you're building your own agent, enable Instant toolkits in your project settings because they're off by default. You can check your wallet balance under Billing and include the cost in each tool response by setting `return_instant_charge` (`returnInstantCharge` in TypeScript).
 
 ### Connect ChatGPT
 
-To use Composio inside ChatGPT with the plugin:
+You can use the official Composio plugin on ChatGPT's free plan, or add a custom MCP connector on a supported paid plan.
 
-1. In ChatGPT, open Settings, go to Plugins and search the marketplace for Composio, or use the install link below.
-2. Click Install plugin.
-3. When ChatGPT asks you to authenticate, log in to Composio and click Allow access.
-4. In a chat, type @Composio followed by your request, such as "@Composio pull the Semrush backlinks overview for a competitor's domain."
-5. On first use, ChatGPT asks you to authorize Composio.
+#### Install the Composio plugin
 
-Composio connects through OAuth, so review the permission screen before you allow access. Keep manual confirmation turned on for write actions such as sending messages.
+1. Open [the Composio plugin for ChatGPT](https://chatgpt.com/plugins/plugin_asdk_app_6a58503580c08191b78cc5bdaf4eba6e?cta_placement=works-with-chatgpt) and click **Install plugin**. Composio also offers an official plugin for Codex.
+2. When ChatGPT asks you to sign in, log in to Composio, review the OAuth permissions and click **Allow access**.
+3. Start a chat and type: "@Composio pull the Semrush backlinks overview for composio.dev, then list its top 5 referring domains."
+4. Approve the authorization or tool-call request that ChatGPT shows on first use.
+
+Keep manual confirmation turned on for write actions, such as sending messages.
 
 ![Composio plugin page in ChatGPT](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-semrush-for-free-without-subscription/04-chatgpt-composio-plugin.webp)
 
 The Composio plugin page in ChatGPT.
 
-I ran the same prompt in ChatGPT on the free plan: "@Composio pull the Semrush backlinks overview for composio.dev, then list its top 5 referring domains." ChatGPT asked me to approve the tool call before it ran, then returned the overview and the top five referring domains.
+I tested this prompt on ChatGPT's free plan. ChatGPT asked me to approve the tool call, then returned the backlinks overview for composio.dev and its top five referring domains.
 
 ![ChatGPT listing the top five referring domains for composio.dev](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-semrush-for-free-without-subscription/05-chatgpt-semrush-result.webp)
 
 ChatGPT's answer with the top five referring domains for composio.dev.
 
-Composio is available as an official plugin for ChatGPT and Codex, and you can install it from [the Composio plugin for ChatGPT](https://chatgpt.com/plugins/plugin_asdk_app_6a58503580c08191b78cc5bdaf4eba6e?cta_placement=works-with-chatgpt).
+#### Use a custom MCP connector instead
 
-If you'd rather add it as a custom connector, this is the route [Composio's ChatGPT guide](https://composio.dev/blog/chatgpt-mcp-how-to-connect-chatgpt-to-your-apps-without-code) describes:
+[Composio's ChatGPT guide](https://composio.dev/blog/chatgpt-mcp-how-to-connect-chatgpt-to-your-apps-without-code) also describes how to add Composio as a custom connector. This method requires ChatGPT Plus, Pro, Business, Enterprise or Edu because free accounts can't turn on Developer Mode.
 
-1. Check your plan. Custom MCP servers need ChatGPT Plus, Pro, Business, Enterprise or Edu, and free accounts can't turn on Developer Mode. On Business or Enterprise, ask your workspace admin whether third-party app connections are allowed.
-2. Open ChatGPT Settings and turn on Developer Mode. The guide places it under Apps, then Advanced settings, or under Workspace Settings, then Permissions & Roles, so check which one your account shows.
-3. Go to Apps and Connectors, click Create, and add a new app named Composio with the URL `https://connect.composio.dev/mcp`. Set authentication to OAuth.
-4. Sign in to Composio when the browser window opens and authorize ChatGPT.
-5. Start a new chat and ask for something that needs a connected app, such as "Pull the backlinks overview for a competitor's domain from Semrush."
+1. If you're on Business or Enterprise, ask your workspace admin whether third-party app connections are allowed.
+2. Open ChatGPT Settings and turn on **Developer Mode**. The guide lists two possible locations: **Apps → Advanced settings** or **Workspace Settings → Permissions & Roles**. Use the one your account shows.
+3. Go to **Apps and Connectors**, click **Create** and name the app **Composio**. Enter `https://connect.composio.dev/mcp` as the server URL and choose **OAuth** for authentication.
+4. Sign in to Composio in the browser window and authorize ChatGPT.
+5. Start a new chat and ask: "Pull the backlinks overview for a competitor's domain from Semrush."
 
-### Connect Claude and other clients
+### Connect Claude
 
-In Claude, I opened Customize, then Connectors, chose Add custom connector, named it Composio and entered `https://connect.composio.dev/mcp`. Claude sent me to Composio to sign in and allow access. After that, Claude asked for permission before each Composio tool ran, with the options to allow once or always allow.
+To add Composio as a custom connector in Claude:
+
+1. Open **Customize → Connectors** and choose **Add custom connector**.
+2. Name the connector **Composio** and enter `https://connect.composio.dev/mcp` as the server URL.
+3. Follow the sign-in prompt to Composio, then authorize the connection.
+4. When Claude calls a Composio tool, review the permission request and choose whether to allow it once or always allow it.
+
+When I tested this connection, Claude asked for permission before each Composio tool ran.
 
 ![Claude asking for permission before running a Composio tool](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/how-to-use-semrush-for-free-without-subscription/06-claude-permission-prompt.webp)
 
-Composio also has a [Claude setup page](https://composio.dev/claude).
+You can also follow [Composio's Claude setup guide](https://composio.dev/claude).
 
-For Claude, Claude Code, Cursor, Grok, Hermes and any other client that supports remote MCP servers, the setup steps are on [composio.dev/works-with](https://composio.dev/works-with).
+#### Connect another client
+
+For Claude Code, Cursor, Grok, Hermes or another client that supports remote MCP servers, follow the client-specific instructions at [composio.dev/works-with](https://composio.dev/works-with). That page also includes setup instructions for Claude.
 
 ### Run your first Semrush call
 
@@ -130,7 +142,14 @@ When you ask your agent to use an app you haven't connected yet, Composio gives 
 - [Google Search Console](https://docs.composio.dev/toolkits/google_search_console) has 9 tools. You can list, add and remove sites, inspect a URL's indexing status, list and submit sitemaps, and run search analytics queries for clicks, impressions, click-through rate and average position. It uses OAuth2, and Composio offers managed OAuth.
 - [Bing Webmaster Tools](https://composio.dev/toolkits/bing_webmaster_tools) has 13 tools, including search, page and query performance, crawl diagnostics, inbound links, keyword research, URL submission and submission quotas. It uses an API key, which you create in your Bing Webmaster Tools account settings and paste into Composio's connection page.
 
-Once both are connected, one prompt can combine them: "Pull the top referring domains for a competitor from Semrush, then show my top queries from Search Console over the last 28 days." The first half uses your Instant wallet and the second half uses your own account.
+Once both are connected, one prompt can combine them:
+
+```markdown
+Pull the top referring domains for a competitor from Semrush, 
+then show my top queries from Search Console over the last 28 days." 
+```
+
+The first half uses your Instant wallet and the second half uses your own account.
 
 ## Keeping an eye on spend
 

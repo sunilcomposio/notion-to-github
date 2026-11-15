@@ -33,7 +33,7 @@ At \$25 for 1,000 searches, Starter is the most expensive entry point in this co
 
 Composio Instant covers 44 of the SerpApi toolkit's 59 tools, including Google search, Maps, News, Shopping, Trends, Scholar and Jobs. Amazon search, Google AI Overview and Google AI Mode aren't on that list, so those still need your own SerpApi key.
 
-[Through Instant](https://composio.dev/pricing/platform), SerpApi's Google search is listed at \$0.025 per successful search, the same as the Starter plan's cost per search. However, there was a 63% discount on it when I tested, so each search cost me \$0.0092. The Instant search tool returns the top five organic results with position, title and link, and no snippets. In my runs, one or two of the five links came back as Google redirect URLs ([google.com/goto](http://google.com/goto)) in place of the destination page.
+[Through Instant](https://composio.dev/pricing/platform), SerpApi's Google search is listed at \$0.025 per successful search, the same as the Starter plan's cost per search. However, there was a 63% discount on it when I tested, so each search cost me \$0.0092. The Instant search tool returns the top five organic results with position, title and link, and no snippets. In my runs, one or two of the five links came back as Google redirect URLs (google.com/goto) in place of the destination page.
 
 ## Serper
 
@@ -92,15 +92,15 @@ I ran that query and got these top five organic results from each provider:
 
 | Position | Serper | DataForSEO | SerpApi |
 | --- | --- | --- | --- |
-| 1 | [wrike.com](http://wrike.com) | [teamwork.com](http://teamwork.com) | [wrike.com](http://wrike.com) |
-| 2 | [icagile.com](http://icagile.com) | [proprofsproject.com](http://proprofsproject.com) | [thedigitalprojectmanager.com](http://thedigitalprojectmanager.com) |
-| 3 | [teamwork.com](http://teamwork.com) | [reddit.com](http://reddit.com) | [icagile.com](http://icagile.com) |
-| 4 | [zapier.com](http://zapier.com) | [thedigitalprojectmanager.com](http://thedigitalprojectmanager.com) | [zapier.com](http://zapier.com) |
-| 5 | [reddit.com](http://reddit.com) | [proofhub.com](http://proofhub.com) | Google redirect link, no destination domain |
+| 1 | wrike.com | teamwork.com | wrike.com |
+| 2 | icagile.com | proprofsproject.com | thedigitalprojectmanager.com |
+| 3 | teamwork.com | reddit.com | icagile.com |
+| 4 | zapier.com | thedigitalprojectmanager.com | zapier.com |
+| 5 | reddit.com | proofhub.com | Google redirect link, no destination domain |
 
 ![Agent output listing the top five Google results from Serper, SerpApi and DataForSEO](https://raw.githubusercontent.com/sunilcomposio/notion-to-github/main/images/best-serp-apis-compared/01-agent-top-5-results-by-provider.webp)
 
-Serper and SerpApi agreed on Wrike, ICAgile and Zapier, though the order shifted, and SerpApi's fifth link was a Google redirect with no destination domain. DataForSEO's top five was mostly different. It shared [Teamwork.com](http://Teamwork.com) and Reddit with Serper and The Digital Project Manager with SerpApi, and added ProProfs and ProofHub. So don't compare positions across providers directly. Serper returned People Also Ask questions and related searches with its organic results. The SerpApi tool returned titles and links only.
+Serper and SerpApi agreed on Wrike, ICAgile and Zapier, though the order shifted, and SerpApi's fifth link was a Google redirect with no destination domain. DataForSEO's top five was mostly different. It shared Teamwork.com and Reddit with Serper and The Digital Project Manager with SerpApi, and added ProProfs and ProofHub. So don't compare positions across providers directly. Serper returned People Also Ask questions and related searches with its organic results. The SerpApi tool returned titles and links only.
 
 The wallet charged \$0.0003 for the Serper search, \$0.0092 for the SerpApi search and \$0.0006 for the DataForSEO task. Together, the three calls cost about a cent.
 

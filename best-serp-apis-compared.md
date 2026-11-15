@@ -8,6 +8,8 @@ This article is a comparison of the cost of the first 1,000 Google searches, how
 
 A SERP API runs your query on a search engine from its own IP pool, gets past CAPTCHAs and blocks, and returns the results page as structured data. You send a keyword and a location, and you get back JSON with organic links, ads, People Also Ask, local results and other page features, depending on the provider.
 
+If you need to extract content from the pages you find, see our guide to the [best web scraping APIs](https://composio.dev/content/best-web-scraping-apis). For agents that need to click, navigate or fill out forms, see our comparison of [browser agent APIs](https://composio.dev/content/best-browser-agent-apis).
+
 The four tools we will discuss in this article handle billing differently. SerpApi counts searches against a monthly plan. Serper sells credits. DataForSEO charges per results page from a prepaid balance. Bright Data charges per 1,000 successful requests. To compare them, the table converts everything to the cost of 1,000 basic Google searches at each provider's entry price.
 
 ## The four APIs at a glance
@@ -35,7 +37,7 @@ Composio Instant covers 44 of the SerpApi toolkit's 59 tools, including Google s
 
 ## Serper
 
-[Serper](https://serper.dev) does Google and nothing else, and it's the cheapest way in at low volume. Its API covers Google web search, images, news, maps, places, shopping, Scholar, patents, videos, Lens, autocomplete and place reviews, plus a page scraper.
+[Serper](https://serper.dev) does Google and nothing else, and it's the cheapest way in at low volume. Its API covers Google web search, images, news, maps, places, shopping, Scholar, patents, videos, Lens, autocomplete and place reviews, plus a page scraper. For a different approach to finding local businesses, see our guide to [finding Google Maps leads with Claude](https://composio.dev/content/how-to-scrape-google-maps-for-leads-with-claude), which uses Google's official Places API.
 
 [New accounts get 2,500 free queries](https://serper.dev) with no credit card. After that you buy prepaid credit packs: \$50 for 50,000 credits (\$1.00 per 1,000), \$375 for 500,000 (\$0.75), \$1,250 for 2.5 million (\$0.50) and \$3,750 for 12.5 million (\$0.30). Credits are valid for six months.
 

@@ -58,7 +58,7 @@ This approach works well when the main goal is to access data or external servic
 - **Maturity:** Monid has an active product and documentation, but a shorter publicly documented production history than Composio.
 - **Developer experience:** MCP, CLI, skills, and HTTP APIs for discovering, inspecting, and running tools. Lacks an SDK for all around support for developers.
 - **Security:** API authentication and OAuth support. Public SOC 2 Type II or ISO 27001 certification could not be verified.
-- **Enterprise adoption: **Might be there, but I didn’t find any public documentation verifying named enterprise deployments.
+- **Enterprise adoption:** Might be there, but I didn’t find any public documentation verifying named enterprise deployments.
 
 Monid is a strong option for agents that mainly need external research, scraping, enrichment, or generation services.
 
